@@ -6,13 +6,35 @@ import os
 import signal
 import sys
 import torch
+import json
+import glob
+import re
 
 from vllm import LLM, SamplingParams
 
 import optuna
 
 ## TODO:
-# - [ ] BUILD Optuna around vllm server and guidellm
+# - [X] BUILD Optuna around vllm server and guidellm
+# - [ ] Log all the benchmark for each trial (name it benckmarks_1.1.json, benchmarks_1.2.json, etc.. For next benchmark run is it benchmarks_2.1.json, benchmarks_2.2.json, etc.)
+# - [ ] Log the vllm server logs into a file that can be related to the benchmark run vllm_server_logs_1.1, vllm_server_logs_1.2, etc.
+
+SRC_DIR = os.path.dirname(__file__)
+PROJECT_DIR = os.path.abspath(os.path.join(SRC_DIR, ".."))
+BENCH_ROOT = os.path.join(PROJECT_DIR, "benchmarks")
+os.makedirs(BENCH_ROOT, exist_ok=True)
+
+# Initialize run tracking at module level
+run_dirs = glob.glob(os.path.join(BENCH_ROOT, "benchmarks_*"))
+run_ids = []
+for d in run_dirs:
+    m = re.match(r".*benchmarks_(\d+)$", d)
+    if m:
+        run_ids.append(int(m.group(1)))
+RUN_ID = max(run_ids) + 1 if run_ids else 1
+RUN_DIR = os.path.join(BENCH_ROOT, f"benchmarks_{RUN_ID}")
+os.makedirs(RUN_DIR, exist_ok=True)
+print(f"Logging this run's benchmarks to: {RUN_DIR}")
 
 
 def build_vllm_command(model_name, port, candidate_flags):
@@ -46,7 +68,7 @@ def start_vllm_server(cmd, ready_pattern="Application startup complete", timeout
     """
 
     print(f"Launching vLLM server {' '.join(cmd)}")
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1, preexec_fn=os.setsid)
 
     start_time = time.time()
 
@@ -85,9 +107,9 @@ def stop_vllm_server(proc, grace_period=5):
 
     print(f"Stopping vLLM process {proc.pid}...")
 
-    try:
-        # First try SIGTERM for graceful shutdown
-        proc.terminate()
+    try:    
+        # First try SIGINT for graceful shutdown
+        os.killpg(os.getpgid(proc.pid), signal.SIGINT)
         
         # Wait for graceful shutdown
         deadline = time.time() + grace_period
@@ -136,7 +158,7 @@ def query_vllm_server(port, prompt):
         return response_json["choices"][0]["text"]
     return "No response generated"
 
-def run_guidellm(input_text, guidellm_args):
+def run_guidellm(guidellm_args):
     """
     Lauches guidellm as a subprocess, give input text and capture output
     guidellm_args is a list of args for the guidellm command
@@ -144,34 +166,40 @@ def run_guidellm(input_text, guidellm_args):
 
     cmd = ["guidellm"] + guidellm_args
     print(f"Launching guidellm: {' '.join(cmd)}")
-
-    if input_text is None:
-        proc = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-        )
-        out, err = proc.communicate()
-    else:
-        proc = subprocess.Popen(
-            cmd,
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-        )
-        out, err = proc.communicate(input=input_text)
-
+    proc = subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    out, err = proc.communicate()  # no stdin
     if proc.returncode != 0:
-        print("guidellm failed with error:", err, file=sys.stderr)
-        return None
+        raise RuntimeError(f"guidellm failed (code {proc.returncode}):\n{err}")
     return out
 
 
 # -----------------------------
 # Optuna
 # -----------------------------
+
+def parse_benchmarks(bench_file):
+    """
+    Parse the benchmark results from the specified benchmark file
+    
+    Args:
+        bench_file: Path to the benchmark results JSON file
+    """
+    with open(bench_file) as f:
+        data = json.load(f)
+    
+    # Get the first benchmark result
+    stats = data["benchmarks"][0]
+    
+    # Extract the median throughput from successful requests
+    median_throughput = stats["metrics"]["requests_per_second"]["successful"]["median"]
+    
+    return median_throughput
+
 def objective(trial):
     """
     Objective function for Optuna
@@ -185,10 +213,13 @@ def objective(trial):
     vllm_cmd = build_vllm_command(model_name=model, port=port, candidate_flags="")
     vllm_proc = start_vllm_server(vllm_cmd)
 
-    try:
-        # sanity check
-        response = query_vllm_server(port, "Hello from Red Hat")
+    trial_id   = trial.number + 1
+    bench_file = os.path.join(
+        RUN_DIR,
+        f"benchmarks_{RUN_ID}.{trial_id}.json"
+    )
 
+    try:
         guidellm_args = [
             "benchmark",
             "--target", "http://localhost:8000",
@@ -197,11 +228,13 @@ def objective(trial):
             "--rate-type",        "concurrent",
             "--max-requests",     "100",
             "--rate",             "10",
+            "--output-path", bench_file,
         ]
 
-        output = run_guidellm(guidellm_args)
+        run_guidellm(guidellm_args)
 
-        
+        # Parse the benchmark results from the specified file
+        return parse_benchmarks(bench_file)
 
     except Exception as e:
         print("Error during vLLM to guidellm processing:", str(e), file=sys.stderr)
@@ -214,7 +247,17 @@ def objective(trial):
 
 
 def main():
-    return
+    db_path     = os.path.join(RUN_DIR, "optuna.db")
+    storage_url = f"sqlite:///{db_path}"
+    study = optuna.create_study(
+        storage=storage_url,
+        study_name=f"vllm_tuning_run{RUN_ID}",
+        direction="maximize",
+        load_if_exists=True
+    )
+    study.optimize(objective, n_trials=10)
+
+    print(study.best_trial.value, study.best_trial.params)
 
 if __name__ == "__main__":
     main()
