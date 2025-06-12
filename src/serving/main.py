@@ -4,11 +4,14 @@ import requests
 import os
 import signal
 import sys
-import torch
 import json
 import glob
 import re
 import optuna
+
+# TODO
+# [ ] max_num_batched_tokens
+
 
 SRC_DIR = os.path.dirname(__file__)
 PROJECT_DIR = os.path.abspath(os.path.join(SRC_DIR, ".."))
@@ -227,9 +230,9 @@ def parse_benchmarks(bench_file):
         data = json.load(f)
     
     stats = data["benchmarks"][0]
-    median_throughput = stats["metrics"]["requests_per_second"]["successful"]["median"]
+    median_rps = stats["metrics"]["requests_per_second"]["successful"]["median"]
     
-    return median_throughput
+    return median_rps
 
 def objective(trial):
     """
@@ -239,6 +242,9 @@ def objective(trial):
     port = 8000
     model = "Qwen/Qwen3-1.7B"
 
+    # Define the parameter to tune
+    max_num_batched_tokens = trial.suggest_int("max_num_batched_tokens", 8192, 65536, step=4096)
+
     trial_id = trial.number + 1
     vllm_log_file = os.path.join(VLLM_LOGS_DIR, f"vllm_server_logs_{STUDY_ID}.{trial_id}.log")
     guidellm_log_file = os.path.join(GUIDELLM_LOGS_DIR, f"guidellm_logs_{STUDY_ID}.{trial_id}.log")
@@ -246,8 +252,11 @@ def objective(trial):
     print(f"\nStarting trial {trial_id}")
     print(f"vLLM log file: {vllm_log_file}")
     print(f"guidellm log file: {guidellm_log_file}")
-    
-    vllm_cmd = build_vllm_command(model_name=model, port=port, candidate_flags="")
+
+    candidate_flags = [
+        "--max-num-batched-tokens", str(max_num_batched_tokens)
+    ]
+    vllm_cmd = build_vllm_command(model_name=model, port=port, candidate_flags=candidate_flags)
     vllm_proc = start_vllm_server(vllm_cmd, log_file=vllm_log_file)
 
     bench_file = os.path.join(

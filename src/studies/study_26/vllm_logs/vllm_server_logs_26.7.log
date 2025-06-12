@@ -1,0 +1,323 @@
+INFO 06-11 18:40:35 [__init__.py:243] Automatically detected platform cuda.
+INFO 06-11 18:40:44 [__init__.py:31] Available plugins for group vllm.general_plugins:
+INFO 06-11 18:40:44 [__init__.py:33] - lora_filesystem_resolver -> vllm.plugins.lora_resolvers.filesystem_resolver:register_filesystem_resolver
+INFO 06-11 18:40:44 [__init__.py:36] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 06-11 18:40:45 [api_server.py:1289] vLLM API server version 0.9.0.1
+INFO 06-11 18:40:46 [cli_args.py:300] non-default args: {'max_model_len': 4096, 'max_num_batched_tokens': 7168, 'disable_log_requests': True}
+INFO 06-11 18:40:53 [config.py:793] This model supports multiple tasks: {'generate', 'reward', 'score', 'embed', 'classify'}. Defaulting to 'generate'.
+INFO 06-11 18:40:53 [config.py:2118] Chunked prefill is enabled with max_num_batched_tokens=7168.
+INFO 06-11 18:40:57 [__init__.py:243] Automatically detected platform cuda.
+INFO 06-11 18:41:00 [core.py:438] Waiting for init message from front-end.
+INFO 06-11 18:41:00 [__init__.py:31] Available plugins for group vllm.general_plugins:
+INFO 06-11 18:41:00 [__init__.py:33] - lora_filesystem_resolver -> vllm.plugins.lora_resolvers.filesystem_resolver:register_filesystem_resolver
+INFO 06-11 18:41:00 [__init__.py:36] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 06-11 18:41:00 [core.py:65] Initializing a V1 LLM engine (v0.9.0.1) with config: model='Qwen/Qwen3-1.7B', speculative_config=None, tokenizer='Qwen/Qwen3-1.7B', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, override_neuron_config={}, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=LoadFormat.AUTO, tensor_parallel_size=1, pipeline_parallel_size=1, disable_custom_all_reduce=False, quantization=None, enforce_eager=False, kv_cache_dtype=auto,  device_config=cuda, decoding_config=DecodingConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_backend=''), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None), seed=0, served_model_name=Qwen/Qwen3-1.7B, num_scheduler_steps=1, multi_step_stream_outputs=True, enable_prefix_caching=True, chunked_prefill_enabled=True, use_async_output_proc=True, pooler_config=None, compilation_config={"level": 3, "custom_ops": ["none"], "splitting_ops": ["vllm.unified_attention", "vllm.unified_attention_with_output"], "compile_sizes": [], "inductor_compile_config": {"enable_auto_functionalized_v2": false}, "use_cudagraph": true, "cudagraph_num_of_warmups": 1, "cudagraph_capture_sizes": [512, 504, 496, 488, 480, 472, 464, 456, 448, 440, 432, 424, 416, 408, 400, 392, 384, 376, 368, 360, 352, 344, 336, 328, 320, 312, 304, 296, 288, 280, 272, 264, 256, 248, 240, 232, 224, 216, 208, 200, 192, 184, 176, 168, 160, 152, 144, 136, 128, 120, 112, 104, 96, 88, 80, 72, 64, 56, 48, 40, 32, 24, 16, 8, 4, 2, 1], "max_capture_size": 512}
+WARNING 06-11 18:41:00 [utils.py:2671] Methods determine_num_available_blocks,device_config,get_cache_block_size_bytes,initialize_cache not implemented in <vllm.v1.worker.gpu_worker.Worker object at 0x7f0b782cfcb0>
+INFO 06-11 18:41:01 [parallel_state.py:1064] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, TP rank 0, EP rank 0
+WARNING 06-11 18:41:01 [topk_topp_sampler.py:58] FlashInfer is not available. Falling back to the PyTorch-native implementation of top-p & top-k sampling. For the best performance, please install FlashInfer.
+INFO 06-11 18:41:01 [gpu_model_runner.py:1531] Starting to load model Qwen/Qwen3-1.7B...
+INFO 06-11 18:41:01 [cuda.py:217] Using Flash Attention backend on V1 engine.
+INFO 06-11 18:41:01 [backends.py:35] Using InductorAdaptor
+INFO 06-11 18:41:01 [backends.py:35] Using InductorAdaptor
+INFO 06-11 18:41:01 [weight_utils.py:291] Using model weights format ['*.safetensors']
+Loading safetensors checkpoint shards:   0% Completed | 0/2 [00:00<?, ?it/s]
+Loading safetensors checkpoint shards:  50% Completed | 1/2 [00:00<00:00,  1.94it/s]
+Loading safetensors checkpoint shards: 100% Completed | 2/2 [00:00<00:00,  3.88it/s]
+
+INFO 06-11 18:41:02 [default_loader.py:280] Loading weights took 0.56 seconds
+INFO 06-11 18:41:02 [gpu_model_runner.py:1549] Model loading took 3.2152 GiB and 1.136279 seconds
+INFO 06-11 18:41:10 [backends.py:459] Using cache directory: /root/.cache/vllm/torch_compile_cache/632d7e3659/rank_0_0 for vLLM's torch.compile
+INFO 06-11 18:41:10 [backends.py:469] Dynamo bytecode transform time: 7.51 s
+INFO 06-11 18:41:15 [backends.py:132] Directly load the compiled graph(s) for shape None from the cache, took 5.208 s
+INFO 06-11 18:41:16 [monitor.py:33] torch.compile takes 7.51 s in total
+INFO 06-11 18:41:17 [kv_cache_utils.py:637] GPU KV cache size: 151,296 tokens
+INFO 06-11 18:41:17 [kv_cache_utils.py:640] Maximum concurrency for 4,096 tokens per request: 36.94x
+INFO 06-11 18:41:34 [gpu_model_runner.py:1933] Graph capturing finished in 17 secs, took 0.47 GiB
+INFO 06-11 18:41:34 [core.py:167] init engine (profile, create kv cache, warmup model) took 32.17 seconds
+INFO 06-11 18:41:35 [loggers.py:134] vllm cache_config_info with initialization after num_gpu_blocks is: 9456
+WARNING 06-11 18:41:35 [config.py:1339] Default sampling parameters have been overridden by the model's Hugging Face generation config recommended from the model creator. If this is not intended, please relaunch vLLM instance with `--generation-config vllm`.
+INFO 06-11 18:41:35 [serving_chat.py:117] Using default chat sampling params from model: {'temperature': 0.6, 'top_k': 20, 'top_p': 0.95}
+INFO 06-11 18:41:35 [serving_completion.py:65] Using default completion sampling params from model: {'temperature': 0.6, 'top_k': 20, 'top_p': 0.95}
+INFO 06-11 18:41:35 [api_server.py:1336] Starting vLLM API server on http://0.0.0.0:8000
+INFO 06-11 18:41:35 [launcher.py:28] Available routes are:
+INFO 06-11 18:41:35 [launcher.py:36] Route: /openapi.json, Methods: HEAD, GET
+INFO 06-11 18:41:35 [launcher.py:36] Route: /docs, Methods: HEAD, GET
+INFO 06-11 18:41:35 [launcher.py:36] Route: /docs/oauth2-redirect, Methods: HEAD, GET
+INFO 06-11 18:41:35 [launcher.py:36] Route: /redoc, Methods: HEAD, GET
+INFO 06-11 18:41:35 [launcher.py:36] Route: /health, Methods: GET
+INFO 06-11 18:41:35 [launcher.py:36] Route: /load, Methods: GET
+INFO 06-11 18:41:35 [launcher.py:36] Route: /ping, Methods: POST
+INFO 06-11 18:41:35 [launcher.py:36] Route: /ping, Methods: GET
+INFO 06-11 18:41:35 [launcher.py:36] Route: /tokenize, Methods: POST
+INFO 06-11 18:41:35 [launcher.py:36] Route: /detokenize, Methods: POST
+INFO 06-11 18:41:35 [launcher.py:36] Route: /v1/models, Methods: GET
+INFO 06-11 18:41:35 [launcher.py:36] Route: /version, Methods: GET
+INFO 06-11 18:41:35 [launcher.py:36] Route: /v1/chat/completions, Methods: POST
+INFO 06-11 18:41:35 [launcher.py:36] Route: /v1/completions, Methods: POST
+INFO 06-11 18:41:35 [launcher.py:36] Route: /v1/embeddings, Methods: POST
+INFO 06-11 18:41:35 [launcher.py:36] Route: /pooling, Methods: POST
+INFO 06-11 18:41:35 [launcher.py:36] Route: /classify, Methods: POST
+INFO 06-11 18:41:35 [launcher.py:36] Route: /score, Methods: POST
+INFO 06-11 18:41:35 [launcher.py:36] Route: /v1/score, Methods: POST
+INFO 06-11 18:41:35 [launcher.py:36] Route: /v1/audio/transcriptions, Methods: POST
+INFO 06-11 18:41:35 [launcher.py:36] Route: /rerank, Methods: POST
+INFO 06-11 18:41:35 [launcher.py:36] Route: /v1/rerank, Methods: POST
+INFO 06-11 18:41:35 [launcher.py:36] Route: /v2/rerank, Methods: POST
+INFO 06-11 18:41:35 [launcher.py:36] Route: /invocations, Methods: POST
+INFO 06-11 18:41:35 [launcher.py:36] Route: /metrics, Methods: GET
+INFO:     Started server process [147804]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:44436 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44436 - "GET /v1/models HTTP/1.1" 200 OK
+WARNING 06-11 18:41:49 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:44436 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO 06-11 18:41:55 [loggers.py:116] Engine 000: Avg prompt throughput: 0.2 tokens/s, Avg generation throughput: 0.1 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+INFO 06-11 18:42:05 [loggers.py:116] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+INFO:     127.0.0.1:55310 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55320 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55324 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55340 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55342 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55310 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55358 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55320 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55324 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55342 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55340 - "GET /v1/models HTTP/1.1" 200 OK
+WARNING 06-11 18:42:06 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:55358 - "GET /v1/models HTTP/1.1" 200 OK
+WARNING 06-11 18:42:06 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:55360 - "GET /v1/models HTTP/1.1" 200 OK
+WARNING 06-11 18:42:06 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+WARNING 06-11 18:42:06 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+WARNING 06-11 18:42:06 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:55372 - "GET /v1/models HTTP/1.1" 200 OK
+WARNING 06-11 18:42:06 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:55386 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55372 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55360 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55402 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55386 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55310 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55320 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55324 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55340 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55342 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:06 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+WARNING 06-11 18:42:06 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:55402 - "GET /v1/models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55358 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:06 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+WARNING 06-11 18:42:06 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:55372 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55360 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55386 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55402 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:06 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:55410 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:06 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+WARNING 06-11 18:42:06 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+WARNING 06-11 18:42:06 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+WARNING 06-11 18:42:06 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+WARNING 06-11 18:42:06 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+WARNING 06-11 18:42:06 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+WARNING 06-11 18:42:06 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:55422 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55428 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:06 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+WARNING 06-11 18:42:06 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:55444 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55454 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55466 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55478 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55492 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55502 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55512 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:08 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+WARNING 06-11 18:42:08 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:55528 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55534 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:08 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:55538 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:08 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:55550 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:08 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:55552 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:08 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:55560 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:08 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:55570 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:08 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:55586 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:08 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:55598 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:08 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:55610 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:09 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47280 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:09 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47288 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:09 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47294 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:09 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47306 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:09 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47310 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:09 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47320 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:10 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47324 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:10 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47326 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:10 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47332 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:10 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47336 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:11 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47346 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:11 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47352 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:11 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47368 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:11 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47374 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:11 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47384 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:11 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47390 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:11 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47404 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:11 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47408 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:11 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47416 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:12 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47432 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:13 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+WARNING 06-11 18:42:13 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47434 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47450 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:13 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47466 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:13 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47472 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:13 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47486 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:13 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47490 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:13 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47492 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:13 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47500 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:13 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47512 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:13 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47520 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:14 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+WARNING 06-11 18:42:14 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47530 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47532 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:15 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47546 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:15 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47560 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:15 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47562 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:15 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47564 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:15 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47574 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:15 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47580 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO 06-11 18:42:15 [loggers.py:116] Engine 000: Avg prompt throughput: 3133.7 tokens/s, Avg generation throughput: 773.9 tokens/s, Running: 7 reqs, Waiting: 0 reqs, GPU KV cache usage: 2.7%, Prefix cache hit rate: 0.0%
+WARNING 06-11 18:42:15 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47596 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:15 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47610 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:16 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47624 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:16 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47630 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:16 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+WARNING 06-11 18:42:16 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47646 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47656 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:16 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47672 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:17 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47682 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:17 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47690 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:17 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47694 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:17 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47708 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:17 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47718 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:18 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47720 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:18 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47722 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:18 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47738 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:18 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47750 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:18 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47752 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:18 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:47754 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:19 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:57844 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:19 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:57854 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:19 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:57858 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:19 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:57864 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:20 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+WARNING 06-11 18:42:20 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:57868 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57876 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:20 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:57888 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:20 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:57894 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:20 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:57906 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:20 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:57918 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:20 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:57926 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:21 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+WARNING 06-11 18:42:21 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:57936 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57938 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:21 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:57948 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:21 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:57954 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:21 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:57956 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:22 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:57960 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:22 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:57970 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:22 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:57974 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:22 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:57986 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:22 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:57994 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:22 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:58008 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:22 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:58018 - "POST /v1/completions HTTP/1.1" 200 OK
+WARNING 06-11 18:42:22 [protocol.py:57] The following fields were present in the request but ignored: {'max_completion_tokens'}
+INFO:     127.0.0.1:58032 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO 06-11 18:42:24 [launcher.py:79] Shutting down FastAPI HTTP server.
+[rank0]:[W611 18:42:25.417637078 ProcessGroupNCCL.cpp:1476] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+INFO:     Shutting down
+INFO 06-11 18:42:26 [loggers.py:116] Engine 000: Avg prompt throughput: 2267.9 tokens/s, Avg generation throughput: 673.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 0.0%
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
