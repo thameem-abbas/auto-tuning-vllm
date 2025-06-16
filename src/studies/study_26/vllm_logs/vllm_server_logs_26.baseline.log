@@ -1,0 +1,265 @@
+INFO 06-16 18:21:59 [__init__.py:243] Automatically detected platform cuda.
+INFO 06-16 18:22:07 [__init__.py:31] Available plugins for group vllm.general_plugins:
+INFO 06-16 18:22:07 [__init__.py:33] - lora_filesystem_resolver -> vllm.plugins.lora_resolvers.filesystem_resolver:register_filesystem_resolver
+INFO 06-16 18:22:07 [__init__.py:36] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 06-16 18:22:08 [api_server.py:1289] vLLM API server version 0.9.0.1
+INFO 06-16 18:22:09 [cli_args.py:300] non-default args: {'max_model_len': 4096, 'disable_log_requests': True}
+INFO 06-16 18:22:58 [config.py:793] This model supports multiple tasks: {'generate', 'embed', 'classify', 'score', 'reward'}. Defaulting to 'generate'.
+INFO 06-16 18:22:58 [config.py:2118] Chunked prefill is enabled with max_num_batched_tokens=2048.
+INFO 06-16 18:23:35 [__init__.py:243] Automatically detected platform cuda.
+INFO 06-16 18:23:37 [core.py:438] Waiting for init message from front-end.
+INFO 06-16 18:23:37 [__init__.py:31] Available plugins for group vllm.general_plugins:
+INFO 06-16 18:23:37 [__init__.py:33] - lora_filesystem_resolver -> vllm.plugins.lora_resolvers.filesystem_resolver:register_filesystem_resolver
+INFO 06-16 18:23:37 [__init__.py:36] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 06-16 18:23:37 [core.py:65] Initializing a V1 LLM engine (v0.9.0.1) with config: model='Qwen/Qwen3-1.7B', speculative_config=None, tokenizer='Qwen/Qwen3-1.7B', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, override_neuron_config={}, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=4096, download_dir=None, load_format=LoadFormat.AUTO, tensor_parallel_size=1, pipeline_parallel_size=1, disable_custom_all_reduce=False, quantization=None, enforce_eager=False, kv_cache_dtype=auto,  device_config=cuda, decoding_config=DecodingConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_backend=''), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None), seed=0, served_model_name=Qwen/Qwen3-1.7B, num_scheduler_steps=1, multi_step_stream_outputs=True, enable_prefix_caching=True, chunked_prefill_enabled=True, use_async_output_proc=True, pooler_config=None, compilation_config={"level": 3, "custom_ops": ["none"], "splitting_ops": ["vllm.unified_attention", "vllm.unified_attention_with_output"], "compile_sizes": [], "inductor_compile_config": {"enable_auto_functionalized_v2": false}, "use_cudagraph": true, "cudagraph_num_of_warmups": 1, "cudagraph_capture_sizes": [512, 504, 496, 488, 480, 472, 464, 456, 448, 440, 432, 424, 416, 408, 400, 392, 384, 376, 368, 360, 352, 344, 336, 328, 320, 312, 304, 296, 288, 280, 272, 264, 256, 248, 240, 232, 224, 216, 208, 200, 192, 184, 176, 168, 160, 152, 144, 136, 128, 120, 112, 104, 96, 88, 80, 72, 64, 56, 48, 40, 32, 24, 16, 8, 4, 2, 1], "max_capture_size": 512}
+WARNING 06-16 18:23:38 [utils.py:2671] Methods determine_num_available_blocks,device_config,get_cache_block_size_bytes,initialize_cache not implemented in <vllm.v1.worker.gpu_worker.Worker object at 0x7fd749d8c050>
+INFO 06-16 18:23:44 [parallel_state.py:1064] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, TP rank 0, EP rank 0
+WARNING 06-16 18:23:44 [topk_topp_sampler.py:58] FlashInfer is not available. Falling back to the PyTorch-native implementation of top-p & top-k sampling. For the best performance, please install FlashInfer.
+INFO 06-16 18:23:44 [gpu_model_runner.py:1531] Starting to load model Qwen/Qwen3-1.7B...
+INFO 06-16 18:23:45 [cuda.py:217] Using Flash Attention backend on V1 engine.
+INFO 06-16 18:23:45 [backends.py:35] Using InductorAdaptor
+INFO 06-16 18:23:45 [backends.py:35] Using InductorAdaptor
+ERROR 06-16 18:23:45 [core.py:500] EngineCore failed to start.
+ERROR 06-16 18:23:45 [core.py:500] Traceback (most recent call last):
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 409, in hf_raise_for_status
+ERROR 06-16 18:23:45 [core.py:500]     response.raise_for_status()
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/requests/models.py", line 1024, in raise_for_status
+ERROR 06-16 18:23:45 [core.py:500]     raise HTTPError(http_error_msg, response=self)
+ERROR 06-16 18:23:45 [core.py:500] requests.exceptions.HTTPError: 403 Client Error: Forbidden for url: https://huggingface.co/api/models/Qwen/Qwen3-1.7B
+ERROR 06-16 18:23:45 [core.py:500] 
+ERROR 06-16 18:23:45 [core.py:500] The above exception was the direct cause of the following exception:
+ERROR 06-16 18:23:45 [core.py:500] 
+ERROR 06-16 18:23:45 [core.py:500] Traceback (most recent call last):
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 491, in run_engine_core
+ERROR 06-16 18:23:45 [core.py:500]     engine_core = EngineCoreProc(*args, **kwargs)
+ERROR 06-16 18:23:45 [core.py:500]                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 390, in __init__
+ERROR 06-16 18:23:45 [core.py:500]     super().__init__(vllm_config, executor_class, log_stats,
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 71, in __init__
+ERROR 06-16 18:23:45 [core.py:500]     self.model_executor = executor_class(vllm_config)
+ERROR 06-16 18:23:45 [core.py:500]                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/executor/executor_base.py", line 52, in __init__
+ERROR 06-16 18:23:45 [core.py:500]     self._init_executor()
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/executor/uniproc_executor.py", line 47, in _init_executor
+ERROR 06-16 18:23:45 [core.py:500]     self.collective_rpc("load_model")
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/executor/uniproc_executor.py", line 56, in collective_rpc
+ERROR 06-16 18:23:45 [core.py:500]     answer = run_method(self.driver_worker, method, args, kwargs)
+ERROR 06-16 18:23:45 [core.py:500]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/utils.py", line 2605, in run_method
+ERROR 06-16 18:23:45 [core.py:500]     return func(*args, **kwargs)
+ERROR 06-16 18:23:45 [core.py:500]            ^^^^^^^^^^^^^^^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 164, in load_model
+ERROR 06-16 18:23:45 [core.py:500]     self.model_runner.load_model()
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/worker/gpu_model_runner.py", line 1534, in load_model
+ERROR 06-16 18:23:45 [core.py:500]     self.model = get_model(vllm_config=self.vllm_config)
+ERROR 06-16 18:23:45 [core.py:500]                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/model_loader/__init__.py", line 58, in get_model
+ERROR 06-16 18:23:45 [core.py:500]     return loader.load_model(vllm_config=vllm_config,
+ERROR 06-16 18:23:45 [core.py:500]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/model_loader/default_loader.py", line 277, in load_model
+ERROR 06-16 18:23:45 [core.py:500]     loaded_weights = model.load_weights(
+ERROR 06-16 18:23:45 [core.py:500]                      ^^^^^^^^^^^^^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/models/qwen3.py", line 320, in load_weights
+ERROR 06-16 18:23:45 [core.py:500]     return loader.load_weights(weights)
+ERROR 06-16 18:23:45 [core.py:500]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/models/utils.py", line 277, in load_weights
+ERROR 06-16 18:23:45 [core.py:500]     autoloaded_weights = set(self._load_module("", self.module, weights))
+ERROR 06-16 18:23:45 [core.py:500]                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/models/utils.py", line 226, in _load_module
+ERROR 06-16 18:23:45 [core.py:500]     for child_prefix, child_weights in self._groupby_prefix(weights):
+ERROR 06-16 18:23:45 [core.py:500]                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/models/utils.py", line 115, in _groupby_prefix
+ERROR 06-16 18:23:45 [core.py:500]     for prefix, group in itertools.groupby(weights_by_parts,
+ERROR 06-16 18:23:45 [core.py:500]                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/models/utils.py", line 113, in <genexpr>
+ERROR 06-16 18:23:45 [core.py:500]     for weight_name, weight_data in weights)
+ERROR 06-16 18:23:45 [core.py:500]                                     ^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/models/utils.py", line 274, in <genexpr>
+ERROR 06-16 18:23:45 [core.py:500]     weights = ((name, weight) for name, weight in weights
+ERROR 06-16 18:23:45 [core.py:500]                                                   ^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/model_loader/default_loader.py", line 252, in get_all_weights
+ERROR 06-16 18:23:45 [core.py:500]     yield from self._get_weights_iterator(primary_weights)
+ERROR 06-16 18:23:45 [core.py:500]                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/model_loader/default_loader.py", line 179, in _get_weights_iterator
+ERROR 06-16 18:23:45 [core.py:500]     hf_folder, hf_weights_files, use_safetensors = self._prepare_weights(
+ERROR 06-16 18:23:45 [core.py:500]                                                    ^^^^^^^^^^^^^^^^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/model_loader/default_loader.py", line 132, in _prepare_weights
+ERROR 06-16 18:23:45 [core.py:500]     hf_folder = download_weights_from_hf(
+ERROR 06-16 18:23:45 [core.py:500]                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/model_loader/weight_utils.py", line 282, in download_weights_from_hf
+ERROR 06-16 18:23:45 [core.py:500]     file_list = fs.ls(model_name_or_path, detail=False, revision=revision)
+ERROR 06-16 18:23:45 [core.py:500]                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/huggingface_hub/hf_file_system.py", line 368, in ls
+ERROR 06-16 18:23:45 [core.py:500]     resolved_path = self.resolve_path(path, revision=revision)
+ERROR 06-16 18:23:45 [core.py:500]                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/huggingface_hub/hf_file_system.py", line 209, in resolve_path
+ERROR 06-16 18:23:45 [core.py:500]     repo_and_revision_exist, err = self._repo_and_revision_exist(repo_type, repo_id, revision)
+ERROR 06-16 18:23:45 [core.py:500]                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/huggingface_hub/hf_file_system.py", line 125, in _repo_and_revision_exist
+ERROR 06-16 18:23:45 [core.py:500]     self._api.repo_info(
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+ERROR 06-16 18:23:45 [core.py:500]     return fn(*args, **kwargs)
+ERROR 06-16 18:23:45 [core.py:500]            ^^^^^^^^^^^^^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/huggingface_hub/hf_api.py", line 2816, in repo_info
+ERROR 06-16 18:23:45 [core.py:500]     return method(
+ERROR 06-16 18:23:45 [core.py:500]            ^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+ERROR 06-16 18:23:45 [core.py:500]     return fn(*args, **kwargs)
+ERROR 06-16 18:23:45 [core.py:500]            ^^^^^^^^^^^^^^^^^^^
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/huggingface_hub/hf_api.py", line 2601, in model_info
+ERROR 06-16 18:23:45 [core.py:500]     hf_raise_for_status(r)
+ERROR 06-16 18:23:45 [core.py:500]   File "/root/rehan/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 473, in hf_raise_for_status
+ERROR 06-16 18:23:45 [core.py:500]     raise _format(HfHubHTTPError, message, response) from e
+ERROR 06-16 18:23:45 [core.py:500] huggingface_hub.errors.HfHubHTTPError: 403 Forbidden: None.
+ERROR 06-16 18:23:45 [core.py:500] Cannot access content at: https://huggingface.co/api/models/Qwen/Qwen3-1.7B.
+ERROR 06-16 18:23:45 [core.py:500] Make sure your token has the correct permissions.
+Process EngineCore_0:
+Traceback (most recent call last):
+  File "/root/rehan/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 409, in hf_raise_for_status
+    response.raise_for_status()
+  File "/root/rehan/.venv/lib/python3.12/site-packages/requests/models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 403 Client Error: Forbidden for url: https://huggingface.co/api/models/Qwen/Qwen3-1.7B
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 504, in run_engine_core
+    raise e
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 491, in run_engine_core
+    engine_core = EngineCoreProc(*args, **kwargs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 390, in __init__
+    super().__init__(vllm_config, executor_class, log_stats,
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 71, in __init__
+    self.model_executor = executor_class(vllm_config)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/executor/executor_base.py", line 52, in __init__
+    self._init_executor()
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/executor/uniproc_executor.py", line 47, in _init_executor
+    self.collective_rpc("load_model")
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/executor/uniproc_executor.py", line 56, in collective_rpc
+    answer = run_method(self.driver_worker, method, args, kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/utils.py", line 2605, in run_method
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 164, in load_model
+    self.model_runner.load_model()
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/worker/gpu_model_runner.py", line 1534, in load_model
+    self.model = get_model(vllm_config=self.vllm_config)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/model_loader/__init__.py", line 58, in get_model
+    return loader.load_model(vllm_config=vllm_config,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/model_loader/default_loader.py", line 277, in load_model
+    loaded_weights = model.load_weights(
+                     ^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/models/qwen3.py", line 320, in load_weights
+    return loader.load_weights(weights)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/models/utils.py", line 277, in load_weights
+    autoloaded_weights = set(self._load_module("", self.module, weights))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/models/utils.py", line 226, in _load_module
+    for child_prefix, child_weights in self._groupby_prefix(weights):
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/models/utils.py", line 115, in _groupby_prefix
+    for prefix, group in itertools.groupby(weights_by_parts,
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/models/utils.py", line 113, in <genexpr>
+    for weight_name, weight_data in weights)
+                                    ^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/models/utils.py", line 274, in <genexpr>
+    weights = ((name, weight) for name, weight in weights
+                                                  ^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/model_loader/default_loader.py", line 252, in get_all_weights
+    yield from self._get_weights_iterator(primary_weights)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/model_loader/default_loader.py", line 179, in _get_weights_iterator
+    hf_folder, hf_weights_files, use_safetensors = self._prepare_weights(
+                                                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/model_loader/default_loader.py", line 132, in _prepare_weights
+    hf_folder = download_weights_from_hf(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/model_loader/weight_utils.py", line 282, in download_weights_from_hf
+    file_list = fs.ls(model_name_or_path, detail=False, revision=revision)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/huggingface_hub/hf_file_system.py", line 368, in ls
+    resolved_path = self.resolve_path(path, revision=revision)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/huggingface_hub/hf_file_system.py", line 209, in resolve_path
+    repo_and_revision_exist, err = self._repo_and_revision_exist(repo_type, repo_id, revision)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/huggingface_hub/hf_file_system.py", line 125, in _repo_and_revision_exist
+    self._api.repo_info(
+  File "/root/rehan/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/huggingface_hub/hf_api.py", line 2816, in repo_info
+    return method(
+           ^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/huggingface_hub/hf_api.py", line 2601, in model_info
+    hf_raise_for_status(r)
+  File "/root/rehan/.venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 473, in hf_raise_for_status
+    raise _format(HfHubHTTPError, message, response) from e
+huggingface_hub.errors.HfHubHTTPError: 403 Forbidden: None.
+Cannot access content at: https://huggingface.co/api/models/Qwen/Qwen3-1.7B.
+Make sure your token has the correct permissions.
+[rank0]:[W616 18:23:46.532175108 ProcessGroupNCCL.cpp:1476] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+Traceback (most recent call last):
+  File "/root/rehan/.venv/bin/vllm", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/entrypoints/cli/main.py", line 56, in main
+    args.dispatch_function(args)
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/entrypoints/cli/serve.py", line 42, in cmd
+    uvloop.run(run_server(args))
+  File "/root/rehan/.venv/lib/python3.12/site-packages/uvloop/__init__.py", line 109, in run
+    return __asyncio.run(
+           ^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/root/rehan/.venv/lib/python3.12/site-packages/uvloop/__init__.py", line 61, in wrapper
+    return await main
+           ^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/entrypoints/openai/api_server.py", line 1324, in run_server
+    async with build_async_engine_client(args) as engine_client:
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/contextlib.py", line 210, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/entrypoints/openai/api_server.py", line 153, in build_async_engine_client
+    async with build_async_engine_client_from_engine_args(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/contextlib.py", line 210, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/entrypoints/openai/api_server.py", line 185, in build_async_engine_client_from_engine_args
+    async_llm = AsyncLLM.from_vllm_config(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py", line 157, in from_vllm_config
+    return cls(
+           ^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py", line 123, in __init__
+    self.engine_core = core_client_class(
+                       ^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 734, in __init__
+    super().__init__(
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 418, in __init__
+    self._wait_for_engine_startup(output_address, parallel_config)
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 484, in _wait_for_engine_startup
+    raise RuntimeError("Engine core initialization failed. "
+RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}

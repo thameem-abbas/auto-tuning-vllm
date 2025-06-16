@@ -1,0 +1,69 @@
+Creating backend...
+Backend openai_http connected to http://localhost:8000 for model                
+Qwen/Qwen3-1.7B.                                                                
+Creating request loader...
+Created loader with 1000 unique requests from                                   
+{"prompt_tokens":550,"prompt_tokens_stdev":150,"prompt_tokens_min":400,"prompt_t
+okens_max":700,"output_tokens":150,"output_tokens_stdev":15,"output_tokens_min":
+135,"output_tokens_max":165}.                                                   
+                                                                                
+                                                                                
+╭─ Benchmarks ─────────────────────────────────────────────────────────────────╮
+│ [2… conc… (… Req:    7.1 req/s,    1.38s Lat,     9.8 Conc,     100 Comp,  … │
+│              Tok: 1058.6 gen/s, 8930.6 tot/s,  30.6ms TTFT,    9.1ms ITL,  … │
+╰──────────────────────────────────────────────────────────────────────────────╯
+Generating... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ (1/1) [ 0:00:14 < 0:00:00 ]                    
+                    
+Benchmarks Metadata:
+    Run id:072d5ac4-06e3-4af8-9f5b-e695032b7f22
+    Duration:14.4 seconds
+    Profile:type=concurrent, strategies=['concurrent'], streams=[10]
+    Args:max_number=100, max_duration=None, warmup_number=None,                 
+    warmup_duration=None, cooldown_number=None, cooldown_duration=None          
+    Worker:type_='generative_requests_worker' backend_type='openai_http'        
+    backend_target='http://localhost:8000' backend_model='Qwen/Qwen3-1.7B'      
+    backend_info={'max_output_tokens': 16384, 'timeout': 300, 'http2': True,    
+    'authorization': False, 'organization': None, 'project': None,              
+    'text_completions_path': '/v1/completions', 'chat_completions_path':        
+    '/v1/chat/completions'}                                                     
+    Request Loader:type_='generative_request_loader'                            
+    data='{"prompt_tokens":550,"prompt_tokens_stdev":150,"prompt_tokens_min":400
+    ,"prompt_tokens_max":700,"output_tokens":150,"output_tokens_stdev":15,"outpu
+    t_tokens_min":135,"output_tokens_max":165}' data_args=None                  
+    processor='Qwen/Qwen3-1.7B' processor_args=None                             
+    Extras:None
+                
+                
+Benchmarks Info:
+================================================================================
+====================================================================            
+Metadata                                      |||| Requests Made  ||| Prompt    
+Tok/Req  ||| Output Tok/Req  ||| Prompt Tok Total||| Output Tok Total||         
+    Benchmark| Start Time| End Time| Duration (s)|  Comp|  Inc|  Err|   Comp|   
+Inc|  Err|   Comp|  Inc|  Err|   Comp|  Inc|  Err|   Comp|  Inc|  Err           
+-------------|-----------|---------|-------------|------|-----|-----|-------|---
+--|-----|-------|-----|-----|-------|-----|-----|-------|-----|-----            
+concurrent@10|   20:01:40| 20:01:55|         14.2|   100|    0|    0|  558.6|   
+0.0|  0.0|  150.1|  0.0|  0.0|  55859|    0|    0|  15011|    0|    0           
+================================================================================
+====================================================================            
+                 
+                 
+Benchmarks Stats:
+================================================================================
+===============================================================                 
+Metadata     | Request Stats         || Out Tok/sec| Tot Tok/sec| Req Latency   
+(ms)||| TTFT (ms)        ||| ITL (ms)       ||| TPOT (ms)      ||               
+    Benchmark| Per Second| Concurrency|        mean|        mean| mean| median| 
+p99| mean| median|   p99| mean| median| p99| mean| median| p99                  
+-------------|-----------|------------|------------|------------|-----|-------|-
+----|-----|-------|------|-----|-------|----|-----|-------|----                 
+concurrent@10|       7.05|        9.77|      1058.6|      8930.6| 1.38|   1.38| 
+1.57| 30.6|   24.1| 101.6|  9.1|    9.1| 9.5|  9.0|    9.0| 9.4                 
+================================================================================
+===============================================================                 
+                           
+Saving benchmarks report...
+Benchmarks report saved to /root/rehan/src/studies/study_33/benchmarks_33.6.json
+                      
+Benchmarking complete.

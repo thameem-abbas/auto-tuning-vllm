@@ -4,16 +4,25 @@ import requests
 import os
 import signal
 import sys
-import torch
 import json
 import glob
 import re
 import optuna
+import yaml
+
+# TODO
+# [X] Base vLLM value with no params first
+
 
 SRC_DIR = os.path.dirname(__file__)
 PROJECT_DIR = os.path.abspath(os.path.join(SRC_DIR, ".."))
 STUDIES_ROOT = os.path.join(PROJECT_DIR, "studies")
 os.makedirs(STUDIES_ROOT, exist_ok=True)
+
+# Load vLLM configuration
+VLLM_CONFIG_PATH = os.path.join(PROJECT_DIR, "vllm_config.yaml")
+with open(VLLM_CONFIG_PATH, 'r') as f:
+    vllm_config = yaml.safe_load(f)
 
 study_dirs = glob.glob(os.path.join(STUDIES_ROOT, "study_*"))
 study_ids = []
@@ -222,14 +231,27 @@ def parse_benchmarks(bench_file):
     
     Args:
         bench_file: Path to the benchmark results JSON file
+    Returns:
+        Dictionary containing all benchmark metrics
     """
     with open(bench_file) as f:
         data = json.load(f)
     
     stats = data["benchmarks"][0]
-    median_throughput = stats["metrics"]["requests_per_second"]["successful"]["median"]
+    metrics = stats["metrics"]
     
-    return median_throughput
+    return {
+        "requests_per_second": metrics["requests_per_second"]["successful"]["median"],
+        "request_concurrency": metrics["request_concurrency"]["successful"]["median"],
+        "request_latency": metrics["request_latency"]["successful"]["median"],
+        "prompt_token_count": metrics["prompt_token_count"]["successful"]["median"],
+        "output_token_count": metrics["output_token_count"]["successful"]["median"],
+        "time_to_first_token_ms": metrics["time_to_first_token_ms"]["successful"]["median"],
+        "time_per_output_token_ms": metrics["time_per_output_token_ms"]["successful"]["median"],
+        "inter_token_latency_ms": metrics["inter_token_latency_ms"]["successful"]["median"],
+        "output_tokens_per_second": metrics["output_tokens_per_second"]["successful"]["median"],
+        "tokens_per_second": metrics["tokens_per_second"]["successful"]["median"]
+    }
 
 def objective(trial):
     """
@@ -239,15 +261,31 @@ def objective(trial):
     port = 8000
     model = "Qwen/Qwen3-1.7B"
 
-    trial_id = trial.number + 1
+    # Get parameters from config
+    candidate_flags = []
+    for param_name, param_config in vllm_config["parameters"].items():
+        if param_config["enabled"]:
+            param_value = trial.suggest_int(
+                param_name,
+                param_config["range"]["start"],
+                param_config["range"]["end"],
+                step=param_config["range"]["step"]
+            )
+            # Convert parameter name from snake_case to kebab-case for CLI flags
+            candidate_flags.extend([f"--{param_name}", str(param_value)])
+
+    trial_id = trial.number
     vllm_log_file = os.path.join(VLLM_LOGS_DIR, f"vllm_server_logs_{STUDY_ID}.{trial_id}.log")
     guidellm_log_file = os.path.join(GUIDELLM_LOGS_DIR, f"guidellm_logs_{STUDY_ID}.{trial_id}.log")
     
     print(f"\nStarting trial {trial_id}")
     print(f"vLLM log file: {vllm_log_file}")
     print(f"guidellm log file: {guidellm_log_file}")
-    
-    vllm_cmd = build_vllm_command(model_name=model, port=port, candidate_flags="")
+
+    vllm_cmd = build_vllm_command(model_name=model, port=port, candidate_flags=candidate_flags)
+
+    print(f"vLLM command: {' '.join(vllm_cmd)}") #put in log file
+
     vllm_proc = start_vllm_server(vllm_cmd, log_file=vllm_log_file)
 
     bench_file = os.path.join(
@@ -278,7 +316,13 @@ def objective(trial):
         run_guidellm(guidellm_args, guidellm_log_file)
         print("guidellm benchmark completed successfully")
 
-        return parse_benchmarks(bench_file)
+        metrics = parse_benchmarks(bench_file)
+        
+        # Store all metrics as user attributes
+        for metric_name, value in metrics.items():
+            trial.set_user_attr(metric_name, value)
+
+        return metrics["requests_per_second"]  # Still return RPS as the optimization metric
 
     except Exception as e:
         print("Error during vLLM to guidellm processing:", str(e), file=sys.stderr)
@@ -289,6 +333,61 @@ def objective(trial):
         stop_vllm_server(vllm_proc)
         print("vLLM server stopped.")
 
+def run_baseline_test():
+    """
+    Run a baseline test with default vLLM parameters
+    """
+    port = 8000
+    model = "Qwen/Qwen3-1.7B"
+    
+    vllm_log_file = os.path.join(VLLM_LOGS_DIR, f"vllm_server_logs_{STUDY_ID}.baseline.log")
+    guidellm_log_file = os.path.join(GUIDELLM_LOGS_DIR, f"guidellm_logs_{STUDY_ID}.baseline.log")
+    
+    print(f"\nRunning baseline test")
+    print(f"vLLM log file: {vllm_log_file}")
+    print(f"guidellm log file: {guidellm_log_file}")
+    
+    vllm_cmd = build_vllm_command(model_name=model, port=port, candidate_flags=[])
+    vllm_proc = start_vllm_server(vllm_cmd, log_file=vllm_log_file)
+
+    bench_file = os.path.join(STUDY_DIR, f"benchmarks_{STUDY_ID}.baseline.json")
+
+    try:
+        print("Starting guidellm benchmark for baseline...")
+        guidellm_args = [
+            "benchmark",
+            "--target",    "http://localhost:8000",
+            "--model",     "Qwen/Qwen3-1.7B",
+            "--processor", "Qwen/Qwen3-1.7B",
+            "--data=" + '{"prompt_tokens":550,'
+                        '"prompt_tokens_stdev":150,'
+                        '"prompt_tokens_min":400,'
+                        '"prompt_tokens_max":700,'
+                        '"output_tokens":150,'
+                        '"output_tokens_stdev":15,'
+                        '"output_tokens_min":135,'
+                        '"output_tokens_max":165}',
+            "--rate-type",    "concurrent",
+            "--max-requests", "100",
+            "--rate",         "10",
+            "--output-path",  bench_file
+        ]
+
+        run_guidellm(guidellm_args, guidellm_log_file)
+        print("Baseline guidellm benchmark completed successfully")
+
+        metrics = parse_benchmarks(bench_file)
+        return metrics
+
+    except Exception as e:
+        print("Error during baseline test:", str(e), file=sys.stderr)
+        import traceback; traceback.print_exc()
+        return None
+
+    finally:
+        stop_vllm_server(vllm_proc)
+        print("Baseline vLLM server stopped.")
+
 def main():
     db_path     = os.path.join(STUDY_DIR, "optuna.db")
     storage_url = f"sqlite:///{db_path}"
@@ -298,9 +397,33 @@ def main():
         direction="maximize",
         load_if_exists=True
     )
+
+    # Run baseline test first
+    print("Running baseline test with default parameters...")
+    baseline_metrics = run_baseline_test()
+    if baseline_metrics is not None:
+        print(f"Baseline performance: {baseline_metrics['requests_per_second']} requests/second")
+        # trial = optuna.trial.create_trial(
+        #     params={},
+        #     value=baseline_metrics["requests_per_second"],
+        #     user_attrs=baseline_metrics
+        # )
+        # study.add_trial(trial)
+        # print("Baseline test completed successfully")
+
+    else:
+        print("Baseline test failed")
+
+    # Run Optuna trials
+    print("\nStarting Optuna trials...")
     study.optimize(objective, n_trials=10)
 
-    print(study.best_trial.value, study.best_trial.params)
+    print("\nOptimization Results:")
+    print(f"Best trial value: {study.best_trial.value}")
+    print(f"Best trial parameters: {study.best_trial.params}")
+    if baseline_metrics is not None:
+        improvement = ((study.best_trial.value - baseline_metrics["requests_per_second"]) / baseline_metrics["requests_per_second"]) * 100
+        print(f"Improvement over baseline: {improvement:.2f}%")
 
 if __name__ == "__main__":
     main()

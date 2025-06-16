@@ -1,0 +1,8 @@
+parameters:
+  max_num_batched_tokens:
+    name: "max-num-batched-tokens"
+    enabled: true
+    range:
+      start: 8192
+      end: 66536
+      step: 4096
