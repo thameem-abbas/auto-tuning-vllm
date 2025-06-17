@@ -3,6 +3,18 @@ parameters:
     name: "max-num-batched-tokens"
     enabled: true
     range:
-      start: 8192
-      end: 66536
-      step: 4096
+      start: 4096
+      end: 16384
+      step: 2048 # do 1024 for more trials
+
+  compilation_config: # Figure this out
+    name: "compilation-config"
+    enabled: false
+    values:
+      - "default"
+      - "cuda_graphs"
+      - "cuda_graphs_with_fallback"
+
+settings:
+  trial_interval: 30  # Time in seconds to wait between trials
+  

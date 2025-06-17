@@ -67,7 +67,7 @@ def build_vllm_command(model_name, port, candidate_flags):
     Assembles a vLLM CLI command with both fix and candidate flags
 
     Args:
-        --model: Qwen/Qwen3-1.7B
+        --model: Qwen/Qwen3-32B-FP8 (smaller model: Qwen/Qwen3-1.7B)
         --max-model-len: 8192
         --disable-log-requests: True
         candidate_flags: List of candidate flags to be added to the command
@@ -77,7 +77,7 @@ def build_vllm_command(model_name, port, candidate_flags):
         "vllm",
         "serve",
         model_name,
-        "--max-model-len", "4096",
+        "--max-model-len", "8192",
         "--port", str(port),
         "--disable-log-requests"
     ]
@@ -109,6 +109,12 @@ def get_last_log_lines(log_file, n=20):
 def start_vllm_server(cmd, ready_pattern="Application startup complete", timeout=30000, log_file=None):
     """
     Launches the vLLM server and continuously logs its output
+    
+    Args:
+        cmd: Command to run
+        ready_pattern: Pattern to look for in logs to determine server is ready
+        timeout: Timeout in seconds (if None, uses value from config)
+        log_file: Path to log file
     """
     if not check_port_available(int(cmd[cmd.index('--port') + 1])):
         raise RuntimeError(f"Port {cmd[cmd.index('--port') + 1]} is already in use")
@@ -167,6 +173,10 @@ def start_vllm_server(cmd, ready_pattern="Application startup complete", timeout
 def stop_vllm_server(proc, grace_period=5):
     """
     Terminates the vLLM server process
+    
+    Args:
+        proc: Process to stop
+        grace_period: Grace period in seconds (if None, uses value from config)
     """
     if proc is None:
         print("No vLLM process to stop")
@@ -404,8 +414,8 @@ def objective(trial):
             guidellm_args = [
                 "benchmark",
                 "--target",    "http://localhost:8000",
-                "--model",     "Qwen/Qwen3-1.7B",
-                "--processor", "Qwen/Qwen3-1.7B",
+                "--model",     model,
+                "--processor", model,
                 "--data=" + '{"prompt_tokens":550,'
                             '"prompt_tokens_stdev":150,'
                             '"prompt_tokens_min":400,'
@@ -434,6 +444,10 @@ def objective(trial):
         finally:
             stop_vllm_server(vllm_proc)
             print("vLLM server stopped.")
+            # Wait between trials to allow port to be released
+            interval = vllm_config["settings"].get("trial_interval", 30)
+            print(f"Waiting {interval} seconds before next trial...")
+            time.sleep(interval)
 
     except Exception as e:
         print(f"Error during trial {trial.number}:", str(e), file=sys.stderr)
@@ -448,7 +462,7 @@ def run_baseline_test():
     Run a baseline test with default vLLM parameters
     """
     port = 8000
-    model = "Qwen/Qwen3-1.7B"
+    model = "Qwen/Qwen3-32B-FP8"
     
     vllm_log_file = os.path.join(VLLM_LOGS_DIR, f"vllm_server_logs_{STUDY_ID}.baseline.log")
     guidellm_log_file = os.path.join(GUIDELLM_LOGS_DIR, f"guidellm_logs_{STUDY_ID}.baseline.log")
@@ -467,8 +481,8 @@ def run_baseline_test():
         guidellm_args = [
             "benchmark",
             "--target",    "http://localhost:8000",
-            "--model",     "Qwen/Qwen3-1.7B",
-            "--processor", "Qwen/Qwen3-1.7B",
+            "--model",     model,
+            "--processor", model,
             "--data=" + '{"prompt_tokens":550,'
                         '"prompt_tokens_stdev":150,'
                         '"prompt_tokens_min":400,'
