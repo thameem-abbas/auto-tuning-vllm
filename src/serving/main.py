@@ -1,16 +1,16 @@
-import subprocess
-import time
-import requests
 import os
-import signal
 import sys
-import json
 import glob
 import re
 import optuna
 import yaml
-import socket
-
+import argparse
+from src.serving.utils import validate_huggingface_model
+from src.serving.optimization import (
+    multi_objective_function, objective, p95_latency_objective_function,
+    analyze_trial_results, get_optimization_recommendations
+)
+from src.serving.run_baseline import run_baseline_test
 
 SRC_DIR = os.path.dirname(__file__)
 PROJECT_DIR = os.path.abspath(os.path.join(SRC_DIR, ".."))
@@ -48,506 +48,194 @@ print(f"Logging this study's data to: {STUDY_DIR}")
 print(f"Logging vLLM server logs to: {VLLM_LOGS_DIR}")
 print(f"Logging guidellm logs to: {GUIDELLM_LOGS_DIR}")
 
-def log_stream(stream, log_file, prefix):
-    """
-    Continuously read from a stream and write to a log file
-    """
-    with open(log_file, 'a') as f:
-        while True:
-            line = stream.readline()
-            if not line:
-                break
-            print(f"[{prefix}] {line.strip()}")
-            f.write(line)
-            f.flush()
 
-def build_vllm_command(model_name, port, candidate_flags):
-
-    """
-    Assembles a vLLM CLI command with both fix and candidate flags
-
-    Args:
-        --model: Qwen/Qwen3-32B-FP8 (smaller model: Qwen/Qwen3-1.7B)
-        --max-model-len: 8192
-        --disable-log-requests: True
-        candidate_flags: List of candidate flags to be added to the command
-    """
-
-    cmd = [
-        "vllm",
-        "serve",
-        model_name,
-        "--max-model-len", "8192",
-        "--port", str(port),
-        "--disable-log-requests"
-    ]
-
-    cmd += candidate_flags
-
-    return cmd
-
-def check_port_available(port):
-    """Check if a port is available before starting the server"""
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    try:
-        sock.bind(('localhost', port))
-        return True
-    except socket.error:
-        return False
-    finally:
-        sock.close()
-
-def get_last_log_lines(log_file, n=20):
-    """Get the last n lines from a log file"""
-    try:
-        with open(log_file, 'r') as f:
-            lines = f.readlines()
-            return ''.join(lines[-n:]) if lines else ''
-    except Exception as e:
-        return f"Could not read log file: {str(e)}"
-
-def start_vllm_server(cmd, ready_pattern="Application startup complete", timeout=30000, log_file=None):
-    """
-    Launches the vLLM server and continuously logs its output
-    
-    Args:
-        cmd: Command to run
-        ready_pattern: Pattern to look for in logs to determine server is ready
-        timeout: Timeout in seconds (if None, uses value from config)
-        log_file: Path to log file
-    """
-    if not check_port_available(int(cmd[cmd.index('--port') + 1])):
-        raise RuntimeError(f"Port {cmd[cmd.index('--port') + 1]} is already in use")
-
-    print(f"Launching vLLM server {' '.join(cmd)}")
-    
-    try:
-        with open(log_file, 'w') as f:
-            proc = subprocess.Popen(
-                cmd,
-                stdout=f,
-                stderr=f,
-                stdin=subprocess.PIPE,
-                text=True,
-                bufsize=1,
-                preexec_fn=os.setsid
-            )
-    except FileNotFoundError:
-        raise RuntimeError(f"vLLM binary not found. Is vllm installed and in PATH?")
-    except OSError as e:
-        raise RuntimeError(f"Failed to start vLLM server: {e.strerror}\nCommand: {' '.join(cmd)}")
-    except Exception as e:
-        raise RuntimeError(f"Unexpected error starting vLLM server: {str(e)}")
-
-    start_time = time.time()
-    server_ready = False
-
-    while True:
-        if proc.poll() is not None:
-            last_logs = get_last_log_lines(log_file)
-            raise RuntimeError(
-                f"vLLM server exited unexpectedly with code {proc.returncode}.\n"
-                f"Last log lines:\n{last_logs}\n"
-                f"Check the full log file for details: {log_file}"
-            )
-        
-        elapsed = time.time() - start_time
-        if elapsed > timeout:
-            proc.kill()
-            raise TimeoutError(f"vLLM server did not start within {timeout/1000} seconds")
-
-        if not server_ready:
-            try:
-                with open(log_file, 'r') as f:
-                    content = f.read()
-                    if ready_pattern in content:
-                        time.sleep(10)
-                        server_ready = True
-                        return proc
-            except IOError as e:
-                proc.kill()
-                raise RuntimeError(f"Failed to read vLLM log file: {str(e)}")
-
-        time.sleep(0.1)
-
-def stop_vllm_server(proc, grace_period=5):
-    """
-    Terminates the vLLM server process
-    
-    Args:
-        proc: Process to stop
-        grace_period: Grace period in seconds (if None, uses value from config)
-    """
-    if proc is None:
-        print("No vLLM process to stop")
-        return
-
-    print(f"Stopping vLLM process {proc.pid}...")
-    killed = False
-
-    try:
-        os.killpg(os.getpgid(proc.pid), signal.SIGINT)
-    except ProcessLookupError:
-        print("Process already terminated")
-        return
-    except Exception as e:
-        print(f"Warning: SIGINT failed: {str(e)}")
-    
-    # Wait for graceful shutdown
-    deadline = time.time() + grace_period
-    while time.time() < deadline:
-        if proc.poll() is not None:
-            print("vLLM process exited cleanly")
-            return
-        time.sleep(0.1)
-
-    # If still running, try SIGKILL
-    if proc.poll() is None:
-        print(f"Process {proc.pid} still alive after {grace_period}s; sending SIGKILL")
-        try:
-            proc.kill()
-            proc.wait(timeout=5)  # Wait up to 5 more seconds for SIGKILL
-            killed = True
-        except Exception as e:
-            print(f"Warning: SIGKILL failed: {str(e)}")
-    
-    if not killed and proc.poll() is None:
-        print(f"Warning: Process {proc.pid} could not be terminated")
-    else:
-        print("vLLM process terminated")
-
-def query_vllm_server(port, prompt, max_retries=3, retry_delay=1):
-    """
-    Queries the vLLM server with a given prompt
-    
-    Args:
-        port: Server port number
-        prompt: Input prompt text
-        max_retries: Maximum number of retry attempts
-        retry_delay: Delay between retries in seconds
-    
-    Returns:
-        Generated text response
-    
-    Raises:
-        RuntimeError: If server is unreachable or returns invalid response
-    """
-    url = f"http://localhost:{port}/v1/completions"
-    payload = {
-        "prompt": prompt
-    }
-
-    last_error = None
-    for attempt in range(max_retries):
-        try:
-            response = requests.post(url, json=payload, timeout=30)
-            response.raise_for_status()
-            response_json = response.json()
-            
-            if not response_json.get("choices"):
-                raise RuntimeError("Server returned empty choices array")
-            
-            return response_json["choices"][0]["text"]
-            
-        except requests.Timeout:
-            last_error = "Request timed out"
-        except requests.ConnectionError:
-            last_error = "Failed to connect to server"
-        except requests.HTTPError as e:
-            last_error = f"Server returned HTTP {e.response.status_code}"
-        except (KeyError, json.JSONDecodeError) as e:
-            last_error = f"Invalid response format: {str(e)}"
-        except Exception as e:
-            last_error = f"Unexpected error: {str(e)}"
-            
-        if attempt < max_retries - 1:
-            print(f"Attempt {attempt + 1} failed: {last_error}. Retrying in {retry_delay}s...")
-            time.sleep(retry_delay)
-        
-    raise RuntimeError(f"Failed to query vLLM server after {max_retries} attempts. Last error: {last_error}")
-
-def run_guidellm(guidellm_args, log_file):
-    """
-    Launches guidellm as a subprocess, give input text and capture output
-    guidellm_args is a list of args for the guidellm command
-    """
-
-    cmd = ["guidellm"] + guidellm_args
-    print(f"Launching guidellm: {' '.join(cmd)}")
-
-    try:
-        with open(log_file, 'w') as f:
-            proc = subprocess.Popen(
-                cmd,
-                stdout=f,
-                stderr=f,
-                stdin=subprocess.PIPE,
-                text=True,
-                bufsize=1,
-            )
-    except FileNotFoundError:
-        raise RuntimeError("guidellm binary not found. Is guidellm installed and in PATH?")
-    except OSError as e:
-        raise RuntimeError(f"Failed to start guidellm: {e.strerror}\nCommand: {' '.join(cmd)}")
-    except Exception as e:
-        raise RuntimeError(f"Unexpected error starting guidellm: {str(e)}")
-
-    try:
-        proc.wait(timeout=600)  # 10 minute timeout
-        print(f"guidellm process completed with return code: {proc.returncode}")
-    except subprocess.TimeoutExpired:
-        proc.kill()
-        raise RuntimeError("guidellm process timed out after 10 minutes")
-    except Exception as e:
-        proc.kill()
-        raise RuntimeError(f"Error waiting for guidellm: {str(e)}")
-    
-    if proc.returncode != 0:
-        last_logs = get_last_log_lines(log_file)
-        raise RuntimeError(
-            f"guidellm failed with code {proc.returncode}\n"
-            f"Last log lines:\n{last_logs}\n"
-            f"Check the full log file for details: {log_file}"
-        )
-
-    return proc.returncode
-
-
-# -----------------------------
-# Optuna
-# -----------------------------
-
-def parse_benchmarks(bench_file):
-    """
-    Parse the benchmark results from the specified benchmark file
-    
-    Args:
-        bench_file: Path to the benchmark results JSON file
-    Returns:
-        Dictionary containing all benchmark metrics
-    Raises:
-        RuntimeError: If the file is missing, invalid JSON, or missing required metrics
-    """
-    if not os.path.exists(bench_file):
-        raise RuntimeError(f"Benchmark file missing: {bench_file}")
-
-    try:
-        with open(bench_file) as f:
-            data = json.load(f)
-    except json.JSONDecodeError as e:
-        raise RuntimeError(f"Invalid JSON in benchmark file {bench_file}: {str(e)}")
-    except Exception as e:
-        raise RuntimeError(f"Error reading benchmark file {bench_file}: {str(e)}")
-    
-    try:
-        stats = data["benchmarks"][0]
-        metrics = stats["metrics"]
-    except (KeyError, IndexError) as e:
-        raise RuntimeError(f"Invalid benchmark data structure in {bench_file}: {str(e)}")
-
-    REQUIRED_METRICS = [
-        "requests_per_second",
-        "request_concurrency",
-        "request_latency",
-        "prompt_token_count",
-        "output_token_count",
-        "time_to_first_token_ms",
-        "time_per_output_token_ms",
-        "inter_token_latency_ms",
-        "output_tokens_per_second",
-        "tokens_per_second"
-    ]
-
-    result = {}
-    for metric in REQUIRED_METRICS:
-        try:
-            result[metric] = metrics[metric]["successful"]["median"]
-        except KeyError as e:
-            raise RuntimeError(f"Missing required metric in {bench_file}: {metric}")
-    
-    return result
-
-def objective(trial):
-    """
-    Objective function for Optuna
-    
-    Returns:
-        float: The optimization metric (requests per second)
-    
-    Raises:
-        optuna.TrialPruned: If the trial fails, after recording the error
-    """
-    try:
-        port = 8000
-        model = "Qwen/Qwen3-1.7B"
-
-        # Get parameters from config
-        candidate_flags = []
-        for param_name, param_config in vllm_config["parameters"].items():
-            if param_config["enabled"]:
-                param_value = trial.suggest_int(
-                    param_name,
-                    param_config["range"]["start"],
-                    param_config["range"]["end"],
-                    step=param_config["range"]["step"]
-                )
-                candidate_flags.extend([f"--{param_name}", str(param_value)])
-
-        trial_id = trial.number
-        vllm_log_file = os.path.join(VLLM_LOGS_DIR, f"vllm_server_logs_{STUDY_ID}.{trial_id}.log")
-        guidellm_log_file = os.path.join(GUIDELLM_LOGS_DIR, f"guidellm_logs_{STUDY_ID}.{trial_id}.log")
-        
-        print(f"\nStarting trial {trial_id}")
-        print(f"vLLM log file: {vllm_log_file}")
-        print(f"guidellm log file: {guidellm_log_file}")
-
-        vllm_cmd = build_vllm_command(model_name=model, port=port, candidate_flags=candidate_flags)
-        vllm_proc = start_vllm_server(vllm_cmd, log_file=vllm_log_file)
-
-        bench_file = os.path.join(
-            STUDY_DIR,
-            f"benchmarks_{STUDY_ID}.{trial_id}.json"
-        )
-
-        try:
-            print("Starting guidellm benchmark...")
-            guidellm_args = [
-                "benchmark",
-                "--target",    "http://localhost:8000",
-                "--model",     model,
-                "--processor", model,
-                "--data=" + '{"prompt_tokens":550,'
-                            '"prompt_tokens_stdev":150,'
-                            '"prompt_tokens_min":400,'
-                            '"prompt_tokens_max":700,'
-                            '"output_tokens":150,'
-                            '"output_tokens_stdev":15,'
-                            '"output_tokens_min":135,'
-                            '"output_tokens_max":165}',
-                "--rate-type",    "concurrent",
-                "--max-requests", "100",
-                "--rate",         "10",
-                "--output-path",  bench_file
-            ]
-
-            run_guidellm(guidellm_args, guidellm_log_file)
-            print("guidellm benchmark completed successfully")
-
-            metrics = parse_benchmarks(bench_file)
-            
-            # Store all metrics as user attributes
-            for metric_name, value in metrics.items():
-                trial.set_user_attr(metric_name, value)
-
-            return float(metrics["requests_per_second"])  # Ensure we return a float
-
-        finally:
-            stop_vllm_server(vllm_proc)
-            print("vLLM server stopped.")
-            # Wait between trials to allow port to be released
-            interval = vllm_config["settings"].get("trial_interval", 30)
-            print(f"Waiting {interval} seconds before next trial...")
-            time.sleep(interval)
-
-    except Exception as e:
-        print(f"Error during trial {trial.number}:", str(e), file=sys.stderr)
-        import traceback
-        traceback.print_exc()
-        trial.set_user_attr("error", str(e))
-        trial.set_user_attr("traceback", traceback.format_exc())
-        raise optuna.TrialPruned(f"Trial failed: {str(e)}")
-
-def run_baseline_test():
-    """
-    Run a baseline test with default vLLM parameters
-    """
-    port = 8000
-    model = "Qwen/Qwen3-32B-FP8"
-    
-    vllm_log_file = os.path.join(VLLM_LOGS_DIR, f"vllm_server_logs_{STUDY_ID}.baseline.log")
-    guidellm_log_file = os.path.join(GUIDELLM_LOGS_DIR, f"guidellm_logs_{STUDY_ID}.baseline.log")
-    
-    print(f"\nRunning baseline test")
-    print(f"vLLM log file: {vllm_log_file}")
-    print(f"guidellm log file: {guidellm_log_file}")
-    
-    vllm_cmd = build_vllm_command(model_name=model, port=port, candidate_flags=[])
-    vllm_proc = start_vllm_server(vllm_cmd, log_file=vllm_log_file)
-
-    bench_file = os.path.join(STUDY_DIR, f"benchmarks_{STUDY_ID}.baseline.json")
-
-    try:
-        print("Starting guidellm benchmark for baseline...")
-        guidellm_args = [
-            "benchmark",
-            "--target",    "http://localhost:8000",
-            "--model",     model,
-            "--processor", model,
-            "--data=" + '{"prompt_tokens":550,'
-                        '"prompt_tokens_stdev":150,'
-                        '"prompt_tokens_min":400,'
-                        '"prompt_tokens_max":700,'
-                        '"output_tokens":150,'
-                        '"output_tokens_stdev":15,'
-                        '"output_tokens_min":135,'
-                        '"output_tokens_max":165}',
-            "--rate-type",    "concurrent",
-            "--max-requests", "100",
-            "--rate",         "10",
-            "--output-path",  bench_file
-        ]
-
-        run_guidellm(guidellm_args, guidellm_log_file)
-        print("Baseline guidellm benchmark completed successfully")
-
-        metrics = parse_benchmarks(bench_file)
-        return metrics
-
-    except Exception as e:
-        print("Error during baseline test:", str(e), file=sys.stderr)
-        import traceback; traceback.print_exc()
-        return None
-
-    finally:
-        stop_vllm_server(vllm_proc)
-        print("Baseline vLLM server stopped.")
 
 def main():
-    db_path     = os.path.join(STUDY_DIR, "optuna.db")
-    storage_url = f"sqlite:///{db_path}"
-    study = optuna.create_study(
-        storage=storage_url,
-        study_name=f"vllm_tuning_run{STUDY_ID}",
-        direction="maximize",
-        load_if_exists=True
+    parser = argparse.ArgumentParser(description='vLLM Performance Optimization')
+    parser.add_argument('--mode', choices=['config', 'p95_latency'], default='config',
+                        help='Optimization mode: config (use vllm_config.yaml) or p95_latency (minimize p95 latency)')
+    parser.add_argument('--model', type=str, 
+                        help='HuggingFace model name (default: Qwen/Qwen3-32B-FP8)')
+    parser.add_argument('--max-seconds', type=int, default=240,
+                        help='Duration for each trial in seconds (default: 240)')
+    parser.add_argument('--prompt-tokens', type=int, default=1000,
+                        help='Number of prompt tokens for synthetic data (default: 1000)')
+    parser.add_argument('--output-tokens', type=int, default=1000,
+                        help='Number of output tokens for synthetic data (default: 1000)')
+    parser.add_argument('--n-trials', type=int, 
+                        help='Number of optimization trials (overrides config)')
+    parser.add_argument('--dataset', type=str,
+                        help='Dataset for guidellm: HuggingFace dataset ID, local path to dataset file (CSV, JSONL, etc.), or leave empty to use synthetic data')
+    
+    args = parser.parse_args()
+    
+    model = args.model if args.model else "Qwen/Qwen3-32B-FP8"
+    
+    if not validate_huggingface_model(model):
+        print(f"Error: Invalid HuggingFace model: {model}")
+        sys.exit(1)
+    
+    print("=" * 80)
+    print("RUNNING BASELINE TEST FIRST")
+    print("=" * 80)
+    baseline_metrics = run_baseline_test(
+        model, args.max_seconds, args.prompt_tokens, args.output_tokens, args.dataset,
+        STUDY_DIR, VLLM_LOGS_DIR, GUIDELLM_LOGS_DIR, STUDY_ID
     )
-
-    # Run baseline test first
-    print("Running baseline test with default parameters...")
-    baseline_metrics = run_baseline_test()
     if baseline_metrics is not None:
-        print(f"Baseline performance: {baseline_metrics['requests_per_second']} requests/second")
-        # trial = optuna.trial.create_trial(
-        #     params={},
-        #     value=baseline_metrics["requests_per_second"],
-        #     user_attrs=baseline_metrics
-        # )
-        # study.add_trial(trial)
-        # print("Baseline test completed successfully")
-
+        print(f"✓ Baseline performance: {baseline_metrics['output_tokens_per_second']:.2f} output tokens/second")
+        print(f"✓ Baseline latency: {baseline_metrics['request_latency']:.2f} ms")
+        if baseline_metrics.get('request_latency_p95'):
+            print(f"✓ Baseline P95 latency: {baseline_metrics['request_latency_p95']:.2f} ms")
     else:
-        print("Baseline test failed")
+        print("⚠ Baseline test failed")
+    print("=" * 80)
+    
+    db_path = os.path.join(STUDY_DIR, "optuna.db")
+    storage_url = f"sqlite:///{db_path}"
+    
+    if args.mode == 'p95_latency':
+        print(f"=== P95 LATENCY OPTIMIZATION MODE ===")
+        print(f"Model: {model}")
+        print(f"Trial duration: {args.max_seconds} seconds")
+        if args.dataset:
+            print(f"Dataset: {args.dataset}")
+        else:
+            print(f"Prompt tokens: {args.prompt_tokens}")
+            print(f"Output tokens: {args.output_tokens}")
+        n_trials = args.n_trials if args.n_trials else 100
+        print(f"Number of trials: {n_trials}")
+        print(f"Objective: Minimize P95 end-to-end latency")
+        print("=" * 50)
+        
+        study = optuna.create_study(
+            storage=storage_url,
+            study_name=f"vllm_p95_latency_run{STUDY_ID}",
+            direction="minimize",
+            load_if_exists=True
+        )
+        
+        def objective_function(trial):
+            return p95_latency_objective_function(
+                trial, model, args.max_seconds, args.prompt_tokens, args.output_tokens, args.dataset,
+                vllm_config, STUDY_DIR, VLLM_LOGS_DIR, GUIDELLM_LOGS_DIR, STUDY_ID
+            )
+        
+        print(f"Starting P95 latency optimization with {n_trials} trials...")
+        study.optimize(objective_function, n_trials=n_trials)
+        
+        print("\n" + "="*80)
+        print("P95 LATENCY OPTIMIZATION RESULTS")
+        print("="*80)
+        
+        best_trial = study.best_trial
+        best_p95_latency = best_trial.value
+        
+        print(f"Best P95 latency achieved: {best_p95_latency:.2f} ms")
+        if baseline_metrics and baseline_metrics.get('request_latency_p95'):
+            baseline_p95 = baseline_metrics['request_latency_p95']
+            improvement = ((baseline_p95 - best_p95_latency) / baseline_p95) * 100
+            print(f"P95 latency improvement over baseline: {improvement:.2f}%")
+        
+        print(f"Best trial parameters:")
+        for param, value in best_trial.params.items():
+            print(f"  --{param.replace('_', '-')}: {value}")
+        
+        if hasattr(best_trial, 'user_attrs'):
+            print(f"\nAdditional metrics from best trial:")
+            for attr, value in best_trial.user_attrs.items():
+                if 'latency' in attr.lower() and value is not None:
+                    print(f"  {attr}: {value}")
+        
+        print(f"\nTo use this configuration:")
+        print(f"vllm serve {model} \\")
+        for param, value in best_trial.params.items():
+            print(f"  --{param.replace('_', '-')} {value} \\")
+        print(f"  --port 8000")
+        
+        return
+    
+    optimization_config = vllm_config.get("optimization", {})
+    optimization_approach = optimization_config.get("approach", "single_objective")
+    
+    print(f"=== CONFIG-BASED OPTIMIZATION MODE ===")
+    print(f"Approach: {optimization_approach}")
+    print(f"Model: {model}")
+    print(f"Trial duration: {args.max_seconds} seconds")
+    if args.dataset:
+        print(f"Dataset: {args.dataset}")
+    else:
+        print(f"Prompt tokens: {args.prompt_tokens}")
+        print(f"Output tokens: {args.output_tokens}")
+    n_trials = args.n_trials if args.n_trials else optimization_config.get("n_trials", 200)
+    print(f"Number of trials: {n_trials}")
+    print("=" * 50)
+    
+    if optimization_approach == "multi_objective":
+        study = optuna.create_study(
+            storage=storage_url,
+            study_name=f"vllm_tuning_run{STUDY_ID}_multi",
+            directions=["maximize", "minimize"],
+            load_if_exists=True
+        )
+        
+        def objective_function(trial):
+            return multi_objective_function(
+                trial, model, args.max_seconds, args.prompt_tokens, args.output_tokens, args.dataset,
+                vllm_config, STUDY_DIR, VLLM_LOGS_DIR, GUIDELLM_LOGS_DIR, STUDY_ID
+            )
+        
+        print("Using multi-objective optimization (throughput vs latency)")
+        print("Result: Multiple Pareto-optimal solutions showing trade-offs")
+        
+    else:
+        study = optuna.create_study(
+            storage=storage_url,
+            study_name=f"vllm_tuning_run{STUDY_ID}_single",
+            direction="maximize",
+            load_if_exists=True
+        )
+        
+        def objective_function(trial):
+            return objective(
+                trial, model, args.max_seconds, args.prompt_tokens, args.output_tokens, args.dataset,
+                vllm_config, STUDY_DIR, VLLM_LOGS_DIR, GUIDELLM_LOGS_DIR, STUDY_ID
+            )
+        
+        print("Using single-objective optimization (maximize throughput)")
+        print("Result: Highest throughput configuration (latency not considered)")
 
-    # Run Optuna trials
-    print("\nStarting Optuna trials...")
-    study.optimize(objective, n_trials=10)
+    print(f"\nStarting Optuna trials with {optimization_approach} approach...")
+    print(f"Will run {n_trials} optimization trials")
+    
+    study.optimize(objective_function, n_trials=n_trials)
 
     print("\nOptimization Results:")
-    print(f"Best trial value: {study.best_trial.value}")
-    print(f"Best trial parameters: {study.best_trial.params}")
-    if baseline_metrics is not None:
-        improvement = ((study.best_trial.value - baseline_metrics["requests_per_second"]) / baseline_metrics["requests_per_second"]) * 100
-        print(f"Improvement over baseline: {improvement:.2f}%")
+    if optimization_approach == "multi_objective":
+        print("Multi-objective results:")
+        print(f"Number of Pareto-optimal solutions: {len(study.best_trials)}")
+        print("\nTop solutions (showing trade-offs):")
+        for i, trial in enumerate(study.best_trials[:5]):
+            throughput, latency = trial.values
+            print(f"  Solution {i+1}: {throughput:.2f} tokens/s, {latency:.2f} ms latency")
+            print(f"    Use case: {'High throughput' if throughput > 50 else 'Low latency'}")
+            print(f"    Parameters: {trial.params}")
+            print()
+        
+        print("INTERPRETATION:")
+        print("- Each solution represents a different throughput/latency trade-off")
+        print("- Choose based on your use case (high throughput vs low latency)")
+        print("- All solutions are mathematically optimal (Pareto-efficient)")
+        
+    else:
+        print(f"Best trial value: {study.best_trial.value}")
+        print(f"Best trial parameters: {study.best_trial.params}")
+        if baseline_metrics is not None:
+            improvement = ((study.best_trial.value - baseline_metrics["output_tokens_per_second"]) / baseline_metrics["output_tokens_per_second"]) * 100
+            print(f"Improvement over baseline: {improvement:.2f}%")
+
+    analyze_trial_results(study, baseline_metrics)
+    get_optimization_recommendations(study, optimization_config)
 
 if __name__ == "__main__":
     main()

@@ -1,20 +1,58 @@
 parameters:
+  # vLLM Performance Parameters for Optimization
+  # Each parameter can be enabled/disabled and has configurable ranges/options
+  # All parameters are passed as command-line flags to the vLLM server
+  
   max_num_batched_tokens:
     name: "max-num-batched-tokens"
     enabled: true
-    range:
-      start: 4096
-      end: 16384
-      step: 2048 # do 1024 for more trials
+    options: [512, 1024, 2048, 4096, 8192, 16384]
 
-  compilation_config: # Figure this out
+  compilation_config:
     name: "compilation-config"
+    enabled: true
+    level: [0, 3]
+
+  max_num_seqs:
+    name: "max-num-seqs"
     enabled: false
-    values:
-      - "default"
-      - "cuda_graphs"
-      - "cuda_graphs_with_fallback"
+    range:
+      start: 1
+      end: 128
+      step: 8
+    
+  block_size:
+    name: "block-size"
+    enabled: true
+    options: [16, 32, 64, 128]
+
+  kv_cache_dtype:
+    name: "kv-cache-dtype"
+    enabled: true
+    options: ["auto", "fp8", "fp8_e5m2", "fp8_e4m3"]
+
+  gpu_memory_utilization:
+    name: "gpu-memory-utilization"
+    enabled: true
+    range:
+      start: 0.90 #default is 0.9
+      end: 0.96 # dont go beyond 0.96 as can get a out of memory error
+      step: 0.01
+
+  preemption-mode:
+    name: "preemption-mode"
+    enabled: true
+    options: ["recompute", "swap"]
+
+# Optimization configuration
+optimization:
+  # Available approaches:
+  # - "single_objective": Maximize throughput only
+  # - "multi_objective": Find Pareto-optimal throughput vs latency trade-offs
+  approach: "multi_objective"
+  
+  # Number of trials to run
+  n_trials: 100
 
 settings:
   trial_interval: 30  # Time in seconds to wait between trials
-  

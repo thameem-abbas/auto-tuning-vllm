@@ -1,3 +1,7 @@
 vllm
 optuna
 torch
+huggingface_hub
+guidellm
+pyyaml
+requests
