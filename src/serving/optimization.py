@@ -2,6 +2,7 @@ import optuna
 import sys
 import time
 import os
+import re
 from src.serving.vllm_server import build_vllm_command, start_vllm_server, stop_vllm_server
 from src.serving.benchmarking import run_guidellm, parse_benchmarks
 
@@ -12,6 +13,10 @@ def generate_vllm_parameters(trial, config):
     
     for param_name, param_config in parameters_config.items():
         if not param_config.get("enabled", False):
+            continue
+            
+        # Skip guidellm_concurrency as it's not a vLLM server parameter
+        if param_name == "guidellm_concurrency":
             continue
             
         flag_name = param_config.get("name", param_name.replace("_", "-"))
@@ -54,7 +59,18 @@ def run_single_trial(trial, model=None, max_seconds=None, prompt_tokens=None, ou
 
     candidate_flags = generate_vllm_parameters(trial, vllm_config)
     
-    candidate_flags.extend(["--max-num-seqs", "50"])
+    # Get guidellm concurrency from config or use default
+    parameters_config = vllm_config.get("parameters", {})
+    concurrency_config = parameters_config.get("guidellm_concurrency", {})
+    if concurrency_config.get("enabled", False):
+        concurrency = trial.suggest_int("guidellm_concurrency", 
+                                       concurrency_config["range"]["start"],
+                                       concurrency_config["range"]["end"],
+                                       step=concurrency_config["range"]["step"])
+    else:
+        concurrency = 50  # Default fallback
+    
+    candidate_flags.extend(["--max-num-seqs", str(concurrency)])
 
     trial_id = trial.number
     vllm_log_file = os.path.join(vllm_logs_dir, f"vllm_server_logs_{study_id}.{trial_id}.log")
@@ -64,6 +80,7 @@ def run_single_trial(trial, model=None, max_seconds=None, prompt_tokens=None, ou
     print(f"Model: {model}")
     print(f"Duration: {max_seconds} seconds")
     print(f"Prompt tokens: {prompt_tokens}, Output tokens: {output_tokens}")
+    print(f"Concurrency: {concurrency}")
     print(f"Parameters: {' '.join(candidate_flags)}")
     print(f"vLLM log file: {vllm_log_file}")
     print(f"guidellm log file: {guidellm_log_file}")
@@ -94,8 +111,8 @@ def run_single_trial(trial, model=None, max_seconds=None, prompt_tokens=None, ou
         
         guidellm_args.extend([
             "--rate-type",   "concurrent",
-            "--rate",        "50",
-            "--warmup-percent" "0.1", # Add warmup
+            "--rate",        str(concurrency),
+            # "--warmup-percent", "0.1", # Add warmup
             "--max-seconds", str(max_seconds),
             "--output-path", bench_file
         ])

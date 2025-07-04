@@ -6,7 +6,7 @@ parameters:
   max_num_batched_tokens:
     name: "max-num-batched-tokens"
     enabled: true
-    options: [512, 1024, 2048, 4096, 8192, 16384]
+    options: [8192, 16384] #512, 1024, 2048, 4096 
 
   compilation_config:
     name: "compilation-config"
@@ -41,8 +41,17 @@ parameters:
 
   preemption-mode:
     name: "preemption-mode"
-    enabled: true
+    enabled: false
     options: ["recompute", "swap"]
+
+  # Guidellm concurrency parameter
+  guidellm_concurrency:
+    name: "guidellm-concurrency"
+    enabled: true
+    range:
+      start: 10
+      end: 250
+      step: 10
 
 # Optimization configuration
 optimization:
@@ -54,5 +63,8 @@ optimization:
   # Number of trials to run
   n_trials: 100
 
+  # choose between ["botorch", "nsga2"]
+  sampler: "botorch"
+
 settings:
-  trial_interval: 30  # Time in seconds to wait between trials
+  trial_interval: 45

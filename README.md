@@ -11,6 +11,50 @@ A comprehensive framework for optimizing vLLM server performance using three dis
 - **Detailed Metrics**: Extract p50, p90, p95, p99 percentiles from guidellm benchmarks
 - **Dynamic Parameter Loading**: Automatically reads optimization parameters from YAML config
 - **Universal Parameter Control**: Configure model, duration, and workload for all optimization modes
+- **Enhanced GPU Memory Management**: Comprehensive GPU cleanup to prevent memory leaks
+
+## ⚠️ GPU Memory Management Fix
+
+### Problem
+vLLM servers often don't properly release GPU memory after shutdown, leaving the GPU cache full even after the process terminates. This can cause subsequent runs to fail with out-of-memory errors.
+
+### Solution
+We've implemented a comprehensive GPU cleanup system:
+
+1. **Enhanced Server Shutdown**: Automatic GPU cleanup during normal server shutdown
+2. **Standalone Cleanup Utility**: Force cleanup GPU memory when servers crash or don't shutdown properly
+3. **Environment Optimization**: Better memory management configuration
+
+### Usage
+
+#### Automatic Cleanup (Default)
+The enhanced shutdown procedure runs automatically when stopping vLLM servers:
+```bash
+python src/serving/main.py --mode p95_latency --model "Qwen/Qwen3-32B-FP8"
+# GPU memory will be properly cleaned up on shutdown
+```
+
+#### Manual GPU Cleanup
+If your vLLM server crashed or didn't shutdown properly:
+```bash
+# Basic cleanup
+python src/serving/gpu_cleanup.py
+
+# Verbose output to see detailed cleanup process
+python src/serving/gpu_cleanup.py --verbose
+
+# Force kill any remaining vLLM processes and cleanup
+python src/serving/gpu_cleanup.py --kill-processes --force --verbose
+```
+
+#### Check GPU Status
+```bash
+# Check current GPU memory usage
+nvidia-smi
+
+# Check for active GPU processes
+python src/serving/gpu_cleanup.py --verbose
+```
 
 ## Installation
 
@@ -102,6 +146,10 @@ vllm serve Qwen/Qwen3-32B-FP8 \
   --kv-cache-dtype fp8 \
   --gpu-memory-utilization 0.92 \
   --port 8000
+
+Running post-shutdown GPU memory cleanup...
+✓ Cleaned GPU 0: 32.1GB freed
+✓ GPU memory cleanup completed
 ```
 
 ## Config-Based Optimization
@@ -126,6 +174,57 @@ python src/serving/main.py \
   --prompt-tokens 1024 \
   --output-tokens 512
 ```
+
+## GPU Memory Management
+
+### Environment Variables
+The framework automatically sets optimal environment variables for GPU memory management:
+
+```bash
+# PyTorch CUDA allocator settings for better memory management
+PYTORCH_CUDA_ALLOC_CONF=garbage_collection_threshold:0.8,max_split_size_mb:512
+
+# Disable tokenizer parallelism to avoid deadlocks
+TOKENIZERS_PARALLELISM=false
+
+# Enhanced logging for debugging
+VLLM_LOGGING_LEVEL=INFO
+```
+
+### Memory Cleanup Process
+The enhanced shutdown procedure includes:
+
+1. **Graceful Shutdown**: SIGTERM → wait → SIGINT → wait → SIGKILL
+2. **vLLM Parallel State Cleanup**: `destroy_model_parallel()`
+3. **PyTorch CUDA Cleanup**: `torch.cuda.empty_cache()` + `torch.cuda.synchronize()`
+4. **Ray Cleanup**: `ray.shutdown()` if initialized
+5. **Multiple Garbage Collection Cycles**: Force Python GC multiple times
+6. **Memory Verification**: Check final GPU memory usage
+
+### Troubleshooting GPU Memory Issues
+
+If you encounter "CUDA out of memory" errors or the GPU memory isn't released:
+
+1. **Run the cleanup utility**:
+   ```bash
+   python src/serving/gpu_cleanup.py --verbose
+   ```
+
+2. **Force kill processes and cleanup**:
+   ```bash
+   python src/serving/gpu_cleanup.py --kill-processes --force
+   ```
+
+3. **Check environment variables**:
+   ```bash
+   echo $PYTORCH_CUDA_ALLOC_CONF
+   echo $TOKENIZERS_PARALLELISM
+   ```
+
+4. **Monitor GPU usage**:
+   ```bash
+   watch -n 1 nvidia-smi
+   ```
 
 ## Configuration Files
 
@@ -277,6 +376,7 @@ The framework extracts comprehensive metrics from guidellm:
 - vLLM server
 - guidellm
 - HuggingFace Hub access (for model validation)
+- NVIDIA GPU with CUDA support
 
 ## Study Results
 

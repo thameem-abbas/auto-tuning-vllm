@@ -73,7 +73,7 @@ def start_vllm_server(cmd, ready_pattern="Application startup complete", timeout
 
         time.sleep(0.1)
 
-def stop_vllm_server(proc, grace_period=5):
+def stop_vllm_server(proc, grace_period=15):
     if proc is None:
         print("No vLLM process to stop")
         return
@@ -83,30 +83,63 @@ def stop_vllm_server(proc, grace_period=5):
 
     try:
         os.killpg(os.getpgid(proc.pid), signal.SIGINT)
+        print("Sent SIGINT to process group")
     except ProcessLookupError:
         print("Process already terminated")
         return
     except Exception as e:
         print(f"Warning: SIGINT failed: {str(e)}")
     
+    print(f"Waiting up to {grace_period}s for graceful shutdown...")
     deadline = time.time() + grace_period
     while time.time() < deadline:
         if proc.poll() is not None:
             print("vLLM process exited cleanly")
             return
-        time.sleep(0.1)
+        time.sleep(0.5)
 
     if proc.poll() is None:
-        print(f"Process {proc.pid} still alive after {grace_period}s; sending SIGKILL")
+        print(f"Process {proc.pid} still alive after {grace_period}s; sending SIGTERM")
         try:
-            proc.kill()
-            proc.wait(timeout=5)
+            os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
+            print("Sent SIGTERM to process group")
+            
+            # Wait another 5 seconds for SIGTERM
+            deadline = time.time() + 5
+            while time.time() < deadline:
+                if proc.poll() is not None:
+                    print("vLLM process exited after SIGTERM")
+                    return
+                time.sleep(0.5)
+                
+        except ProcessLookupError:
+            print("Process already terminated")
+            return
+        except Exception as e:
+            print(f"Warning: SIGTERM failed: {str(e)}")
+    
+    if proc.poll() is None:
+        print(f"Process {proc.pid} still alive after SIGTERM; sending SIGKILL")
+        try:
+            os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+            print("Sent SIGKILL to process group")
+            proc.wait(timeout=10)
             killed = True
+        except ProcessLookupError:
+            print("Process already terminated")
+            return
         except Exception as e:
             print(f"Warning: SIGKILL failed: {str(e)}")
     
     if not killed and proc.poll() is None:
-        print(f"Warning: Process {proc.pid} could not be terminated")
+        print(f"ERROR: Process {proc.pid} could not be terminated - manual cleanup may be required")
+        # Try to kill any remaining vllm processes on the port
+        try:
+            import subprocess
+            subprocess.run(["pkill", "-f", "vllm.*serve"], check=False)
+            print("Attempted to kill any remaining vLLM processes")
+        except Exception as e:
+            print(f"Warning: pkill failed: {str(e)}")
     else:
         print("vLLM process terminated")
 
@@ -143,4 +176,59 @@ def query_vllm_server(port, prompt, max_retries=3, retry_delay=1):
             print(f"Attempt {attempt + 1} failed: {last_error}. Retrying in {retry_delay}s...")
             time.sleep(retry_delay)
         
-    raise RuntimeError(f"Failed to query vLLM server after {max_retries} attempts. Last error: {last_error}") 
+    raise RuntimeError(f"Failed to query vLLM server after {max_retries} attempts. Last error: {last_error}")
+
+def cleanup_zombie_vllm_processes():
+    """Clean up any zombie vLLM processes that might be blocking the port."""
+    print("Checking for zombie vLLM processes...")
+    
+    try:
+        # Check if port 8000 is in use
+        if check_port_available(8000):
+            print("Port 8000 is available - no cleanup needed")
+            return
+            
+        print("Port 8000 is in use - attempting cleanup...")
+        
+        # Try to find and kill vLLM processes
+        result = subprocess.run(
+            ["pgrep", "-f", "vllm.*serve"],
+            capture_output=True,
+            text=True
+        )
+        
+        if result.returncode == 0:
+            pids = result.stdout.strip().split('\n')
+            print(f"Found {len(pids)} vLLM processes: {pids}")
+            
+            # Kill each process
+            for pid in pids:
+                if pid:
+                    try:
+                        print(f"Killing process {pid}...")
+                        os.kill(int(pid), signal.SIGTERM)
+                        time.sleep(1)
+                        # Force kill if still running
+                        try:
+                            os.kill(int(pid), signal.SIGKILL)
+                        except ProcessLookupError:
+                            pass  # Process already terminated
+                    except (ProcessLookupError, ValueError):
+                        pass  # Process already terminated or invalid PID
+                        
+            # Wait a bit for processes to clean up
+            time.sleep(3)
+            
+            # Check if port is now available
+            if check_port_available(8000):
+                print("✓ Port 8000 is now available after cleanup")
+            else:
+                print("⚠ Port 8000 is still in use after cleanup")
+                
+        else:
+            print("No vLLM processes found")
+            
+    except Exception as e:
+        print(f"Warning: Cleanup failed: {str(e)}")
+        
+    print("Cleanup complete") 

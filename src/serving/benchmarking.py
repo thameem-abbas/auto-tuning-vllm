@@ -25,11 +25,11 @@ def run_guidellm(guidellm_args, log_file):
         raise RuntimeError(f"Unexpected error starting guidellm: {str(e)}")
 
     try:
-        proc.wait(timeout=1200)
+        proc.wait(timeout=2400)
         print(f"guidellm process completed with return code: {proc.returncode}")
     except subprocess.TimeoutExpired:
         proc.kill()
-        raise RuntimeError("guidellm process timed out after 10 minutes")
+        raise RuntimeError("guidellm process timed out after 40 minutes")
     except Exception as e:
         proc.kill()
         raise RuntimeError(f"Error waiting for guidellm: {str(e)}")

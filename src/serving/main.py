@@ -5,12 +5,15 @@ import re
 import optuna
 import yaml
 import argparse
+from optuna.samplers import TPESampler, RandomSampler, NSGAIISampler
+from optuna.integration import BoTorchSampler
 from src.serving.utils import validate_huggingface_model
 from src.serving.optimization import (
     multi_objective_function, objective, p95_latency_objective_function,
     analyze_trial_results, get_optimization_recommendations
 )
 from src.serving.run_baseline import run_baseline_test
+from src.serving.vllm_server import cleanup_zombie_vllm_processes
 
 SRC_DIR = os.path.dirname(__file__)
 PROJECT_DIR = os.path.abspath(os.path.join(SRC_DIR, ".."))
@@ -75,6 +78,9 @@ def main():
         print(f"Error: Invalid HuggingFace model: {model}")
         sys.exit(1)
     
+    # Clean up any zombie vLLM processes before starting
+    cleanup_zombie_vllm_processes()
+    
     print("=" * 80)
     print("RUNNING BASELINE TEST FIRST")
     print("=" * 80)
@@ -83,12 +89,12 @@ def main():
         STUDY_DIR, VLLM_LOGS_DIR, GUIDELLM_LOGS_DIR, STUDY_ID
     )
     if baseline_metrics is not None:
-        print(f"✓ Baseline performance: {baseline_metrics['output_tokens_per_second']:.2f} output tokens/second")
-        print(f"✓ Baseline latency: {baseline_metrics['request_latency']:.2f} ms")
+        print(f"Baseline performance: {baseline_metrics['output_tokens_per_second']:.2f} output tokens/second")
+        print(f"Baseline latency: {baseline_metrics['request_latency']:.2f} ms")
         if baseline_metrics.get('request_latency_p95'):
-            print(f"✓ Baseline P95 latency: {baseline_metrics['request_latency_p95']:.2f} ms")
+            print(f"Baseline P95 latency: {baseline_metrics['request_latency_p95']:.2f} ms")
     else:
-        print("⚠ Baseline test failed")
+        print("Baseline test failed")
     print("=" * 80)
     
     db_path = os.path.join(STUDY_DIR, "optuna.db")
@@ -172,10 +178,26 @@ def main():
     print("=" * 50)
     
     if optimization_approach == "multi_objective":
+        # Get sampler from config
+        sampler_name = optimization_config.get("sampler", "tpe")
+        
+        # Create appropriate sampler based on config
+        if sampler_name == "botorch":
+            sampler = BoTorchSampler(n_startup_trials=10)
+        elif sampler_name == "nsga2":
+            sampler = NSGAIISampler()
+        elif sampler_name == "tpe":
+            sampler = TPESampler()
+        elif sampler_name == "random":
+            sampler = RandomSampler()
+        else:
+            sampler = TPESampler()
+            
         study = optuna.create_study(
             storage=storage_url,
             study_name=f"vllm_tuning_run{STUDY_ID}_multi",
             directions=["maximize", "minimize"],
+            sampler=sampler,
             load_if_exists=True
         )
         
@@ -185,7 +207,7 @@ def main():
                 vllm_config, STUDY_DIR, VLLM_LOGS_DIR, GUIDELLM_LOGS_DIR, STUDY_ID
             )
         
-        print("Using multi-objective optimization (throughput vs latency)")
+        print(f"Using multi-objective optimization (throughput vs latency) with {sampler_name} sampler")
         print("Result: Multiple Pareto-optimal solutions showing trade-offs")
         
     else:
