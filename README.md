@@ -1,6 +1,6 @@
-# vLLM Performance Optimization Framework
+# vLLM Auto-tuning Redhat
 
-A comprehensive framework for optimizing vLLM server performance using three distinct optimization strategies, including **P95 end-to-end latency minimization**.
+Program finds a configuration (or multiple) that maximises output tokens/second (throughput) for a 32B MoE LLM served by vLLM.
 
 ## Features
 
@@ -9,26 +9,7 @@ A comprehensive framework for optimizing vLLM server performance using three dis
 - **Single-Objective Optimization**: Maximize throughput for high-volume applications
 - **HuggingFace Model Validation**: Automatic validation of model names
 - **Detailed Metrics**: Extract p50, p90, p95, p99 percentiles from guidellm benchmarks
-- **Dynamic Parameter Loading**: Automatically reads optimization parameters from YAML config
-- **Universal Parameter Control**: Configure model, duration, and workload for all optimization modes
-- **Enhanced GPU Memory Management**: Comprehensive GPU cleanup to prevent memory leaks
 
-## ⚠️ GPU Memory Management Fix
-
-### Problem
-vLLM servers often don't properly release GPU memory after shutdown, leaving the GPU cache full even after the process terminates. This can cause subsequent runs to fail with out-of-memory errors.
-
-### Solution
-We've implemented a comprehensive GPU cleanup system:
-
-1. **Enhanced Server Shutdown**: Automatic GPU cleanup during normal server shutdown
-2. **Standalone Cleanup Utility**: Force cleanup GPU memory when servers crash or don't shutdown properly
-3. **Environment Optimization**: Better memory management configuration
-
-### Usage
-
-#### Automatic Cleanup (Default)
-The enhanced shutdown procedure runs automatically when stopping vLLM servers:
 ```bash
 python src/serving/main.py --mode p95_latency --model "Qwen/Qwen3-32B-FP8"
 # GPU memory will be properly cleaned up on shutdown

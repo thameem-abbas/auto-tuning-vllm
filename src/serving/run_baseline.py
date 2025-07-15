@@ -4,7 +4,7 @@ from src.serving.vllm_server import build_vllm_command, start_vllm_server, stop_
 from src.serving.benchmarking import run_guidellm, parse_benchmarks
 
 def run_baseline_test(model=None, max_seconds=None, prompt_tokens=None, output_tokens=None, dataset=None,
-                     study_dir=None, vllm_logs_dir=None, guidellm_logs_dir=None, study_id=None):
+                     study_dir=None, vllm_logs_dir=None, guidellm_logs_dir=None, study_id=None, concurrency=50):
     port = 8000
     
     if model is None:
@@ -16,20 +16,21 @@ def run_baseline_test(model=None, max_seconds=None, prompt_tokens=None, output_t
     if output_tokens is None:
         output_tokens = 1000
     
-    vllm_log_file = os.path.join(vllm_logs_dir, f"vllm_server_logs_{study_id}.baseline.log")
-    guidellm_log_file = os.path.join(guidellm_logs_dir, f"guidellm_logs_{study_id}.baseline.log")
+    vllm_log_file = os.path.join(vllm_logs_dir, f"vllm_server_logs_{study_id}.baseline.concurrency_{concurrency}.log")
+    guidellm_log_file = os.path.join(guidellm_logs_dir, f"guidellm_logs_{study_id}.baseline.concurrency_{concurrency}.log")
     
-    print(f"\nRunning baseline test")
+    print(f"\nRunning baseline test with concurrency {concurrency}")
     print(f"Model: {model}")
     print(f"Duration: {max_seconds} seconds")
     print(f"Prompt tokens: {prompt_tokens}, Output tokens: {output_tokens}")
+    print(f"Concurrency: {concurrency}")
     print(f"vLLM log file: {vllm_log_file}")
     print(f"guidellm log file: {guidellm_log_file}")
     
     vllm_cmd = build_vllm_command(model_name=model, port=port, candidate_flags=[])
     vllm_proc = start_vllm_server(vllm_cmd, log_file=vllm_log_file)
 
-    bench_file = os.path.join(study_dir, f"benchmarks_{study_id}.baseline.json")
+    bench_file = os.path.join(study_dir, f"benchmarks_{study_id}.baseline.concurrency_{concurrency}.json")
 
     try:
         print("Starting guidellm benchmark for baseline...")
@@ -49,7 +50,7 @@ def run_baseline_test(model=None, max_seconds=None, prompt_tokens=None, output_t
         
         guidellm_args.extend([
             "--rate-type",   "concurrent",
-            "--rate",        "50",
+            "--rate",        str(concurrency),
             "--max-seconds", str(max_seconds),
             "--output-path", bench_file
         ])

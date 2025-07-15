@@ -24,6 +24,12 @@ def start_vllm_server(cmd, ready_pattern="Application startup complete", timeout
 
     print(f"Launching vLLM server {' '.join(cmd)}")
     
+    # Set environment variables to help prevent CUDA out of memory issues
+    # env = os.environ.copy()
+    # env['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
+    
+    # print("Setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to prevent CUDA memory fragmentation")
+    
     try:
         with open(log_file, 'w') as f:
             proc = subprocess.Popen(
@@ -33,7 +39,7 @@ def start_vllm_server(cmd, ready_pattern="Application startup complete", timeout
                 stdin=subprocess.PIPE,
                 text=True,
                 bufsize=1,
-                preexec_fn=os.setsid
+                preexec_fn=os.setsid,
             )
     except FileNotFoundError:
         raise RuntimeError(f"vLLM binary not found. Is vllm installed and in PATH?")

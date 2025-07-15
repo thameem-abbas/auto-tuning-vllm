@@ -18,31 +18,54 @@ from optuna.visualization import plot_slice
 from optuna.visualization import plot_timeline
 
 def load_baseline_metrics(study_dir, study_id):
-    """Load baseline metrics from the JSON file."""
-    baseline_file = os.path.join(study_dir, f"benchmarks_{study_id}.baseline.json")
+    """Load baseline metrics from multiple concurrency JSON files."""
+    baseline_files = []
+    baselines = {}
     
-    if not os.path.exists(baseline_file):
-        print(f"Warning: Baseline file not found at {baseline_file}")
-        return None
+    # Look for baseline files with concurrency patterns
+    import glob
+    baseline_pattern = os.path.join(study_dir, f"benchmarks_{study_id}.baseline.concurrency_*.json")
+    baseline_files = glob.glob(baseline_pattern)
     
-    try:
-        with open(baseline_file, 'r') as f:
-            data = json.load(f)
+    # If no concurrency-specific baselines found, look for the old format
+    if not baseline_files:
+        old_baseline_file = os.path.join(study_dir, f"benchmarks_{study_id}.baseline.json")
+        if os.path.exists(old_baseline_file):
+            baseline_files = [old_baseline_file]
+    
+    if not baseline_files:
+        print(f"Warning: No baseline files found in {study_dir}")
+        return {}
+    
+    for baseline_file in baseline_files:
+        # Extract concurrency from filename
+        if "concurrency_" in baseline_file:
+            concurrency = int(baseline_file.split("concurrency_")[1].split(".json")[0])
+        else:
+            concurrency = 50  # Default for old format
         
-        # Extract metrics from the benchmark data structure
-        stats = data["benchmarks"][0]
-        metrics = stats["metrics"]
-        
-        baseline_metrics = {}
-        baseline_metrics['output_tokens_per_second'] = metrics['output_tokens_per_second']['successful']['median']
-        baseline_metrics['request_latency'] = metrics['request_latency']['successful']['median']
-        baseline_metrics['time_to_first_token_ms'] = metrics['time_to_first_token_ms']['successful']['median']
-        baseline_metrics['tokens_per_second'] = metrics['tokens_per_second']['successful']['median']
-        
-        return baseline_metrics
-    except Exception as e:
-        print(f"Error loading baseline metrics: {e}")
-        return None
+        try:
+            with open(baseline_file, 'r') as f:
+                data = json.load(f)
+            
+            # Extract metrics from the benchmark data structure
+            stats = data["benchmarks"][0]
+            metrics = stats["metrics"]
+            
+            baseline_metrics = {}
+            baseline_metrics['output_tokens_per_second'] = metrics['output_tokens_per_second']['successful']['median']
+            baseline_metrics['request_latency'] = metrics['request_latency']['successful']['median']
+            baseline_metrics['time_to_first_token_ms'] = metrics['time_to_first_token_ms']['successful']['median']
+            baseline_metrics['tokens_per_second'] = metrics['tokens_per_second']['successful']['median']
+            baseline_metrics['concurrency'] = concurrency
+            
+            baselines[concurrency] = baseline_metrics
+            
+        except Exception as e:
+            print(f"Error loading baseline metrics from {baseline_file}: {e}")
+            continue
+    
+    return baselines
 
 def create_single_objective_visualization(study, baseline_metrics, study_dir, study_id):
     """Create visualization for single-objective optimization."""
@@ -57,12 +80,14 @@ def create_single_objective_visualization(study, baseline_metrics, study_dir, st
     
     # Add baseline as horizontal line if available
     if baseline_metrics:
-        baseline_value = baseline_metrics.get('output_tokens_per_second', 0)
+        # Show the first baseline by default
+        first_concurrency = min(baseline_metrics.keys())
+        baseline_value = baseline_metrics[first_concurrency].get('output_tokens_per_second', 0)
         fig.add_hline(
             y=baseline_value, 
             line_dash="dash", 
             line_color="red",
-            annotation_text=f"Baseline: {baseline_value:.2f} tokens/s",
+            annotation_text=f"Baseline (C={first_concurrency}): {baseline_value:.2f} tokens/s",
             annotation_position="top right"
         )
     
@@ -118,6 +143,8 @@ def create_multi_objective_visualizations(study, baseline_metrics, study_dir, st
             metrics['inter_token_latency_ms'] = trial.user_attrs.get('inter_token_latency_ms', 'N/A')
             metrics['output_sequence_length'] = trial.user_attrs.get('output_sequence_length', 'N/A')
             metrics['input_sequence_length'] = trial.user_attrs.get('input_sequence_length', 'N/A')
+            # Extract concurrency from trial parameters
+            metrics['concurrency'] = trial.params.get('guidellm_concurrency', 'N/A')
         else:
             # Fallback to basic metrics
             metrics['output_tokens_per_second'] = trial.values[0]
@@ -127,6 +154,7 @@ def create_multi_objective_visualizations(study, baseline_metrics, study_dir, st
             metrics['inter_token_latency_ms'] = 'N/A'
             metrics['output_sequence_length'] = 'N/A'
             metrics['input_sequence_length'] = 'N/A'
+            metrics['concurrency'] = trial.params.get('guidellm_concurrency', 'N/A')
         trial_metrics.append(metrics)
     
     # 1. Throughput optimization history
@@ -139,20 +167,44 @@ def create_multi_objective_visualizations(study, baseline_metrics, study_dir, st
         line=dict(color='blue')
     ))
     
+    # Add all baseline throughputs as separate traces
+    baseline_traces = []
     if baseline_metrics:
-        baseline_throughput = baseline_metrics.get('output_tokens_per_second', 0)
-        fig1.add_hline(
-            y=baseline_throughput,
-            line_dash="dash",
-            line_color="red",
-            annotation_text=f"Baseline: {baseline_throughput:.2f} tokens/s",
-            annotation_position="top right"
-        )
+        for i, (concurrency, metrics) in enumerate(baseline_metrics.items()):
+            baseline_throughput = metrics.get('output_tokens_per_second', 0)
+            fig1.add_trace(go.Scatter(
+                x=trial_numbers,
+                y=[baseline_throughput] * len(trial_numbers),
+                mode='lines',
+                name=f'Baseline C={concurrency}',
+                line=dict(color='red', dash='dash'),
+                visible=True if i == 0 else False,  # Show only the first one initially
+                hovertemplate=f'Baseline (C={concurrency}): {baseline_throughput:.2f} tokens/s<extra></extra>'
+            ))
     
     fig1.update_layout(
         title=f"Throughput Optimization History - Study {study_id}",
         xaxis_title="Trial",
-        yaxis_title="Output Tokens per Second"
+        yaxis_title="Output Tokens per Second",
+        updatemenus=[
+            dict(
+                type="dropdown",
+                direction="down",
+                buttons=list([
+                    dict(
+                        args=[{"visible": [True] + [concurrency == c for c in sorted(baseline_metrics.keys())]}],
+                        label=f"Baseline C={concurrency}",
+                        method="restyle"
+                    ) for concurrency in sorted(baseline_metrics.keys())
+                ]) if baseline_metrics else [],
+                pad={"r": 10, "t": 10},
+                showactive=True,
+                x=0.99,
+                xanchor="right",
+                y=1.25,
+                yanchor="top"
+            ),
+        ] if baseline_metrics else []
     )
     
     html_path1 = os.path.join(viz_dir, f"throughput_history_{study_id}.html")
@@ -169,20 +221,44 @@ def create_multi_objective_visualizations(study, baseline_metrics, study_dir, st
         line=dict(color='orange')
     ))
     
+    # Add all baseline latencies as separate traces
     if baseline_metrics:
-        baseline_latency = baseline_metrics.get('request_latency', 0)
-        fig2.add_hline(
-            y=baseline_latency,
-            line_dash="dash",
-            line_color="red",
-            annotation_text=f"Baseline: {baseline_latency:.2f} ms",
-            annotation_position="top right"
-        )
+        for i, (concurrency, metrics) in enumerate(baseline_metrics.items()):
+            baseline_latency = metrics.get('request_latency', 0)
+            fig2.add_trace(go.Scatter(
+                x=trial_numbers,
+                y=[baseline_latency] * len(trial_numbers),
+                mode='lines',
+                name=f'Baseline C={concurrency}',
+                line=dict(color='red', dash='dash'),
+                visible=True if i == 0 else False,  # Show only the first one initially
+                hovertemplate=f'Baseline (C={concurrency}): {baseline_latency:.2f} ms<extra></extra>'
+            ))
     
     fig2.update_layout(
         title=f"Latency Optimization History - Study {study_id}",
         xaxis_title="Trial",
-        yaxis_title="Request Latency (ms)"
+        yaxis_title="Request Latency (ms)",
+        yaxis=dict(range=[0, None]),  # Make latency start from 0
+        updatemenus=[
+            dict(
+                type="dropdown",
+                direction="down",
+                buttons=list([
+                    dict(
+                        args=[{"visible": [True] + [concurrency == c for c in sorted(baseline_metrics.keys())]}],
+                        label=f"Baseline C={concurrency}",
+                        method="restyle"
+                    ) for concurrency in sorted(baseline_metrics.keys())
+                ]) if baseline_metrics else [],
+                pad={"r": 10, "t": 10},
+                showactive=True,
+                x=0.99,
+                xanchor="right",
+                y=1.25,
+                yanchor="top"
+            ),
+        ] if baseline_metrics else []
     )
     
     html_path2 = os.path.join(viz_dir, f"latency_history_{study_id}.html")
@@ -198,6 +274,7 @@ def create_multi_objective_visualizations(study, baseline_metrics, study_dir, st
         hover_text = f'<b>Trial {trial_num}</b><br>'
         hover_text += f'Output Tokens/s: {metrics["output_tokens_per_second"]:.2f}<br>'
         hover_text += f'Request Latency: {metrics["request_latency"]:.2f} ms<br>'
+        hover_text += f'Concurrency: {metrics["concurrency"]}<br>'
         if metrics["time_to_first_token_ms"] != 'N/A':
             hover_text += f'TTFT: {metrics["time_to_first_token_ms"]:.2f} ms<br>'
         if metrics["tokens_per_second"] != 'N/A':
@@ -235,114 +312,82 @@ def create_multi_objective_visualizations(study, baseline_metrics, study_dir, st
         text=hover_texts
     ), secondary_y=True)
     
-    # Add baseline horizontal lines
+    # Add baseline horizontal lines for each concurrency level as separate traces
     if baseline_metrics:
-        baseline_throughput = baseline_metrics.get('output_tokens_per_second', 0)
-        baseline_latency = baseline_metrics.get('request_latency', 0)
-        
-        # Add horizontal line for baseline throughput
-        fig3.add_hline(
-            y=baseline_throughput,
-            line_dash="dash",
-            line_color="red",
-            annotation_text=f"Baseline Throughput: {baseline_throughput:.2f} tokens/s",
-            annotation_position="top right",
-            secondary_y=False
-        )
-        
-        # Add horizontal line for baseline latency
-        fig3.add_hline(
-            y=baseline_latency,
-            line_dash="dash",
-            line_color="orange",
-            annotation_text=f"Baseline Latency: {baseline_latency:.2f} ms",
-            annotation_position="bottom right",
-            secondary_y=True
-        )
-    
-    # Add best value dots
-    if throughputs and latencies:
-        best_throughput = max(throughputs)
-        best_latency = min(latencies)  # Lower latency is better
-        best_throughput_idx = throughputs.index(best_throughput)
-        best_latency_idx = latencies.index(best_latency)
-        best_throughput_trial = trial_numbers[best_throughput_idx]
-        best_latency_trial = trial_numbers[best_latency_idx]
-        
-        # Get comprehensive metrics for best trials
-        best_throughput_metrics = trial_metrics[best_throughput_idx]
-        best_latency_metrics = trial_metrics[best_latency_idx]
-        
-        # Create hover text for best throughput
-        best_throughput_hover = f'<b>Best Throughput - Trial {best_throughput_trial}</b><br>'
-        best_throughput_hover += f'Output Tokens/s: {best_throughput_metrics["output_tokens_per_second"]:.2f}<br>'
-        best_throughput_hover += f'Request Latency: {best_throughput_metrics["request_latency"]:.2f} ms<br>'
-        if best_throughput_metrics["time_to_first_token_ms"] != 'N/A':
-            best_throughput_hover += f'TTFT: {best_throughput_metrics["time_to_first_token_ms"]:.2f} ms<br>'
-        if best_throughput_metrics["tokens_per_second"] != 'N/A':
-            best_throughput_hover += f'Total Tokens/s: {best_throughput_metrics["tokens_per_second"]:.2f}<br>'
-        if best_throughput_metrics["inter_token_latency_ms"] != 'N/A':
-            best_throughput_hover += f'Inter-token Latency: {best_throughput_metrics["inter_token_latency_ms"]:.2f} ms'
-        
-        # Create hover text for best latency
-        best_latency_hover = f'<b>Best Latency - Trial {best_latency_trial}</b><br>'
-        best_latency_hover += f'Output Tokens/s: {best_latency_metrics["output_tokens_per_second"]:.2f}<br>'
-        best_latency_hover += f'Request Latency: {best_latency_metrics["request_latency"]:.2f} ms<br>'
-        if best_latency_metrics["time_to_first_token_ms"] != 'N/A':
-            best_latency_hover += f'TTFT: {best_latency_metrics["time_to_first_token_ms"]:.2f} ms<br>'
-        if best_latency_metrics["tokens_per_second"] != 'N/A':
-            best_latency_hover += f'Total Tokens/s: {best_latency_metrics["tokens_per_second"]:.2f}<br>'
-        if best_latency_metrics["inter_token_latency_ms"] != 'N/A':
-            best_latency_hover += f'Inter-token Latency: {best_latency_metrics["inter_token_latency_ms"]:.2f} ms'
-        
-        # Best throughput dot
-        fig3.add_trace(go.Scatter(
-            x=[best_throughput_trial],
-            y=[best_throughput],
-            mode='markers',
-            name='Best Throughput',
-            marker=dict(
-                size=12,
-                color='green',
-                symbol='circle',
-                line=dict(width=2, color='darkgreen')
-            ),
-            hovertemplate='%{text}<extra></extra>',
-            text=[best_throughput_hover],
-            showlegend=True
-        ), secondary_y=False)
-        
-        # Best latency dot
-        fig3.add_trace(go.Scatter(
-            x=[best_latency_trial],
-            y=[best_latency],
-            mode='markers',
-            name='Best Latency',
-            marker=dict(
-                size=12,
-                color='green',
-                symbol='circle',
-                line=dict(width=2, color='darkgreen')
-            ),
-            yaxis="y2",
-            hovertemplate='%{text}<extra></extra>',
-            text=[best_latency_hover],
-            showlegend=False  # Don't duplicate best in legend
-        ), secondary_y=True)
+        for i, (concurrency, metrics) in enumerate(baseline_metrics.items()):
+            baseline_throughput = metrics.get('output_tokens_per_second', 0)
+            baseline_latency = metrics.get('request_latency', 0)
+            
+            # Add baseline throughput line
+            fig3.add_trace(go.Scatter(
+                x=trial_numbers,
+                y=[baseline_throughput] * len(trial_numbers),
+                mode='lines',
+                name=f'Baseline Throughput C={concurrency}',
+                line=dict(color='red', dash='dash'),
+                visible=True if i == 0 else False,  # Show only the first one initially
+                hovertemplate=f'Baseline Throughput (C={concurrency}): {baseline_throughput:.2f} tokens/s<extra></extra>',
+                showlegend=False
+            ), secondary_y=False)
+            
+            # Add baseline latency line
+            fig3.add_trace(go.Scatter(
+                x=trial_numbers,
+                y=[baseline_latency] * len(trial_numbers),
+                mode='lines',
+                name=f'Baseline Latency C={concurrency}',
+                line=dict(color='orange', dash='dash'),
+                yaxis="y2",
+                visible=True if i == 0 else False,  # Show only the first one initially
+                hovertemplate=f'Baseline Latency (C={concurrency}): {baseline_latency:.2f} ms<extra></extra>',
+                showlegend=False
+            ), secondary_y=True)
     
     # Set x-axis title
     fig3.update_xaxes(title_text="Trial")
     
     # Set y-axes titles and ranges
     fig3.update_yaxes(title_text="Output Tokens per Second", range=[0, None], secondary_y=False)
-    fig3.update_yaxes(title_text="Request Latency (ms)", secondary_y=True)
+    fig3.update_yaxes(title_text="Request Latency (ms)", range=[0, None], secondary_y=True)  # Make latency start from 0
+    
+    # Add baseline selector dropdown
+    baseline_buttons = []
+    if baseline_metrics:
+        for concurrency in sorted(baseline_metrics.keys()):
+            # Create visibility list for this concurrency
+            visibility = [True, True]  # Always show throughput and latency main traces
+            
+            # Add baseline visibility (2 traces per baseline: throughput and latency)
+            for c in sorted(baseline_metrics.keys()):
+                visibility.extend([concurrency == c, concurrency == c])  # Two lines per baseline
+            
+            baseline_buttons.append(
+                dict(
+                    args=[{"visible": visibility}],
+                    label=f"Baseline C={concurrency}",
+                    method="restyle"
+                )
+            )
     
     fig3.update_layout(
         title=f"Multi-Objective Optimization: Combined Metrics - Study {study_id}",
-        hovermode='x unified'
+        hovermode='x unified',
+        updatemenus=[
+            dict(
+                type="dropdown",
+                direction="down",
+                buttons=baseline_buttons,
+                pad={"r": 10, "t": 10},
+                showactive=True,
+                x=0.99,
+                xanchor="right",
+                y=1.25,
+                yanchor="top"
+            ),
+        ] if baseline_metrics else []
     )
     
-    html_path3 = os.path.join(viz_dir, f"pareto_front_{study_id}.html")
+    html_path3 = os.path.join(viz_dir, f"multi_objective_visualization_{study_id}.html")
     fig3.write_html(html_path3)
     saved_files.append(html_path3)
     
@@ -370,7 +415,25 @@ def main():
     
     # Construct paths
     current_dir = os.getcwd()
-    study_dir = os.path.join(current_dir, "src", "studies", f"study_{study_id}")
+    
+    # Find the project root by looking for src directory
+    project_root = current_dir
+    while project_root != os.path.dirname(project_root):  # Stop at filesystem root
+        if os.path.exists(os.path.join(project_root, "src")):
+            break
+        project_root = os.path.dirname(project_root)
+    
+    # If we're already in src/visualization, go up two levels
+    if current_dir.endswith("src/visualization"):
+        src_dir = os.path.dirname(current_dir)
+    # If we're in src directory, use it directly
+    elif current_dir.endswith("src"):
+        src_dir = current_dir
+    # Otherwise, assume we're in project root and look for src
+    else:
+        src_dir = os.path.join(project_root, "src")
+    
+    study_dir = os.path.join(src_dir, "studies", f"study_{study_id}")
     db_path = os.path.join(study_dir, "optuna.db")
     
     # Check if study exists
@@ -441,8 +504,8 @@ def main():
         baseline_metrics = load_baseline_metrics(study_dir, study_id)
         if baseline_metrics:
             print("Baseline metrics loaded successfully!")
-            print(f"Baseline throughput: {baseline_metrics['output_tokens_per_second']:.2f} tokens/s")
-            print(f"Baseline latency: {baseline_metrics['request_latency']:.2f} ms")
+            for concurrency, metrics in baseline_metrics.items():
+                print(f"Baseline C={concurrency}: {metrics['output_tokens_per_second']:.2f} tokens/s, {metrics['request_latency']:.2f} ms")
         else:
             print("Warning: Could not load baseline metrics.")
         

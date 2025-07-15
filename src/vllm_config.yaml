@@ -1,30 +1,19 @@
 parameters:
-  # vLLM Performance Parameters for Optimization
-  # Each parameter can be enabled/disabled and has configurable ranges/options
-  # All parameters are passed as command-line flags to the vLLM server
   
   max_num_batched_tokens:
     name: "max-num-batched-tokens"
     enabled: true
-    options: [8192, 16384] #512, 1024, 2048, 4096 
+    options: [8192, 16384]
 
   compilation_config:
     name: "compilation-config"
     enabled: true
     level: [0, 3]
-
-  max_num_seqs:
-    name: "max-num-seqs"
-    enabled: false
-    range:
-      start: 1
-      end: 128
-      step: 8
     
   block_size:
     name: "block-size"
     enabled: true
-    options: [16, 32, 64, 128]
+    options: [8, 16, 32, 64, 128]
 
   kv_cache_dtype:
     name: "kv-cache-dtype"
@@ -35,13 +24,13 @@ parameters:
     name: "gpu-memory-utilization"
     enabled: true
     range:
-      start: 0.90 #default is 0.9
-      end: 0.96 # dont go beyond 0.96 as can get a out of memory error
+      start: 0.90
+      end: 0.95
       step: 0.01
 
   preemption-mode:
     name: "preemption-mode"
-    enabled: false
+    enabled: true
     options: ["recompute", "swap"]
 
   # Guidellm concurrency parameter
@@ -50,21 +39,43 @@ parameters:
     enabled: true
     range:
       start: 10
-      end: 250
+      end: 240
       step: 10
 
-# Optimization configuration
+  cuda_graph_sizes:
+    name: "cuda-graph-sizes"
+    enabled: true
+    range:
+      start: 8
+      end: 16384
+      step: 8
+
+  long_prefill_token_threshold:
+    name: "long-prefill-token-threshold"
+    enabled: true
+    range:
+      start: 512
+      end: 4096
+      step: 512
+
+  max_parallel_loading_workers:
+    name: "max-parallel-loading-workers"
+    enabled: true
+    range:
+      start: 1
+      end: 8
+      step: 1
+
 optimization:
   # Available approaches:
   # - "single_objective": Maximize throughput only
   # - "multi_objective": Find Pareto-optimal throughput vs latency trade-offs
   approach: "multi_objective"
   
-  # Number of trials to run
-  n_trials: 100
+  n_trials: 200
 
-  # choose between ["botorch", "nsga2"]
+  # choose between ["botorch", "nsga2", "tpe", "random", "grid"]
   sampler: "botorch"
 
 settings:
-  trial_interval: 45
+  trial_interval: 30

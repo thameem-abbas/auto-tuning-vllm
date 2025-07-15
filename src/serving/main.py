@@ -5,7 +5,7 @@ import re
 import optuna
 import yaml
 import argparse
-from optuna.samplers import TPESampler, RandomSampler, NSGAIISampler
+from optuna.samplers import TPESampler, RandomSampler, NSGAIISampler, GridSampler
 from optuna.integration import BoTorchSampler
 from src.serving.utils import validate_huggingface_model
 from src.serving.optimization import (
@@ -52,6 +52,67 @@ print(f"Logging vLLM server logs to: {VLLM_LOGS_DIR}")
 print(f"Logging guidellm logs to: {GUIDELLM_LOGS_DIR}")
 
 
+def build_grid_search_space(config):
+    """Build search space for GridSampler from vLLM config"""
+    search_space = {}
+    parameters = config.get("parameters", {})
+    
+    total_combinations = 1
+    
+    print(f"DEBUG: Building grid search space from config...")
+    
+    for param_name, param_config in parameters.items():
+        if not param_config.get("enabled", False):
+            print(f"DEBUG: Skipping disabled parameter: {param_name}")
+            continue
+        
+        param_key = param_name.replace("-", "_")
+        print(f"DEBUG: Processing parameter: {param_name} -> {param_key}")
+        
+        if "options" in param_config:
+            # Discrete options
+            values = param_config["options"]
+            search_space[param_key] = values
+            total_combinations *= len(values)
+            print(f"DEBUG: Options parameter {param_key}: {len(values)} values {values}")
+            
+        elif "range" in param_config:
+            # Range parameters - convert to discrete list
+            range_config = param_config["range"]
+            start = range_config["start"]
+            end = range_config["end"]
+            step = range_config["step"]
+            
+            # Generate all values in range
+            values = []
+            current = start
+            while current <= end:
+                values.append(current)
+                current += step
+                # Handle floating point precision issues
+                current = round(current, 10)
+            
+            search_space[param_key] = values
+            total_combinations *= len(values)
+            print(f"DEBUG: Range parameter {param_key}: {len(values)} values from {start} to {end} step {step}")
+            
+        elif "level" in param_config:
+            # Level parameters (like compilation_config)
+            # These are treated as categorical choices, not ranges
+            levels = param_config["level"]
+            if isinstance(levels, list):
+                search_space[param_key] = levels
+                total_combinations *= len(levels)
+                print(f"DEBUG: Level parameter {param_key}: {len(levels)} values {levels}")
+        else:
+            print(f"WARNING: Unknown parameter type for {param_name}: {param_config}")
+    
+    print(f"DEBUG: Final search space: {search_space}")
+    print(f"DEBUG: Total combinations: {total_combinations}")
+    
+    return search_space, total_combinations
+
+
 
 def main():
     parser = argparse.ArgumentParser(description='vLLM Performance Optimization')
@@ -82,20 +143,36 @@ def main():
     cleanup_zombie_vllm_processes()
     
     print("=" * 80)
-    print("RUNNING BASELINE TEST FIRST")
+    print("RUNNING BASELINE TESTS WITH DIFFERENT CONCURRENCY LEVELS")
     print("=" * 80)
-    baseline_metrics = run_baseline_test(
-        model, args.max_seconds, args.prompt_tokens, args.output_tokens, args.dataset,
-        STUDY_DIR, VLLM_LOGS_DIR, GUIDELLM_LOGS_DIR, STUDY_ID
-    )
-    if baseline_metrics is not None:
-        print(f"Baseline performance: {baseline_metrics['output_tokens_per_second']:.2f} output tokens/second")
-        print(f"Baseline latency: {baseline_metrics['request_latency']:.2f} ms")
-        if baseline_metrics.get('request_latency_p95'):
-            print(f"Baseline P95 latency: {baseline_metrics['request_latency_p95']:.2f} ms")
-    else:
-        print("Baseline test failed")
+    
+    # Run 5 baseline tests with concurrency levels from 50 to 250 in steps of 50
+    concurrency_levels = [50] #, 100, 150, 200
+    baseline_results = []
+    
+    for concurrency in concurrency_levels:
+        print(f"\n{'='*40}")
+        print(f"BASELINE TEST: Concurrency {concurrency}")
+        print(f"{'='*40}")
+        
+        baseline_metrics = run_baseline_test(
+            model, args.max_seconds, args.prompt_tokens, args.output_tokens, args.dataset,
+            STUDY_DIR, VLLM_LOGS_DIR, GUIDELLM_LOGS_DIR, STUDY_ID, concurrency
+        )
+        
+        if baseline_metrics is not None:
+            baseline_results.append({
+                'concurrency': concurrency,
+                'metrics': baseline_metrics
+            })
+            print(f"Concurrency {concurrency} - Performance: {baseline_metrics['output_tokens_per_second']:.2f} output tokens/second")
+            print(f"Concurrency {concurrency} - Latency: {baseline_metrics['request_latency']:.2f} ms")
+        else:
+            print(f"Baseline test failed for concurrency {concurrency}")
     print("=" * 80)
+    
+    # Use the first successful baseline for optimization comparison (or None if all failed)
+    baseline_metrics = baseline_results[0]['metrics'] if baseline_results else None
     
     db_path = os.path.join(STUDY_DIR, "optuna.db")
     storage_url = f"sqlite:///{db_path}"
@@ -177,22 +254,35 @@ def main():
     print(f"Number of trials: {n_trials}")
     print("=" * 50)
     
-    if optimization_approach == "multi_objective":
-        # Get sampler from config
-        sampler_name = optimization_config.get("sampler", "tpe")
+    sampler_name = optimization_config.get("sampler", "tpe")
+    
+    if sampler_name == "botorch":
+        sampler = BoTorchSampler(
+            n_startup_trials=20
+        )
+
+    elif sampler_name == "nsga2":
+        sampler = NSGAIISampler()
+    elif sampler_name == "tpe":
+        sampler = TPESampler()
+    elif sampler_name == "random":
+        sampler = RandomSampler()
+    elif sampler_name == "grid":
+        search_space, total_combinations = build_grid_search_space(vllm_config)
         
-        # Create appropriate sampler based on config
-        if sampler_name == "botorch":
-            sampler = BoTorchSampler(n_startup_trials=10)
-        elif sampler_name == "nsga2":
-            sampler = NSGAIISampler()
-        elif sampler_name == "tpe":
-            sampler = TPESampler()
-        elif sampler_name == "random":
-            sampler = RandomSampler()
-        else:
-            sampler = TPESampler()
-            
+        print(f"\n=== GRID SAMPLER CONFIGURATION ===")
+        print(f"Parameters to optimize:")
+        for param, values in search_space.items():
+            print(f"  {param}: {len(values)} values {values}")
+        print(f"Total possible combinations: {total_combinations:,}")
+        print(f"GridSampler will test all {total_combinations:,} combinations")
+        
+        # Set seed for reproducible results
+        sampler = GridSampler(search_space=search_space, seed=42)
+    else:
+        sampler = TPESampler()
+    
+    if optimization_approach == "multi_objective":
         study = optuna.create_study(
             storage=storage_url,
             study_name=f"vllm_tuning_run{STUDY_ID}_multi",
@@ -215,6 +305,7 @@ def main():
             storage=storage_url,
             study_name=f"vllm_tuning_run{STUDY_ID}_single",
             direction="maximize",
+            sampler=sampler,
             load_if_exists=True
         )
         
@@ -228,9 +319,13 @@ def main():
         print("Result: Highest throughput configuration (latency not considered)")
 
     print(f"\nStarting Optuna trials with {optimization_approach} approach...")
-    print(f"Will run {n_trials} optimization trials")
     
-    study.optimize(objective_function, n_trials=n_trials)
+    if sampler_name == "grid":
+        print(f"Will run ALL grid combinations (no n_trials limit)")
+        study.optimize(objective_function)
+    else:
+        print(f"Will run {n_trials} optimization trials")
+        study.optimize(objective_function, n_trials=n_trials)
 
     print("\nOptimization Results:")
     if optimization_approach == "multi_objective":
