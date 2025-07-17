@@ -46,9 +46,9 @@ parameters:
     name: "cuda-graph-sizes"
     enabled: true
     range:
-      start: 64
+      start: 8
       end: 16384
-      step: 8
+      step: 64
 
   long_prefill_token_threshold:
     name: "long-prefill-token-threshold"
