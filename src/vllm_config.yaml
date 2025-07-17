@@ -18,7 +18,7 @@ parameters:
   kv_cache_dtype:
     name: "kv-cache-dtype"
     enabled: true
-    options: ["auto", "fp8", "fp8_e5m2", "fp8_e4m3"]
+    options: ["auto", "fp8", "fp8_e5m2", "fp8_e4m3"] # fp8_e5m2 kv-cache is not supported with fp8 checkpoint
 
   gpu_memory_utilization:
     name: "gpu-memory-utilization"
@@ -30,13 +30,13 @@ parameters:
 
   preemption-mode:
     name: "preemption-mode"
-    enabled: true
+    enabled: false
     options: ["recompute", "swap"]
 
   # Guidellm concurrency parameter
   guidellm_concurrency:
     name: "guidellm-concurrency"
-    enabled: true
+    enabled: false
     range:
       start: 10
       end: 240
@@ -46,25 +46,24 @@ parameters:
     name: "cuda-graph-sizes"
     enabled: true
     range:
-      start: 8
+      start: 64
       end: 16384
       step: 8
 
   long_prefill_token_threshold:
     name: "long-prefill-token-threshold"
     enabled: true
-    range:
-      start: 512
-      end: 4096
-      step: 512
+    options: [0, 256, 512, 1024, 2048, 4096, 8192]
 
-  max_parallel_loading_workers:
-    name: "max-parallel-loading-workers"
+  max_seq_len_to_capture:
+    name: "max-seq-len-to-capture"
     enabled: true
-    range:
-      start: 1
-      end: 8
-      step: 1
+    options: [4096, 8192, 16384]
+
+  max_num_partial_prefills:
+    name: "max-num-partial-prefills"
+    enabled: true
+    options: [1, 2, 4, 8]
 
 optimization:
   # Available approaches:

@@ -11,10 +11,40 @@ def build_vllm_command(model_name, port, candidate_flags):
         "vllm",
         "serve",
         model_name,
-        "--max-model-len", "8192",
+        # "--max-model-len", "8192",
         "--port", str(port),
         "--disable-log-requests"
     ]
+    
+    # Check if we need to add --enable-chunked-prefill based on --max-num-partial-prefills
+    max_partial_prefills_value = None
+    has_enable_chunked_prefill = False
+    
+    i = 0
+    while i < len(candidate_flags):
+        flag = candidate_flags[i]
+        
+        if flag == "--enable-chunked-prefill" or flag.startswith("--enable-chunked-prefill="):
+            has_enable_chunked_prefill = True
+        
+        elif flag == "--max-num-partial-prefills":
+            if i + 1 < len(candidate_flags):
+                try:
+                    max_partial_prefills_value = int(candidate_flags[i + 1])
+                except ValueError:
+                    pass
+        elif flag.startswith("--max-num-partial-prefills="):
+            try:
+                value_str = flag.split("=", 1)[1]
+                max_partial_prefills_value = int(value_str)
+            except (ValueError, IndexError):
+                pass
+        
+        i += 1
+    
+    if max_partial_prefills_value is not None and max_partial_prefills_value > 1 and not has_enable_chunked_prefill:
+        cmd.append("--enable-chunked-prefill")
+    
     cmd += candidate_flags
     return cmd
 
