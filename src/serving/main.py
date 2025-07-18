@@ -147,7 +147,7 @@ def main():
     print("=" * 80)
     
     # Run 5 baseline tests with concurrency levels from 50 to 250 in steps of 50
-    concurrency_levels = [50] #, 100, 150, 200
+    concurrency_levels = [50, 100, 150, 200] #, 100, 150, 200
     baseline_results = []
     
     for concurrency in concurrency_levels:

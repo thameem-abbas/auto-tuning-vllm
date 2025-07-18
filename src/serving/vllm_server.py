@@ -11,7 +11,7 @@ def build_vllm_command(model_name, port, candidate_flags):
         "vllm",
         "serve",
         model_name,
-        # "--max-model-len", "8192",
+        "--max-model-len", "11000",
         "--port", str(port),
         "--disable-log-requests"
     ]

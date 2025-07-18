@@ -112,7 +112,7 @@ def run_single_trial(trial, model=None, max_seconds=None, prompt_tokens=None, ou
         guidellm_args.extend([
             "--rate-type",   "concurrent",
             "--rate",        str(concurrency),
-            "--warmup-percent", "0.2", # Add warmup
+            "--warmup-percent", "0.1", # Add warmup
             "--max-seconds", str(max_seconds),
             "--output-path", bench_file
         ])
