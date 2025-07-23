@@ -79,7 +79,9 @@ optimization:
   
   n_trials: 200
 
-  # choose between ["botorch", "nsga2", "tpe", "random", "grid"]
+  # Choose between ["botorch", "nsga2", "tpe", "random", "grid"]
+  # BoTorch is particularly effective for parallel optimization across multiple GPUs
+  # as it can suggest multiple candidates simultaneously and learn from parallel trials
   sampler: "botorch"
 
 settings:

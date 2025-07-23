@@ -115,13 +115,31 @@ def build_grid_search_space(config):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='vLLM Performance Optimization with MLPerf')
+    parser = argparse.ArgumentParser(
+        description='vLLM Performance Optimization with MLPerf',
+        epilog="""
+Examples:
+  # Regular single-GPU optimization
+  python src/serving/main.py --n-trials 50
+  
+  # Parallel optimization on GPU 0 and 1
+  python src/serving/main.py --parallel --gpus "0,1" --n-trials 20
+  
+  # Parallel optimization on 4 GPUs
+  python src/serving/main.py --parallel --gpus "0,1,2,3" --n-trials 40
+        """,
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument('--model', type=str, 
                         help='HuggingFace model name (default: meta-llama/Llama-3.1-8B-Instruct)')
     parser.add_argument('--n-trials', type=int, 
                         help='Number of optimization trials (overrides config)')
     parser.add_argument('--dataset', type=str,
                         help='Dataset for MLPerf: local path to dataset file (default: datasets/cnn_eval.json)')
+    parser.add_argument('--parallel', action='store_true',
+                        help='Enable parallel optimization across multiple GPUs (works with BoTorch)')
+    parser.add_argument('--gpus', type=str, default="0,1",
+                        help='Comma-separated list of GPU IDs for parallel optimization (default: "0,1")')
     
     args = parser.parse_args()
     
@@ -206,17 +224,29 @@ def main():
             STUDY_DIR, STUDY_ID
         )
     
-    print(f"Using single-objective optimization with {sampler_name} sampler")
-    print("Result: Maximize tokens per second using MLPerf")
-
-    print(f"\nStarting MLPerf optimization trials...")
-    
-    if sampler_name == "grid":
-        print(f"Will run ALL grid combinations (no n_trials limit)")
-        study.optimize(objective_function)
+    # Check if parallel optimization is requested
+    if args.parallel:
+        gpu_ids = [int(gpu.strip()) for gpu in args.gpus.split(',')]
+        print(f"Using parallel optimization with {sampler_name} sampler on GPUs: {gpu_ids}")
+        print("Result: Maximize tokens per second using MLPerf with parallel trials")
+        
+        from src.serving.optimization import run_parallel_trials
+        study = run_parallel_trials(
+            study, model, dataset, vllm_config, 
+            STUDY_DIR, STUDY_ID, gpu_ids, n_trials
+        )
     else:
-        print(f"Will run {n_trials} optimization trials")
-        study.optimize(objective_function, n_trials=n_trials)
+        print(f"Using single-objective optimization with {sampler_name} sampler")
+        print("Result: Maximize tokens per second using MLPerf")
+
+        print(f"\nStarting MLPerf optimization trials...")
+        
+        if sampler_name == "grid":
+            print(f"Will run ALL grid combinations (no n_trials limit)")
+            study.optimize(objective_function)
+        else:
+            print(f"Will run {n_trials} optimization trials")
+            study.optimize(objective_function, n_trials=n_trials)
 
     print("\nMLPerf Optimization Results:")
     print(f"Best throughput achieved: {study.best_trial.value:.2f} tokens/s")

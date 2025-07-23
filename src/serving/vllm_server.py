@@ -6,7 +6,7 @@ import signal
 import json
 from src.serving.utils import check_port_available, get_last_log_lines
 
-def build_vllm_command(model_name, port, candidate_flags):
+def build_vllm_command(model_name, port, candidate_flags, gpu_id=0):
     cmd = [
         "vllm",
         "serve",
@@ -49,14 +49,17 @@ def build_vllm_command(model_name, port, candidate_flags):
     cmd += candidate_flags
     return cmd
 
-def start_vllm_server(cmd, ready_pattern="Application startup complete", timeout=30000, log_file=None):
+def start_vllm_server(cmd, ready_pattern="Application startup complete", timeout=30000, log_file=None, gpu_id=0):
     if not check_port_available(int(cmd[cmd.index('--port') + 1])):
         raise RuntimeError(f"Port {cmd[cmd.index('--port') + 1]} is already in use")
 
-    print(f"Launching vLLM server {' '.join(cmd)}")
+    print(f"Launching vLLM server on GPU {gpu_id}: {' '.join(cmd)}")
     
     # Set environment variables to help prevent CUDA out of memory issues
-    # env = os.environ.copy()
+    env = os.environ.copy()
+    env['CUDA_VISIBLE_DEVICES'] = str(gpu_id)
+
+    # Set environment variables to help prevent CUDA out of memory issues
     # env['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
     
     # print("Setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to prevent CUDA memory fragmentation")
@@ -71,6 +74,7 @@ def start_vllm_server(cmd, ready_pattern="Application startup complete", timeout
                 text=True,
                 bufsize=1,
                 preexec_fn=os.setsid,
+                env=env
             )
     except FileNotFoundError:
         raise RuntimeError(f"vLLM binary not found. Is vllm installed and in PATH?")
@@ -268,4 +272,115 @@ def cleanup_zombie_vllm_processes():
     except Exception as e:
         print(f"Warning: Cleanup failed: {str(e)}")
         
-    print("Cleanup complete") 
+    print("Cleanup complete")
+
+def cleanup_zombie_vllm_processes_on_ports(ports):
+    """Clean up any zombie vLLM processes that might be blocking the specified ports."""
+    print(f"Checking for zombie vLLM processes on ports: {ports}")
+    
+    for port in ports:
+        try:
+            if check_port_available(port):
+                print(f"Port {port} is available - no cleanup needed")
+                continue
+                
+            print(f"Port {port} is in use - attempting cleanup...")
+            
+            # Try to find processes using this port
+            result = subprocess.run(
+                ["lsof", "-ti", f":{port}"],
+                capture_output=True,
+                text=True
+            )
+            
+            if result.returncode == 0:
+                pids = result.stdout.strip().split('\n')
+                print(f"Found {len(pids)} processes using port {port}: {pids}")
+                
+                # Kill each process
+                for pid in pids:
+                    if pid:
+                        try:
+                            print(f"Killing process {pid} using port {port}...")
+                            os.kill(int(pid), signal.SIGTERM)
+                            time.sleep(1)
+                            # Force kill if still running
+                            try:
+                                os.kill(int(pid), signal.SIGKILL)
+                            except ProcessLookupError:
+                                pass  # Process already terminated
+                        except (ProcessLookupError, ValueError):
+                            pass  # Process already terminated or invalid PID
+                            
+        except Exception as e:
+            print(f"Warning: Cleanup failed for port {port}: {str(e)}")
+    
+    # Wait a bit for processes to clean up
+    time.sleep(3)
+    print("Cleanup complete for all ports")
+
+def start_parallel_vllm_servers(model_name, base_port=8000, gpu_ids=[0, 1], candidate_flags=[], log_dir="logs"):
+    """
+    Start multiple vLLM servers in parallel on different GPUs for Optuna/BoTorch trials.
+    
+    Args:
+        model_name: The model to serve
+        base_port: Starting port number (will use base_port, base_port+1, etc.)
+        gpu_ids: List of GPU IDs to use
+        candidate_flags: Additional flags for vLLM
+        log_dir: Directory to store log files
+        
+    Returns:
+        List of tuples: [(process, port, gpu_id), ...]
+    """
+    import os
+    
+    # Create log directory if it doesn't exist
+    os.makedirs(log_dir, exist_ok=True)
+    
+    # Cleanup any existing processes on the ports we plan to use
+    ports = [base_port + i for i in range(len(gpu_ids))]
+    cleanup_zombie_vllm_processes_on_ports(ports)
+    
+    servers = []
+    
+    for i, gpu_id in enumerate(gpu_ids):
+        port = base_port + i
+        log_file = os.path.join(log_dir, f"vllm_gpu_{gpu_id}_port_{port}.log")
+        
+        print(f"Starting vLLM server on GPU {gpu_id}, port {port}")
+        
+        try:
+            # Build command for this GPU
+            cmd = build_vllm_command(model_name, port, candidate_flags, gpu_id)
+            
+            # Start server
+            proc = start_vllm_server(cmd, log_file=log_file, gpu_id=gpu_id)
+            
+            servers.append((proc, port, gpu_id))
+            print(f"✓ vLLM server started on GPU {gpu_id}, port {port}")
+            
+        except Exception as e:
+            print(f"✗ Failed to start vLLM server on GPU {gpu_id}: {str(e)}")
+            # Clean up any successfully started servers
+            for proc, _, _ in servers:
+                stop_vllm_server(proc)
+            raise
+    
+    print(f"Successfully started {len(servers)} vLLM servers")
+    return servers
+
+def stop_parallel_vllm_servers(servers):
+    """
+    Stop multiple vLLM servers.
+    
+    Args:
+        servers: List of tuples from start_parallel_vllm_servers()
+    """
+    print(f"Stopping {len(servers)} vLLM servers...")
+    
+    for proc, port, gpu_id in servers:
+        print(f"Stopping server on GPU {gpu_id}, port {port}")
+        stop_vllm_server(proc)
+    
+    print("All servers stopped") 

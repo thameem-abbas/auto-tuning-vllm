@@ -2,7 +2,7 @@ import subprocess
 import os
 from src.serving.utils import get_last_log_lines
 
-def run_mlperf(model_name, dataset_path, trial_dir, log_file):
+def run_mlperf(model_name, dataset_path, trial_dir, log_file, port=8000):
     """
     Run MLPerf benchmark with the SUT_VLLM_SingleReplica.py script
     
@@ -11,6 +11,7 @@ def run_mlperf(model_name, dataset_path, trial_dir, log_file):
         dataset_path: Path to dataset file
         trial_dir: Directory for this specific trial (baseline/, trial_1/, etc.)
         log_file: Path to log file for MLPerf console output
+        port: Port number for the vLLM server (default: 8000)
     
     Returns:
         Path to the generated mlperf_log_summary.txt file
@@ -28,9 +29,9 @@ def run_mlperf(model_name, dataset_path, trial_dir, log_file):
     cmd = [
         "python3", "SUT_VLLM_SingleReplica.py",
         "--model_name", model_name,
-        "--api-server-url", "http://0.0.0.0:8000",
+        "--api-server-url", f"http://0.0.0.0:{port}",
         # "--print-timing",
-        "--batch_size", "13368",
+        "--batch_size", "32",
         # "--print-histogram",
         # "--sort-by-token-contents",
         # "--enable-metrics-csv",
