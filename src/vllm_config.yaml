@@ -13,12 +13,18 @@ parameters:
   block_size:
     name: "block-size"
     enabled: true
-    options: [8, 16, 32, 64, 128]
+    options: [16, 32]
+
+  max_num_seqs:
+    name: "max-num-seqs"
+    enabled: true
+    options: [64, 128, 192, 256, 384, 512]
 
   kv_cache_dtype:
     name: "kv-cache-dtype"
     enabled: true
-    options: ["auto", "fp8", "fp8_e5m2", "fp8_e4m3"] # fp8_e5m2 kv-cache is not supported with fp8 checkpoint
+    options: ["fp8"] # fp8_e5m2 kv-cache is not supported with fp8 checkpoint  
+    # "auto" 
 
   gpu_memory_utilization:
     name: "gpu-memory-utilization"
@@ -36,7 +42,7 @@ parameters:
   # Guidellm concurrency parameter
   guidellm_concurrency:
     name: "guidellm-concurrency"
-    enabled: true
+    enabled: false
     range:
       start: 10
       end: 240
@@ -47,17 +53,17 @@ parameters:
     enabled: true
     range:
       start: 8
-      end: 16384
+      end: 16328
       step: 64
 
   long_prefill_token_threshold:
     name: "long-prefill-token-threshold"
     enabled: true
-    options: [0, 256, 512, 1024, 2048, 4096, 8192]
+    options: [0, 256, 512, 1024, 2048]
 
   max_seq_len_to_capture:
     name: "max-seq-len-to-capture"
-    enabled: true
+    enabled: false
     options: [4096, 8192, 16384]
 
   max_num_partial_prefills:

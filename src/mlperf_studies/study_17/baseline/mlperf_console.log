@@ -1,0 +1,368 @@
+INFO 07-22 20:48:16 [__init__.py:243] Automatically detected platform cuda.
+/root/rehan/mlperf-inference-5.1-redhat/language/llama3.1-8b/SUT_VLLM_SingleReplica.py:11: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+  import pkg_resources
+================================================================================
+COMMAND LINE AND EXECUTABLE INFORMATION
+================================================================================
+Executable: /root/rehan/.venv/bin/python3
+Command line: SUT_VLLM_SingleReplica.py --model_name meta-llama/Llama-3.1-8B --batch_size 32 --max_model_len 8192 --num_gpus 1 --output-log-dir /root/rehan/src/mlperf_studies/study_17/baseline --dataset_path /root/rehan/datasets/cnn_eval.json
+================================================================================
+Current date and time: 2025-07-22 20:48:20
+================================================================================
+Installed Python packages:
+  aiohappyeyeballs               2.6.1
+  aiohttp                        3.12.7
+  aiosignal                      1.3.2
+  airportsdata                   20250523
+  alembic                        1.16.1
+  annotated-types                0.7.0
+  anyio                          4.9.0
+  astor                          0.8.1
+  attrs                          25.3.0
+  autocommand                    2.2.2
+  backports.tarfile              1.2.0
+  blake3                         1.0.5
+  botorch                        0.9.5
+  bottle                         0.13.3
+  cachetools                     6.0.0
+  certifi                        2025.4.26
+  charset-normalizer             3.4.2
+  choreographer                  1.0.9
+  click                          8.1.8
+  cloudpickle                    3.1.1
+  colorama                       0.4.6
+  colorlog                       6.9.0
+  compressed-tensors             0.9.4
+  contourpy                      1.3.2
+  cupy-cuda12x                   13.4.1
+  cycler                         0.12.1
+  datasets                       3.6.0
+  Deprecated                     1.2.18
+  depyf                          0.18.0
+  dill                           0.3.8
+  diskcache                      5.6.3
+  distro                         1.9.0
+  dnspython                      2.7.0
+  einops                         0.8.1
+  email-validator                2.2.0
+  fastapi                        0.115.12
+  fastapi-cli                    0.0.7
+  fastrlock                      0.8.3
+  filelock                       3.18.0
+  fonttools                      4.58.4
+  frozenlist                     1.6.0
+  fsspec                         2025.3.0
+  ftfy                           6.3.1
+  gguf                           0.17.0
+  giturlparse                    0.12.0
+  googleapis-common-protos       1.70.0
+  gpytorch                       1.11
+  greenlet                       3.2.2
+  grpcio                         1.72.1
+  guidellm                       0.1.0.dev0
+  h11                            0.16.0
+  h2                             4.2.0
+  hf-xet                         1.1.2
+  hpack                          4.1.0
+  httpcore                       1.0.9
+  httptools                      0.6.4
+  httpx                          0.28.1
+  huggingface-hub                0.32.4
+  hyperframe                     6.1.0
+  idna                           3.10
+  importlib-metadata             8.6.1
+  inflect                        7.3.1
+  interegular                    0.3.3
+  jaraco.collections             5.1.0
+  jaraco.context                 5.3.0
+  jaraco.functools               4.0.1
+  jaraco.text                    3.12.1
+  jaxtyping                      0.3.2
+  jinja2                         3.1.6
+  jiter                          0.10.0
+  joblib                         1.5.1
+  jsonschema                     4.24.0
+  jsonschema-specifications      2025.4.1
+  kaleido                        1.0.0
+  kiwisolver                     1.4.8
+  lark                           1.2.2
+  linear-operator                0.5.1
+  llguidance                     0.7.26
+  llvmlite                       0.44.0
+  lm-format-enforcer             0.10.11
+  logistro                       1.1.0
+  loguru                         0.7.3
+  mako                           1.3.10
+  markdown-it-py                 3.0.0
+  MarkupSafe                     3.0.2
+  matplotlib                     3.10.3
+  mdurl                          0.1.2
+  mistral-common                 1.5.6
+  mlc-scripts                    1.0.2
+  mlcflow                        1.0.18
+  mlcommons-loadgen              5.0.25
+  more-itertools                 10.3.0
+  mpmath                         1.3.0
+  msgpack                        1.1.0
+  msgspec                        0.19.0
+  multidict                      6.4.4
+  multipledispatch               1.0.0
+  multiprocess                   0.70.16
+  mypy-extensions                1.1.0
+  narwhals                       1.44.0
+  nest-asyncio                   1.6.0
+  networkx                       3.5
+  ninja                          1.11.1.4
+  numba                          0.61.2
+  numpy                          2.2.6
+  nvidia-cublas-cu12             12.6.4.1
+  nvidia-cuda-cupti-cu12         12.6.80
+  nvidia-cuda-nvrtc-cu12         12.6.77
+  nvidia-cuda-runtime-cu12       12.6.77
+  nvidia-cudnn-cu12              9.5.1.17
+  nvidia-cufft-cu12              11.3.0.4
+  nvidia-cufile-cu12             1.11.1.6
+  nvidia-curand-cu12             10.3.7.77
+  nvidia-cusolver-cu12           11.7.1.2
+  nvidia-cusparse-cu12           12.5.4.2
+  nvidia-cusparselt-cu12         0.6.3
+  nvidia-nccl-cu12               2.26.2
+  nvidia-nvjitlink-cu12          12.6.85
+  nvidia-nvtx-cu12               12.6.77
+  openai                         1.83.0
+  opencv-python-headless         4.11.0.86
+  opentelemetry-api              1.33.1
+  opentelemetry-exporter-otlp    1.33.1
+  opentelemetry-exporter-otlp-proto-common 1.33.1
+  opentelemetry-exporter-otlp-proto-grpc 1.33.1
+  opentelemetry-exporter-otlp-proto-http 1.33.1
+  opentelemetry-proto            1.33.1
+  opentelemetry-sdk              1.33.1
+  opentelemetry-semantic-conventions 0.54b1
+  opentelemetry-semantic-conventions-ai 0.4.9
+  opt-einsum                     3.4.0
+  optuna                         4.4.0
+  optuna-dashboard               0.18.0
+  optuna-integration             4.4.0
+  orjson                         3.10.18
+  outlines                       0.1.11
+  outlines-core                  0.1.26
+  packaging                      25.0
+  panda                          0.3.1
+  pandas                         2.3.0
+  partial-json-parser            0.2.1.1.post5
+  pillow                         11.2.1
+  pip                            25.1.1
+  platformdirs                   4.2.2
+  plotly                         6.1.2
+  prometheus-client              0.22.1
+  prometheus-fastapi-instrumentator 7.1.0
+  propcache                      0.3.1
+  protobuf                       5.29.5
+  psutil                         7.0.0
+  py-cpuinfo                     9.0.0
+  pyarrow                        20.0.0
+  pybind11                       3.0.0
+  pycountry                      24.6.1
+  pydantic                       2.11.7
+  pydantic-core                  2.33.2
+  pydantic-settings              2.9.1
+  pygments                       2.19.1
+  pyparsing                      3.2.3
+  pyre-extensions                0.0.32
+  pyro-api                       0.1.2
+  pyro-ppl                       1.9.1
+  python-dateutil                2.9.0.post0
+  python-dotenv                  1.1.0
+  python-json-logger             3.3.0
+  python-multipart               0.0.20
+  pytz                           2025.2
+  PyYAML                         6.0.2
+  pyzmq                          26.4.0
+  ray                            2.46.0
+  referencing                    0.36.2
+  regex                          2024.11.6
+  requests                       2.32.3
+  rich                           14.0.0
+  rich-toolkit                   0.14.7
+  rpds-py                        0.25.1
+  safetensors                    0.5.3
+  scikit-learn                   1.7.0
+  scipy                          1.15.3
+  seaborn                        0.13.2
+  sentencepiece                  0.2.0
+  setproctitle                   1.2.2
+  setuptools                     79.0.1
+  shellingham                    1.5.4
+  simplejson                     3.20.1
+  six                            1.17.0
+  sniffio                        1.3.1INFO:root:--------------------------------------------------
+INFO:root:Using local vLLM model
+INFO:Llama-8B-Dataset:Loading dataset...
+INFO:Llama-8B-Dataset:Finished loading dataset.
+INFO:root:Dataset Max          = 2540
+INFO:root:Dataset Min          = 79
+INFO:root:Dataset TotalSamples = 13368
+INFO:root:Loading model 'meta-llama/Llama-3.1-8B' on single GPU...
+
+  sqlalchemy                     2.0.41
+  starlette                      0.46.2
+  sympy                          1.14.0
+  threadpoolctl                  3.6.0
+  tiktoken                       0.9.0
+  tokenizers                     0.21.1
+  tomli                          2.0.1
+  torch                          2.7.0
+  torchaudio                     2.7.0
+  torchvision                    0.22.0
+  tqdm                           4.67.1
+  transformers                   4.52.4
+  triton                         3.3.0
+  typeguard                      2.13.3
+  typer                          0.16.0
+  typing-extensions              4.14.0
+  typing-inspect                 0.9.0
+  typing-inspection              0.4.1
+  tzdata                         2025.2
+  urllib3                        2.4.0
+  uvicorn                        0.34.3
+  uvloop                         0.21.0
+  vllm                           0.9.0.1
+  wadler-lindig                  0.1.7
+  watchfiles                     1.0.5
+  wcwidth                        0.2.13
+  websockets                     15.0.1
+  wheel                          0.45.1
+  wrapt                          1.17.2
+  xformers                       0.0.30
+  xgrammar                       0.1.19
+  xxhash                         3.5.0
+  yarl                           1.20.0
+  zipp                           3.22.0
+================================================================================
+
+Set TORCH_CUDA_ARCH_LIST to 8.9
+INFO 07-22 20:48:23 [__init__.py:31] Available plugins for group vllm.general_plugins:
+INFO 07-22 20:48:23 [__init__.py:33] - lora_filesystem_resolver -> vllm.plugins.lora_resolvers.filesystem_resolver:register_filesystem_resolver
+INFO 07-22 20:48:23 [__init__.py:36] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 07-22 20:48:38 [config.py:793] This model supports multiple tasks: {'embed', 'classify', 'reward', 'score', 'generate'}. Defaulting to 'generate'.
+INFO 07-22 20:48:38 [config.py:2118] Chunked prefill is enabled with max_num_batched_tokens=8192.
+WARNING 07-22 20:48:41 [utils.py:2531] We must use the `spawn` multiprocessing start method. Overriding VLLM_WORKER_MULTIPROC_METHOD to 'spawn'. See https://docs.vllm.ai/en/latest/usage/troubleshooting.html#python-multiprocessing for more information. Reason: CUDA is initialized
+INFO 07-22 20:48:44 [__init__.py:243] Automatically detected platform cuda.
+INFO 07-22 20:48:47 [core.py:438] Waiting for init message from front-end.
+INFO 07-22 20:48:47 [__init__.py:31] Available plugins for group vllm.general_plugins:
+INFO 07-22 20:48:47 [__init__.py:33] - lora_filesystem_resolver -> vllm.plugins.lora_resolvers.filesystem_resolver:register_filesystem_resolver
+INFO 07-22 20:48:47 [__init__.py:36] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 07-22 20:48:47 [core.py:65] Initializing a V1 LLM engine (v0.9.0.1) with config: model='meta-llama/Llama-3.1-8B', speculative_config=None, tokenizer='meta-llama/Llama-3.1-8B', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, override_neuron_config={}, tokenizer_revision=None, trust_remote_code=True, dtype=torch.bfloat16, max_seq_len=8192, download_dir=None, load_format=LoadFormat.AUTO, tensor_parallel_size=1, pipeline_parallel_size=1, disable_custom_all_reduce=False, quantization=None, enforce_eager=False, kv_cache_dtype=auto,  device_config=cuda, decoding_config=DecodingConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_backend=''), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None), seed=0, served_model_name=meta-llama/Llama-3.1-8B, num_scheduler_steps=1, multi_step_stream_outputs=True, enable_prefix_caching=True, chunked_prefill_enabled=True, use_async_output_proc=True, pooler_config=None, compilation_config={"level": 3, "custom_ops": ["none"], "splitting_ops": ["vllm.unified_attention", "vllm.unified_attention_with_output"], "compile_sizes": [], "inductor_compile_config": {"enable_auto_functionalized_v2": false}, "use_cudagraph": true, "cudagraph_num_of_warmups": 1, "cudagraph_capture_sizes": [512, 504, 496, 488, 480, 472, 464, 456, 448, 440, 432, 424, 416, 408, 400, 392, 384, 376, 368, 360, 352, 344, 336, 328, 320, 312, 304, 296, 288, 280, 272, 264, 256, 248, 240, 232, 224, 216, 208, 200, 192, 184, 176, 168, 160, 152, 144, 136, 128, 120, 112, 104, 96, 88, 80, 72, 64, 56, 48, 40, 32, 24, 16, 8, 4, 2, 1], "max_capture_size": 512}
+WARNING 07-22 20:48:47 [utils.py:2671] Methods determine_num_available_blocks,device_config,get_cache_block_size_bytes,initialize_cache not implemented in <vllm.v1.worker.gpu_worker.Worker object at 0x7f19798f6e40>
+INFO 07-22 20:48:53 [parallel_state.py:1064] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, TP rank 0, EP rank 0
+WARNING 07-22 20:48:53 [topk_topp_sampler.py:58] FlashInfer is not available. Falling back to the PyTorch-native implementation of top-p & top-k sampling. For the best performance, please install FlashInfer.
+INFO 07-22 20:48:53 [gpu_model_runner.py:1531] Starting to load model meta-llama/Llama-3.1-8B...
+INFO 07-22 20:48:53 [cuda.py:217] Using Flash Attention backend on V1 engine.
+INFO 07-22 20:48:53 [backends.py:35] Using InductorAdaptor
+INFO 07-22 20:48:54 [weight_utils.py:291] Using model weights format ['*.safetensors']
+INFO 07-22 20:48:55 [weight_utils.py:307] Time spent downloading weights for meta-llama/Llama-3.1-8B: 0.564889 seconds
+Loading safetensors checkpoint shards:   0% Completed | 0/4 [00:00<?, ?it/s]
+Loading safetensors checkpoint shards:  25% Completed | 1/4 [00:00<00:00,  6.68it/s]
+Loading safetensors checkpoint shards:  50% Completed | 2/4 [00:00<00:00,  2.14it/s]
+Loading safetensors checkpoint shards:  75% Completed | 3/4 [00:01<00:00,  1.71it/s]
+Loading safetensors checkpoint shards: 100% Completed | 4/4 [00:02<00:00,  1.56it/s]
+Loading safetensors checkpoint shards: 100% Completed | 4/4 [00:02<00:00,  1.75it/s]
+
+INFO 07-22 20:48:58 [default_loader.py:280] Loading weights took 2.34 seconds
+INFO 07-22 20:48:58 [gpu_model_runner.py:1549] Model loading took 14.9889 GiB and 5.230546 seconds
+INFO 07-22 20:49:04 [backends.py:459] Using cache directory: /root/.cache/vllm/torch_compile_cache/5eb6de1f46/rank_0_0 for vLLM's torch.compile
+INFO 07-22 20:49:04 [backends.py:469] Dynamo bytecode transform time: 6.07 s
+INFO 07-22 20:49:08 [backends.py:132] Directly load the compiled graph(s) for shape None from the cache, took 4.059 s
+INFO 07-22 20:49:09 [monitor.py:33] torch.compile takes 6.07 s in total
+INFO 07-22 20:49:10 [kv_cache_utils.py:637] GPU KV cache size: 181,552 tokens
+INFO 07-22 20:49:10 [kv_cache_utils.py:640] Maximum concurrency for 8,192 tokens per request: 22.16x
+INFO 07-22 20:49:28 [gpu_model_runner.py:1933] Graph capturing finished in 18 secs, took 0.52 GiB
+INFO 07-22 20:49:28 [core.py:167] init engine (profile, create kv cache, warmup model) took 30.48 seconds
+INFO:root:Model loaded successfully.
+INFO:root:MLPerf Loadgen: Starting test with 13368 samples in Offline mode...
+INFO:root:Model: meta-llama/Llama-3.1-8B, Test Mode: performance
+INFO:root:SUT issue_query: Received 10 queries from Loadgen. Batch size: 32. Number of batches: 1.
+--------------START CONFIG---------------------------
+
+model='meta-llama/Llama-3.1-8B', speculative_config=None, tokenizer='meta-llama/Llama-3.1-8B', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, override_neuron_config={}, tokenizer_revision=None, trust_remote_code=True, dtype=torch.bfloat16, max_seq_len=8192, download_dir=None, load_format=LoadFormat.AUTO, tensor_parallel_size=1, pipeline_parallel_size=1, disable_custom_all_reduce=False, quantization=None, enforce_eager=False, kv_cache_dtype=auto,  device_config=cuda, decoding_config=DecodingConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_backend=''), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None), seed=0, served_model_name=meta-llama/Llama-3.1-8B, num_scheduler_steps=1, multi_step_stream_outputs=True, enable_prefix_caching=True, chunked_prefill_enabled=True, use_async_output_proc=True, pooler_config=None, compilation_config={"level": 3, "custom_ops": ["none"], "splitting_ops": ["vllm.unified_attention", "vllm.unified_attention_with_output"], "compile_sizes": [], "inductor_compile_config": {"enable_auto_functionalized_v2": false}, "use_cudagraph": true, "cudagraph_num_of_warmups": 1, "cudagraph_capture_sizes": [512, 504, 496, 488, 480, 472, 464, 456, 448, 440, 432, 424, 416, 408, 400, 392, 384, 376, 368, 360, 352, 344, 336, 328, 320, 312, 304, 296, 288, 280, 272, 264, 256, 248, 240, 232, 224, 216, 208, 200, 192, 184, 176, 168, 160, 152, 144, 136, 128, 120, 112, 104, 96, 88, 80, 72, 64, 56, 48, 40, 32, 24, 16, 8, 4, 2, 1], "max_capture_size": 512}
+ModelConfig(model='meta-llama/Llama-3.1-8B', task='generate', tokenizer='meta-llama/Llama-3.1-8B', tokenizer_mode='auto', trust_remote_code=True, dtype=torch.bfloat16, seed=0, hf_config_path=None, allowed_local_media_path='', revision=None, code_revision=None, rope_scaling={}, rope_theta=None, tokenizer_revision=None, max_model_len=8192, spec_target_max_model_len=None, quantization=None, enforce_eager=False, max_seq_len_to_capture=8192, max_logprobs=20, disable_sliding_window=False, disable_cascade_attn=False, skip_tokenizer_init=False, enable_prompt_embeds=False, served_model_name='meta-llama/Llama-3.1-8B', limit_mm_per_prompt={}, use_async_output_proc=True, config_format=<ConfigFormat.AUTO: 'auto'>, hf_token=None, hf_overrides=None, mm_processor_kwargs=None, disable_mm_preprocessor_cache=False, override_neuron_config={}, pooler_config=None, override_pooler_config=None, logits_processor_pattern=None, generation_config='auto', override_generation_config={}, enable_sleep_mode=False, model_impl='auto')
+CacheConfig(block_size=16, gpu_memory_utilization=0.9, swap_space=4, cache_dtype='auto', is_attention_free=False, num_gpu_blocks_override=None, sliding_window=None, enable_prefix_caching=True, prefix_caching_hash_algo='builtin', cpu_offload_gb=0, calculate_kv_scales=False, num_gpu_blocks=11347, num_cpu_blocks=None)
+--------------END   CONFIG---------------------------
+
+Adding requests:   0%|          | 0/10 [00:00<?, ?it/s]Adding requests: 100%|██████████| 10/10 [00:00<00:00, 5383.52it/s]
+Processed prompts:   0%|          | 0/10 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:  10%|█         | 1/10 [00:03<00:35,  3.89s/it, est. speed input: 446.22 toks/s, output: 32.90 toks/s]Processed prompts: 100%|██████████| 10/10 [00:03<00:00,  2.55it/s, est. speed input: 2461.90 toks/s, output: 326.86 toks/s]
+INFO:root:Query ID: 417557440, Query Index: 6911, Output Tokens: 128
+INFO:root:Query ID: 417557472, Query Index: 9215, Output Tokens: 128
+INFO:root:Query ID: 417557504, Query Index: 13221, Output Tokens: 128
+INFO:root:Query ID: 417557536, Query Index: 1399, Output Tokens: 128
+INFO:root:Query ID: 417557568, Query Index: 6375, Output Tokens: 128
+INFO:root:Query ID: 417557600, Query Index: 5207, Output Tokens: 128
+INFO:root:Query ID: 417557632, Query Index: 6870, Output Tokens: 128
+INFO:root:Query ID: 417557664, Query Index: 4586, Output Tokens: 128
+INFO:root:Query ID: 417557696, Query Index: 5981, Output Tokens: 128
+INFO:root:Query ID: 417557728, Query Index: 6175, Output Tokens: 128
+INFO:root:SUT flush_queries: Flushing (no specific action for offline in this demo).
+INFO:root:
+MLPerf Loadgen test finished.
+INFO:root:Main: Program finished.
+INFO:root:Run Completed!
+[rank0]:[W722 20:49:34.377089563 ProcessGroupNCCL.cpp:1476] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+================================================
+MLPerf Results Summary
+================================================
+SUT name : PySUT
+Scenario : Offline
+Mode     : PerformanceOnly
+Samples per second: 2.55091
+Tokens per second: 326.517
+Result is : VALID
+  Min duration satisfied : Yes
+  Min queries satisfied : Yes
+  Early stopping satisfied: Yes
+
+================================================
+Additional Stats
+================================================
+Min latency (ns)                : 3920166928
+Max latency (ns)                : 3920166928
+Mean latency (ns)               : 3920166928
+50.00 percentile latency (ns)   : 3920166928
+90.00 percentile latency (ns)   : 3920166928
+95.00 percentile latency (ns)   : 3920166928
+97.00 percentile latency (ns)   : 3920166928
+99.00 percentile latency (ns)   : 3920166928
+99.90 percentile latency (ns)   : 3920166928
+
+
+================================================
+Test Parameters Used
+================================================
+samples_per_query : 10
+target_qps : 1
+ttft_latency (ns): 2000000000
+tpot_latency (ns): 100000000
+max_async_queries : 1
+min_duration (ms): 1000
+max_duration (ms): 0
+min_query_count : 1
+max_query_count : 0
+qsl_rng_seed : 1780908523862526354
+sample_index_rng_seed : 14771362308971278857
+schedule_rng_seed : 18209322760996052031
+accuracy_log_rng_seed : 0
+accuracy_log_probability : 0
+accuracy_log_sampling_target : 0
+print_timestamps : 0
+performance_issue_unique : 0
+performance_issue_same : 0
+performance_issue_same_index : 0
+performance_sample_count : 10
+WARNING: sample_concatenate_permutation was set to true. 
+Generated samples per query might be different as the one in the setting.
+Check the generated_samples_per_query line in the detailed log for the real
+samples_per_query value
+
+No warnings encountered during test.
+
+No errors encountered during test.

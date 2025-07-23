@@ -1,0 +1,612 @@
+INFO 07-23 02:01:30 [__init__.py:243] Automatically detected platform cuda.
+/root/rehan/mlperf-inference-5.1-redhat/language/llama3.1-8b/SUT_VLLM_SingleReplica.py:11: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+  import pkg_resources
+================================================================================
+COMMAND LINE AND EXECUTABLE INFORMATION
+================================================================================
+Executable: /root/rehan/.venv/bin/python3
+Command line: SUT_VLLM_SingleReplica.py --model_name meta-llama/Llama-3.1-8B --api-server-url http://0.0.0.0:8000 --batch_size 32 --output-log-dir /root/rehan/src/mlperf_studies/study_28/baseline --dataset_path /root/rehan/datasets/cnn_eval.json
+================================================================================
+Current date and time: 2025-07-23 02:01:31
+================================================================================
+Installed Python packages:
+  aiohappyeyeballs               2.6.1
+  aiohttp                        3.12.7
+  aiosignal                      1.3.2
+  airportsdata                   20250523
+  alembic                        1.16.1
+  annotated-types                0.7.0
+  anyio                          4.9.0
+  astor                          0.8.1
+  attrs                          25.3.0
+  autocommand                    2.2.2
+  backports.tarfile              1.2.0
+  blake3                         1.0.5
+  botorch                        0.9.5
+  bottle                         0.13.3
+  cachetools                     6.0.0
+  certifi                        2025.4.26
+  charset-normalizer             3.4.2
+  choreographer                  1.0.9
+  click                          8.1.8
+  cloudpickle                    3.1.1
+  colorama                       0.4.6
+  colorlog                       6.9.0
+  compressed-tensors             0.9.4
+  contourpy                      1.3.2
+  cupy-cuda12x                   13.4.1
+  cycler                         0.12.1
+  datasets                       3.6.0
+  Deprecated                     1.2.18
+  depyf                          0.18.0
+  dill                           0.3.8
+  diskcache                      5.6.3
+  distro                         1.9.0
+  dnspython                      2.7.0
+  einops                         0.8.1
+  email-validator                2.2.0
+  fastapi                        0.115.12
+  fastapi-cli                    0.0.7
+  fastrlock                      0.8.3
+  filelock                       3.18.0
+  fonttools                      4.58.4
+  frozenlist                     1.6.0
+  fsspec                         2025.3.0
+  ftfy                           6.3.1
+  gguf                           0.17.0
+  giturlparse                    0.12.0
+  googleapis-common-protos       1.70.0
+  gpytorch                       1.11
+  greenlet                       3.2.2
+  grpcio                         1.72.1
+  guidellm                       0.1.0.dev0
+  h11                            0.16.0
+  h2                             4.2.0
+  hf-xet                         1.1.2
+  hpack                          4.1.0
+  httpcore                       1.0.9
+  httptools                      0.6.4
+  httpx                          0.28.1
+  huggingface-hub                0.32.4
+  hyperframe                     6.1.0
+  idna                           3.10
+  importlib-metadata             8.6.1
+  inflect                        7.3.1
+  interegular                    0.3.3
+  jaraco.collections             5.1.0
+  jaraco.context                 5.3.0
+  jaraco.functools               4.0.1
+  jaraco.text                    3.12.1
+  jaxtyping                      0.3.2
+  jinja2                         3.1.6
+  jiter                          0.10.0
+  joblib                         1.5.1
+  jsonschema                     4.24.0
+  jsonschema-specifications      2025.4.1
+  kaleido                        1.0.0
+  kiwisolver                     1.4.8
+  lark                           1.2.2
+  linear-operator                0.5.1
+  llguidance                     0.7.26
+  llvmlite                       0.44.0
+  lm-format-enforcer             0.10.11
+  logistro                       1.1.0
+  loguru                         0.7.3
+  mako                           1.3.10
+  markdown-it-py                 3.0.0
+  MarkupSafe                     3.0.2
+  matplotlib                     3.10.3
+  mdurl                          0.1.2
+  mistral-common                 1.5.6
+  mlc-scripts                    1.0.2
+  mlcflow                        1.0.18
+  mlcommons-loadgen              5.0.25
+  more-itertools                 10.3.0
+  mpmath                         1.3.0
+  msgpack                        1.1.0
+  msgspec                        0.19.0
+  multidict                      6.4.4
+  multipledispatch               1.0.0
+  multiprocess                   0.70.16
+  mypy-extensions                1.1.0
+  narwhals                       1.44.0
+  nest-asyncio                   1.6.0
+  networkx                       3.5
+  ninja                          1.11.1.4
+  numba                          0.61.2
+  numpy                          2.2.6
+  nvidia-cublas-cu12             12.6.4.1
+  nvidia-cuda-cupti-cu12         12.6.80
+  nvidia-cuda-nvrtc-cu12         12.6.77
+  nvidia-cuda-runtime-cu12       12.6.77
+  nvidia-cudnn-cu12              9.5.1.17
+  nvidia-cufft-cu12              11.3.0.4
+  nvidia-cufile-cu12             1.11.1.6
+  nvidia-curand-cu12             10.3.7.77
+  nvidia-cusolver-cu12           11.7.1.2
+  nvidia-cusparse-cu12           12.5.4.2
+  nvidia-cusparselt-cu12         0.6.3
+  nvidia-nccl-cu12               2.26.2
+  nvidia-nvjitlink-cu12          12.6.85
+  nvidia-nvtx-cu12               12.6.77
+  openai                         1.83.0
+  opencv-python-headless         4.11.0.86
+  opentelemetry-api              1.33.1
+  opentelemetry-exporter-otlp    1.33.1
+  opentelemetry-exporter-otlp-proto-common 1.33.1
+  opentelemetry-exporter-otlp-proto-grpc 1.33.1
+  opentelemetry-exporter-otlp-proto-http 1.33.1
+  opentelemetry-proto            1.33.1
+  opentelemetry-sdk              1.33.1
+  opentelemetry-semantic-conventions 0.54b1
+  opentelemetry-semantic-conventions-ai 0.4.9
+  opt-einsum                     3.4.0
+  optuna                         4.4.0
+  optuna-dashboard               0.18.0
+  optuna-integration             4.4.0
+  orjson                         3.10.18
+  outlines                       0.1.11
+  outlines-core                  0.1.26
+  packaging                      25.0
+  panda                          0.3.1
+  pandas                         2.3.0
+  partial-json-parser            0.2.1.1.post5
+  pillow                         11.2.1
+  pip                            25.1.1
+  platformdirs                   4.2.2
+  plotly                         6.1.2
+  prometheus-client              0.22.1
+  prometheus-fastapi-instrumentator 7.1.0
+  propcache                      0.3.1
+  protobuf                       5.29.5
+  psutil                         7.0.0
+  py-cpuinfo                     9.0.0
+  pyarrow                        20.0.0
+  pybind11                       3.0.0
+  pycountry                      24.6.1
+  pydantic                       2.11.7
+  pydantic-core                  2.33.2
+  pydantic-settings              2.9.1
+  pygments                       2.19.1
+  pyparsing                      3.2.3
+  pyre-extensions                0.0.32
+  pyro-api                       0.1.2
+  pyro-ppl                       1.9.1
+  python-dateutil                2.9.0.post0
+  python-dotenv                  1.1.0
+  python-json-logger             3.3.0
+  python-multipart               0.0.20
+  pytz                           2025.2
+  PyYAML                         6.0.2
+  pyzmq                          26.4.0
+  ray                            2.46.0
+  referencing                    0.36.2
+  regex                          2024.11.6
+  requests                       2.32.3
+  rich                           14.0.0
+  rich-toolkit                   0.14.7
+  rpds-py                        0.25.1
+  safetensors                    0.5.3
+  scikit-learn                   1.7.0
+  scipy                          1.15.3
+  seaborn                        0.13.2
+  sentencepiece                  0.2.0
+  setproctitle                   1.2.2
+  setuptools                     79.0.1
+  shellingham                    1.5.4
+  simplejson                     3.20.1
+  six                            1.17.0
+  sniffio                        1.3.1INFO:root:--------------------------------------------------
+INFO:root:Using vLLM API server at: http://0.0.0.0:8000
+INFO:Llama-8B-Dataset:Loading dataset...
+INFO:Llama-8B-Dataset:Finished loading dataset.
+INFO:root:Dataset = 13368
+INFO:root:Dataset Max = 2540
+INFO:root:Dataset Min = 79
+INFO:root:Dataset Len = 13368
+INFO:root:Waiting for vLLM API server at http://0.0.0.0:8000 to be ready (timeout: 600s)...
+INFO:root:vLLM API server at http://0.0.0.0:8000 is ready!
+INFO:root:Tokenizer initialized for detokenization
+INFO:root:MLPerf Loadgen: Starting test with 13368 samples in Offline mode...
+INFO:root:Model: meta-llama/Llama-3.1-8B, Test Mode: performance
+INFO:root:API SUT issue_query: Received 13368 queries from Loadgen. Batch size: 32. Number of batches: 418.
+INFO:root:API Query ID: 461701808, Query Index: 4002, Output Tokens: 0
+INFO:root:API Query ID: 461701840, Query Index: 10292, Output Tokens: 0
+INFO:root:API Query ID: 461701872, Query Index: 12834, Output Tokens: 0
+INFO:root:API Query ID: 461701904, Query Index: 10118, Output Tokens: 0
+INFO:root:API Query ID: 461701936, Query Index: 10623, Output Tokens: 0
+INFO:root:API Query ID: 461701968, Query Index: 423, Output Tokens: 0
+INFO:root:API Query ID: 461702000, Query Index: 10588, Output Tokens: 0
+INFO:root:API Query ID: 461702032, Query Index: 12917, Output Tokens: 0
+INFO:root:API Query ID: 461702064, Query Index: 7973, Output Tokens: 0
+INFO:root:API Query ID: 461702096, Query Index: 11566, Output Tokens: 128
+INFO:root:API Query ID: 461702128, Query Index: 10452, Output Tokens: 0
+INFO:root:API Query ID: 461702160, Query Index: 8092, Output Tokens: 128
+INFO:root:API Query ID: 461702192, Query Index: 11178, Output Tokens: 59
+INFO:root:API Query ID: 461702224, Query Index: 595, Output Tokens: 0
+INFO:root:API Query ID: 461702256, Query Index: 3504, Output Tokens: 0
+INFO:root:API Query ID: 461702288, Query Index: 6047, Output Tokens: 0
+INFO:root:API Query ID: 461702320, Query Index: 101, Output Tokens: 0
+INFO:root:API Query ID: 461702352, Query Index: 2381, Output Tokens: 0
+INFO:root:API Query ID: 461702384, Query Index: 11680, Output Tokens: 0
+INFO:root:API Query ID: 461702416, Query Index: 5536, Output Tokens: 0
+INFO:root:API Query ID: 461702448, Query Index: 6340, Output Tokens: 0
+INFO:root:API Query ID: 461702480, Query Index: 8970, Output Tokens: 0
+INFO:root:API Query ID: 461702512, Query Index: 5666, Output Tokens: 0
+INFO:root:API Query ID: 461702544, Query Index: 8663, Output Tokens: 0
+INFO:root:API Query ID: 461702576, Query Index: 1672, Output Tokens: 0
+INFO:root:API Query ID: 461702608, Query Index: 3297, Output Tokens: 0
+INFO:root:API Query ID: 461702640, Query Index: 6250, Output Tokens: 0
+INFO:root:API Query ID: 461702672, Query Index: 2362, Output Tokens: 128
+INFO:root:API Query ID: 461702704, Query Index: 8109, Output Tokens: 0
+INFO:root:API Query ID: 461702736, Query Index: 3186, Output Tokens: 0
+INFO:root:API Query ID: 461702768, Query Index: 743, Output Tokens: 128
+INFO:root:API Query ID: 461702800, Query Index: 12123, Output Tokens: 0
+INFO:root:API Query ID: 461702832, Query Index: 10330, Output Tokens: 0
+INFO:root:API Query ID: 461702864, Query Index: 10177, Output Tokens: 0
+INFO:root:API Query ID: 461702896, Query Index: 9407, Output Tokens: 128
+INFO:root:API Query ID: 461702928, Query Index: 10758, Output Tokens: 0
+INFO:root:API Query ID: 461702960, Query Index: 5096, Output Tokens: 0
+INFO:root:API Query ID: 461702992, Query Index: 8865, Output Tokens: 0
+INFO:root:API Query ID: 461703024, Query Index: 11838, Output Tokens: 0
+INFO:root:API Query ID: 461703056, Query Index: 8889, Output Tokens: 0
+INFO:root:API Query ID: 461703088, Query Index: 11043, Output Tokens: 0
+INFO:root:API Query ID: 461703120, Query Index: 7894, Output Tokens: 0
+INFO:root:API Query ID: 461703152, Query Index: 2200, Output Tokens: 128
+INFO:root:API Query ID: 461703184, Query Index: 11264, Output Tokens: 0
+INFO:root:API Query ID: 461703216, Query Index: 12480, Output Tokens: 0
+INFO:root:API Query ID: 461703248, Query Index: 6451, Output Tokens: 0
+INFO:root:API Query ID: 461703280, Query Index: 2872, Output Tokens: 0
+INFO:root:API Query ID: 461703312, Query Index: 7929, Output Tokens: 0
+INFO:root:API Query ID: 461703344, Query Index: 11842, Output Tokens: 128
+INFO:root:API Query ID: 461703376, Query Index: 10189, Output Tokens: 0
+INFO:root:API Query ID: 461703408, Query Index: 10266, Output Tokens: 0
+INFO:root:API Query ID: 461703440, Query Index: 7265, Output Tokens: 0
+INFO:root:API Query ID: 461703472, Query Index: 2708, Output Tokens: 128
+INFO:root:API Query ID: 461703504, Query Index: 9004, Output Tokens: 0
+INFO:root:API Query ID: 461703536, Query Index: 12348, Output Tokens: 0
+INFO:root:API Query ID: 461703568, Query Index: 4457, Output Tokens: 128
+INFO:root:API Query ID: 461703600, Query Index: 4105, Output Tokens: 72
+INFO:root:API Query ID: 461703632, Query Index: 8625, Output Tokens: 70
+INFO:root:API Query ID: 461703664, Query Index: 11907, Output Tokens: 0
+INFO:root:API Query ID: 461703696, Query Index: 10525, Output Tokens: 0
+INFO:root:API Query ID: 461703728, Query Index: 328, Output Tokens: 0
+INFO:root:API Query ID: 461703760, Query Index: 10585, Output Tokens: 0
+INFO:root:API Query ID: 461703792, Query Index: 9695, Output Tokens: 0
+INFO:root:API Query ID: 461703824, Query Index: 9047, Output Tokens: 128
+INFO:root:API Query ID: 461703856, Query Index: 4659, Output Tokens: 0
+INFO:root:API Query ID: 461703888, Query Index: 9634, Output Tokens: 128
+INFO:root:API Query ID: 461703920, Query Index: 9817, Output Tokens: 128
+INFO:root:API Query ID: 461703952, Query Index: 13295, Output Tokens: 0
+INFO:root:API Query ID: 461703984, Query Index: 10843, Output Tokens: 0
+INFO:root:API Query ID: 461704016, Query Index: 3813, Output Tokens: 0
+INFO:root:API Query ID: 461704048, Query Index: 7546, Output Tokens: 0
+INFO:root:API Query ID: 461704080, Query Index: 10864, Output Tokens: 0
+INFO:root:API Query ID: 461704112, Query Index: 10527, Output Tokens: 128
+INFO:root:API Query ID: 461704144, Query Index: 13281, Output Tokens: 128
+INFO:root:API Query ID: 461704176, Query Index: 12203, Output Tokens: 0
+INFO:root:API Query ID: 461704208, Query Index: 6421, Output Tokens: 0
+INFO:root:API Query ID: 461704240, Query Index: 7032, Output Tokens: 0
+INFO:root:API Query ID: 461704272, Query Index: 10357, Output Tokens: 0
+INFO:root:API Query ID: 461704304, Query Index: 3998, Output Tokens: 0
+INFO:root:API Query ID: 461704336, Query Index: 10962, Output Tokens: 0
+INFO:root:API Query ID: 461704368, Query Index: 3752, Output Tokens: 0
+INFO:root:API Query ID: 461704400, Query Index: 8557, Output Tokens: 0
+INFO:root:API Query ID: 461704432, Query Index: 11382, Output Tokens: 0
+INFO:root:API Query ID: 461704464, Query Index: 9955, Output Tokens: 0
+INFO:root:API Query ID: 461704496, Query Index: 4601, Output Tokens: 0
+INFO:root:API Query ID: 461704528, Query Index: 10482, Output Tokens: 128
+INFO:root:API Query ID: 461704560, Query Index: 7347, Output Tokens: 0
+INFO:root:API Query ID: 461704592, Query Index: 3291, Output Tokens: 128
+INFO:root:API Query ID: 461704624, Query Index: 6511, Output Tokens: 0
+INFO:root:API Query ID: 461704656, Query Index: 11855, Output Tokens: 0
+INFO:root:API Query ID: 461704688, Query Index: 6162, Output Tokens: 0
+INFO:root:API Query ID: 461704720, Query Index: 9033, Output Tokens: 0
+INFO:root:API Query ID: 461704752, Query Index: 5105, Output Tokens: 0
+INFO:root:API Query ID: 461704784, Query Index: 8874, Output Tokens: 0
+INFO:root:API Query ID: 461704816, Query Index: 5164, Output Tokens: 0
+INFO:root:API Query ID: 461704848, Query Index: 10428, Output Tokens: 0
+INFO:root:API Query ID: 461704880, Query Index: 401, Output Tokens: 0
+INFO:root:API Query ID: 461704912, Query Index: 1724, Output Tokens: 0
+INFO:root:API Query ID: 461704944, Query Index: 2039, Output Tokens: 0
+INFO:root:API Query ID: 461704976, Query Index: 7910, Output Tokens: 0
+INFO:root:API Query ID: 461705008, Query Index: 1047, Output Tokens: 0
+INFO:root:API Query ID: 461705040, Query Index: 1919, Output Tokens: 0
+INFO:root:API Query ID: 461705072, Query Index: 5160, Output Tokens: 0
+INFO:root:API Query ID: 461705104, Query Index: 6647, Output Tokens: 128
+INFO:root:API Query ID: 461705136, Query Index: 9525, Output Tokens: 61
+INFO:root:API Query ID: 461705168, Query Index: 5806, Output Tokens: 0
+INFO:root:API Query ID: 461705200, Query Index: 9454, Output Tokens: 0
+INFO:root:API Query ID: 461705232, Query Index: 11801, Output Tokens: 0
+INFO:root:API Query ID: 461705264, Query Index: 10647, Output Tokens: 0
+INFO:root:API Query ID: 461705296, Query Index: 10992, Output Tokens: 128
+INFO:root:API Query ID: 461705328, Query Index: 2574, Output Tokens: 63
+INFO:root:API Query ID: 461705360, Query Index: 10325, Output Tokens: 128
+INFO:root:API Query ID: 461705392, Query Index: 6007, Output Tokens: 0
+INFO:root:API Query ID: 461705424, Query Index: 8780, Output Tokens: 0
+INFO:root:API Query ID: 461705456, Query Index: 238, Output Tokens: 128
+INFO:root:API Query ID: 461705488, Query Index: 11190, Output Tokens: 0
+INFO:root:API Query ID: 461705520, Query Index: 6831, Output Tokens: 0
+INFO:root:API Query ID: 461705552, Query Index: 4759, Output Tokens: 0
+INFO:root:API Query ID: 461705584, Query Index: 12564, Output Tokens: 0
+INFO:root:API Query ID: 461705616, Query Index: 10804, Output Tokens: 0
+INFO:root:API Query ID: 461705648, Query Index: 8615, Output Tokens: 0
+INFO:root:API Query ID: 461705680, Query Index: 13117, Output Tokens: 61
+INFO:root:API Query ID: 461705712, Query Index: 5220, Output Tokens: 128
+INFO:root:API Query ID: 461705744, Query Index: 3978, Output Tokens: 0
+INFO:root:API Query ID: 461705776, Query Index: 1107, Output Tokens: 0
+INFO:root:API Query ID: 461705808, Query Index: 11117, Output Tokens: 0
+INFO:root:API Query ID: 461705840, Query Index: 6821, Output Tokens: 0
+INFO:root:API Query ID: 461705872, Query Index: 10359, Output Tokens: 0
+INFO:root:API Query ID: 461705904, Query Index: 98, Output Tokens: 0
+INFO:root:API Query ID: 461705936, Query Index: 1751, Output Tokens: 128
+INFO:root:API Query ID: 461705968, Query Index: 12723, Output Tokens: 128
+INFO:root:API Query ID: 461706000, Query Index: 3735, Output Tokens: 0
+INFO:root:API Query ID: 461706032, Query Index: 8751, Output Tokens: 0
+INFO:root:API Query ID: 461706064, Query Index: 3165, Output Tokens: 0
+INFO:root:API Query ID: 461706096, Query Index: 2566, Output Tokens: 0
+INFO:root:API Query ID: 461706128, Query Index: 7514, Output Tokens: 0
+INFO:root:API Query ID: 461706160, Query Index: 427, Output Tokens: 0
+INFO:root:API Query ID: 461706192, Query Index: 11793, Output Tokens: 128
+INFO:root:API Query ID: 461706224, Query Index: 12913, Output Tokens: 0
+INFO:root:API Query ID: 461706256, Query Index: 2568, Output Tokens: 128
+INFO:root:API Query ID: 461706288, Query Index: 12495, Output Tokens: 0
+INFO:root:API Query ID: 461706320, Query Index: 13336, Output Tokens: 0
+INFO:root:API Query ID: 461706352, Query Index: 7031, Output Tokens: 0
+INFO:root:API Query ID: 461706384, Query Index: 12005, Output Tokens: 0
+INFO:root:API Query ID: 461706416, Query Index: 6515, Output Tokens: 0
+INFO:root:API Query ID: 461706448, Query Index: 3847, Output Tokens: 128
+INFO:root:API Query ID: 461706480, Query Index: 8972, Output Tokens: 0
+INFO:root:API Query ID: 461706512, Query Index: 11765, Output Tokens: 0
+INFO:root:API Query ID: 461706544, Query Index: 12394, Output Tokens: 128
+INFO:root:API Query ID: 461706576, Query Index: 4908, Output Tokens: 0
+INFO:root:API Query ID: 461706608, Query Index: 6516, Output Tokens: 0
+INFO:root:API Query ID: 461706640, Query Index: 13069, Output Tokens: 0
+INFO:root:API Query ID: 461706672, Query Index: 4836, Output Tokens: 0
+INFO:root:API Query ID: 461706704, Query Index: 4109, Output Tokens: 0
+INFO:root:API Query ID: 461706736, Query Index: 17, Output Tokens: 0
+INFO:root:API Query ID: 461706768, Query Index: 11120, Output Tokens: 0
+INFO:root:API Query ID: 461706800, Query Index: 3836, Output Tokens: 0
+INFO:root:API Query ID: 461706832, Query Index: 7655, Output Tokens: 128
+INFO:root:API Query ID: 461706864, Query Index: 11035, Output Tokens: 0
+INFO:root:API Query ID: 461706896, Query Index: 391, Output Tokens: 0
+INFO:root:API Query ID: 461706928, Query Index: 4848, Output Tokens: 0
+INFO:root:API Query ID: 461706960, Query Index: 11082, Output Tokens: 0
+INFO:root:API Query ID: 461706992, Query Index: 5610, Output Tokens: 0
+INFO:root:API Query ID: 461707024, Query Index: 3440, Output Tokens: 0
+INFO:root:API Query ID: 461707056, Query Index: 3101, Output Tokens: 0
+INFO:root:API Query ID: 461707088, Query Index: 4860, Output Tokens: 128
+INFO:root:API Query ID: 461707120, Query Index: 11153, Output Tokens: 128
+INFO:root:API Query ID: 461707152, Query Index: 868, Output Tokens: 0
+INFO:root:API Query ID: 461707184, Query Index: 756, Output Tokens: 0
+INFO:root:API Query ID: 461707216, Query Index: 7129, Output Tokens: 0
+INFO:root:API Query ID: 461707248, Query Index: 6071, Output Tokens: 0
+INFO:root:API Query ID: 461707280, Query Index: 1309, Output Tokens: 0
+INFO:root:API Query ID: 461707312, Query Index: 8588, Output Tokens: 128
+INFO:root:API Query ID: 461707344, Query Index: 9427, Output Tokens: 0
+INFO:root:API Query ID: 461707376, Query Index: 5168, Output Tokens: 0
+INFO:root:API Query ID: 461707408, Query Index: 4653, Output Tokens: 0
+INFO:root:API Query ID: 461707440, Query Index: 11244, Output Tokens: 0
+INFO:root:API Query ID: 461707472, Query Index: 7106, Output Tokens: 128
+INFO:root:API Query ID: 461707504, Query Index: 3834, Output Tokens: 0
+INFO:root:API Query ID: 461707536, Query Index: 188, Output Tokens: 0
+INFO:root:API Query ID: 461707568, Query Index: 3772, Output Tokens: 0
+INFO:root:API Query ID: 461707600, Query Index: 3969, Output Tokens: 0
+INFO:root:API Query ID: 461707632, Query Index: 9172, Output Tokens: 0
+INFO:root:API Query ID: 461707664, Query Index: 3578, Output Tokens: 0
+INFO:root:API Query ID: 461707696, Query Index: 1485, Output Tokens: 0
+INFO:root:API Query ID: 461707728, Query Index: 9647, Output Tokens: 0
+INFO:root:API Query ID: 461707760, Query Index: 11607, Output Tokens: 0
+INFO:root:API Query ID: 461707792, Query Index: 10309, Output Tokens: 0
+INFO:root:API Query ID: 461707824, Query Index: 3387, Output Tokens: 0
+INFO:root:API Query ID: 461707856, Query Index: 20, Output Tokens: 0
+INFO:root:API Query ID: 461707888, Query Index: 1869, Output Tokens: 128
+INFO:root:API Query ID: 461707920, Query Index: 8568, Output Tokens: 0
+INFO:root:API Query ID: 461707952, Query Index: 13202, Output Tokens: 0
+INFO:root:API Query ID: 461707984, Query Index: 8270, Output Tokens: 0
+INFO:root:API Query ID: 461708016, Query Index: 1876, Output Tokens: 128
+INFO:root:API Query ID: 461708048, Query Index: 8084, Output Tokens: 0
+INFO:root:API Query ID: 461708080, Query Index: 177, Output Tokens: 0
+INFO:root:API Query ID: 461708112, Query Index: 1979, Output Tokens: 128
+INFO:root:API Query ID: 461708144, Query Index: 6871, Output Tokens: 0
+INFO:root:API Query ID: 461708176, Query Index: 9212, Output Tokens: 128
+INFO:root:API Query ID: 461708208, Query Index: 97, Output Tokens: 0
+INFO:root:API Query ID: 461708240, Query Index: 3696, Output Tokens: 0
+INFO:root:API Query ID: 461708272, Query Index: 5517, Output Tokens: 0
+INFO:root:API Query ID: 461708304, Query Index: 3444, Output Tokens: 0
+INFO:root:API Query ID: 461708336, Query Index: 6322, Output Tokens: 0
+INFO:root:API Query ID: 461708368, Query Index: 11129, Output Tokens: 0
+INFO:root:API Query ID: 461708400, Query Index: 7601, Output Tokens: 128
+INFO:root:API Query ID: 461708432, Query Index: 5296, Output Tokens: 0
+INFO:root:API Query ID: 461708464, Query Index: 88, Output Tokens: 0
+INFO:root:API Query ID: 461708496, Query Index: 10137, Output Tokens: 0
+INFO:root:API Query ID: 461708528, Query Index: 11396, Output Tokens: 0
+INFO:root:API Query ID: 461708560, Query Index: 13012, Output Tokens: 0
+INFO:root:API Query ID: 461708592, Query Index: 2341, Output Tokens: 128
+INFO:root:API Query ID: 461708624, Query Index: 13148, Output Tokens: 0
+INFO:root:API Query ID: 461708656, Query Index: 4267, Output Tokens: 128
+INFO:root:API Query ID: 461708688, Query Index: 86, Output Tokens: 0
+INFO:root:API Query ID: 461708720, Query Index: 8937, Output Tokens: 0
+INFO:root:API Query ID: 461708752, Query Index: 3315, Output Tokens: 128
+INFO:root:API Query ID: 461708784, Query Index: 9617, Output Tokens: 0
+INFO:root:API Query ID: 461708816, Query Index: 9718, Output Tokens: 0
+INFO:root:API Query ID: 461708848, Query Index: 5223, Output Tokens: 0
+INFO:root:API Query ID: 461708880, Query Index: 7908, Output Tokens: 0
+INFO:root:API Query ID: 461708912, Query Index: 10854, Output Tokens: 0
+INFO:root:API Query ID: 461708944, Query Index: 12755, Output Tokens: 0
+INFO:root:API Query ID: 461708976, Query Index: 4062, Output Tokens: 0
+INFO:root:API Query ID: 461709008, Query Index: 1657, Output Tokens: 0
+INFO:root:API Query ID: 461709040, Query Index: 4764, Output Tokens: 0
+INFO:root:API Query ID: 461709072, Query Index: 842, Output Tokens: 0
+INFO:root:API Query ID: 461709104, Query Index: 4102, Output Tokens: 0
+INFO:root:API Query ID: 461709136, Query Index: 10536, Output Tokens: 128
+INFO:root:API Query ID: 461709168, Query Index: 5512, Output Tokens: 128
+INFO:root:API Query ID: 461709200, Query Index: 2690, Output Tokens: 0
+INFO:root:API Query ID: 461709232, Query Index: 7624, Output Tokens: 0
+INFO:root:API Query ID: 461709264, Query Index: 8080, Output Tokens: 0
+INFO:root:API Query ID: 461709296, Query Index: 3109, Output Tokens: 0
+INFO:root:API Query ID: 461709328, Query Index: 124, Output Tokens: 0
+INFO:root:API Query ID: 461709360, Query Index: 1363, Output Tokens: 0
+INFO:root:API Query ID: 461709392, Query Index: 780, Output Tokens: 0
+INFO:root:API Query ID: 461709424, Query Index: 5418, Output Tokens: 0
+INFO:root:API Query ID: 461709456, Query Index: 3637, Output Tokens: 0
+INFO:root:API Query ID: 461709488, Query Index: 1670, Output Tokens: 128
+INFO:root:API Query ID: 461709520, Query Index: 3598, Output Tokens: 0
+INFO:root:API Query ID: 461709552, Query Index: 12911, Output Tokens: 0
+INFO:root:API Query ID: 461709584, Query Index: 6090, Output Tokens: 0
+INFO:root:API Query ID: 461709616, Query Index: 1438, Output Tokens: 128
+INFO:root:API Query ID: 461709648, Query Index: 7793, Output Tokens: 0
+INFO:root:API Query ID: 461709680, Query Index: 9159, Output Tokens: 0
+INFO:root:API Query ID: 461709712, Query Index: 2129, Output Tokens: 128
+INFO:root:API Query ID: 461709744, Query Index: 4531, Output Tokens: 0
+INFO:root:API Query ID: 461709776, Query Index: 1025, Output Tokens: 0
+INFO:root:API Query ID: 461709808, Query Index: 3918, Output Tokens: 0
+INFO:root:API Query ID: 461709840, Query Index: 7545, Output Tokens: 0
+INFO:root:API Query ID: 461709872, Query Index: 3615, Output Tokens: 0
+INFO:root:API Query ID: 461709904, Query Index: 10555, Output Tokens: 0
+INFO:root:API Query ID: 461709936, Query Index: 11819, Output Tokens: 0
+INFO:root:API Query ID: 461709968, Query Index: 8039, Output Tokens: 128
+INFO:root:API Query ID: 461710000, Query Index: 7487, Output Tokens: 0
+INFO:root:API Query ID: 461710032, Query Index: 8287, Output Tokens: 0
+INFO:root:API Query ID: 461710064, Query Index: 11869, Output Tokens: 0
+INFO:root:API Query ID: 461710096, Query Index: 2887, Output Tokens: 0
+INFO:root:API Query ID: 461710128, Query Index: 3782, Output Tokens: 0
+INFO:root:API Query ID: 461710160, Query Index: 196, Output Tokens: 0
+INFO:root:API Query ID: 461710192, Query Index: 79, Output Tokens: 0
+INFO:root:API Query ID: 461710224, Query Index: 10347, Output Tokens: 0
+INFO:root:API Query ID: 461710256, Query Index: 3306, Output Tokens: 0
+INFO:root:API Query ID: 461710288, Query Index: 3943, Output Tokens: 128
+INFO:root:API Query ID: 461710320, Query Index: 11687, Output Tokens: 0
+INFO:root:API Query ID: 461710352, Query Index: 10245, Output Tokens: 128
+INFO:root:API Query ID: 461710384, Query Index: 1722, Output Tokens: 128
+INFO:root:API Query ID: 461710416, Query Index: 4425, Output Tokens: 0
+INFO:root:API Query ID: 461710448, Query Index: 4188, Output Tokens: 0
+INFO:root:API Query ID: 461710480, Query Index: 9451, Output Tokens: 0
+INFO:root:API Query ID: 461710512, Query Index: 4181, Output Tokens: 128
+INFO:root:API Query ID: 461710544, Query Index: 7375, Output Tokens: 0
+INFO:root:API Query ID: 461710576, Query Index: 8017, Output Tokens: 128
+INFO:root:API Query ID: 461710608, Query Index: 11678, Output Tokens: 128
+INFO:root:API Query ID: 461710640, Query Index: 3763, Output Tokens: 0
+INFO:root:API Query ID: 461710672, Query Index: 2595, Output Tokens: 0
+INFO:root:API Query ID: 461710704, Query Index: 12784, Output Tokens: 0
+INFO:root:API Query ID: 461710736, Query Index: 6417, Output Tokens: 0
+INFO:root:API Query ID: 461710768, Query Index: 1286, Output Tokens: 0
+INFO:root:API Query ID: 461710800, Query Index: 11800, Output Tokens: 0
+INFO:root:API Query ID: 461710832, Query Index: 4037, Output Tokens: 0
+INFO:root:API Query ID: 461710864, Query Index: 8121, Output Tokens: 128
+INFO:root:API Query ID: 461710896, Query Index: 4236, Output Tokens: 128
+INFO:root:API Query ID: 461710928, Query Index: 9590, Output Tokens: 0
+INFO:root:API Query ID: 461710960, Query Index: 546, Output Tokens: 0
+INFO:root:API Query ID: 461710992, Query Index: 9888, Output Tokens: 0
+INFO:root:API Query ID: 461711024, Query Index: 4928, Output Tokens: 0
+INFO:root:API Query ID: 461711056, Query Index: 706, Output Tokens: 0
+INFO:root:API Query ID: 461711088, Query Index: 8015, Output Tokens: 0
+INFO:root:API Query ID: 461711120, Query Index: 1706, Output Tokens: 0
+INFO:root:API Query ID: 461711152, Query Index: 11786, Output Tokens: 128
+INFO:root:API Query ID: 461711184, Query Index: 2560, Output Tokens: 0
+INFO:root:API Query ID: 461711216, Query Index: 6684, Output Tokens: 0
+INFO:root:API Query ID: 461711248, Query Index: 5250, Output Tokens: 0
+INFO:root:API Query ID: 461711280, Query Index: 5956, Output Tokens: 128
+INFO:root:API Query ID: 461711312, Query Index: 8378, Output Tokens: 128
+INFO:root:API Query ID: 461711344, Query Index: 2403, Output Tokens: 0
+INFO:root:API Query ID: 461711376, Query Index: 9008, Output Tokens: 0
+INFO:root:API Query ID: 461711408, Query Index: 11286, Output Tokens: 0
+INFO:root:API Query ID: 461711440, Query Index: 11336, Output Tokens: 0
+INFO:root:API Query ID: 461711472, Query Index: 8276, Output Tokens: 0
+INFO:root:API Query ID: 461711504, Query Index: 10366, Output Tokens: 0
+INFO:root:API Query ID: 461711536, Query Index: 5722, Output Tokens: 0
+INFO:root:API Query ID: 461711568, Query Index: 5642, Output Tokens: 0
+INFO:root:API Query ID: 461711600, Query Index: 6682, Output Tokens: 0
+INFO:root:API Query ID: 461711632, Query Index: 12315, Output Tokens: 0
+INFO:root:API Query ID: 461711664, Query Index: 9711, Output Tokens: 0
+INFO:root:API Query ID: 461711696, Query Index: 6878, Output Tokens: 63
+INFO:root:API Query ID: 461711728, Query Index: 6910, Output Tokens: 0
+INFO:root:API Query ID: 461711760, Query Index: 8069, Output Tokens: 0
+INFO:root:API Query ID: 461711792, Query Index: 6584, Output Tokens: 128
+INFO:root:API Query ID: 461711824, Query Index: 8332, Output Tokens: 0
+INFO:root:API Query ID: 461711856, Query Index: 9728, Output Tokens: 128
+INFO:root:API Query ID: 461711888, Query Index: 6155, Output Tokens: 0
+INFO:root:API Query ID: 461711920, Query Index: 8411, Output Tokens: 0
+INFO:root:API Query ID: 461711952, Query Index: 3285, Output Tokens: 0
+INFO:root:API Query ID: 461711984, Query Index: 3381, Output Tokens: 0
+INFO:root:API Query ID: 461712016, Query Index: 11945, Output Tokens: 0
+
+  sqlalchemy                     2.0.41
+  starlette                      0.46.2
+  sympy                          1.14.0
+  threadpoolctl                  3.6.0
+  tiktoken                       0.9.0
+  tokenizers                     0.21.1
+  tomli                          2.0.1
+  torch                          2.7.0
+  torchaudio                     2.7.0
+  torchvision                    0.22.0
+  tqdm                           4.67.1
+  transformers                   4.52.4
+  triton                         3.3.0
+  typeguard                      2.13.3
+  typer                          0.16.0
+  typing-extensions              4.14.0
+  typing-inspect                 0.9.0
+  typing-inspection              0.4.1
+  tzdata                         2025.2
+  urllib3                        2.4.0
+  uvicorn                        0.34.3
+  uvloop                         0.21.0
+  vllm                           0.9.0.1
+  wadler-lindig                  0.1.7
+  watchfiles                     1.0.5
+  wcwidth                        0.2.13
+  websockets                     15.0.1
+  wheel                          0.45.1
+  wrapt                          1.17.2
+  xformers                       0.0.30
+  xgrammar                       0.1.19
+  xxhash                         3.5.0
+  yarl                           1.20.0
+  zipp                           3.22.0
+================================================================================
+
+Set TORCH_CUDA_ARCH_LIST to 8.9
+Traceback (most recent call last):
+  File "/root/rehan/mlperf-inference-5.1-redhat/language/llama3.1-8b/SUT_VLLM_SingleReplica.py", line 808, in <module>
+    lg.StartTestWithLogSettings(SUTToTest, qsl, settings, log_settings)
+  File "/root/rehan/mlperf-inference-5.1-redhat/language/llama3.1-8b/SUT_VLLM_SingleReplica.py", line 498, in issue_query
+    response = requests.post(self.completions_endpoint, json=api_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/requests/adapters.py", line 667, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/urllib3/connectionpool.py", line 534, in _make_request
+    response = conn.getresponse()
+               ^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/urllib3/connection.py", line 516, in getresponse
+    httplib_response = super().getresponse()
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/http/client.py", line 1430, in getresponse
+    response.begin()
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/http/client.py", line 331, in begin
+    version, status, reason = self._read_status()
+                              ^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/http/client.py", line 292, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/socket.py", line 720, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

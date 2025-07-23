@@ -1,0 +1,1637 @@
+INFO 07-21 21:58:24 [__init__.py:243] Automatically detected platform cuda.
+INFO 07-21 21:58:31 [__init__.py:31] Available plugins for group vllm.general_plugins:
+INFO 07-21 21:58:31 [__init__.py:33] - lora_filesystem_resolver -> vllm.plugins.lora_resolvers.filesystem_resolver:register_filesystem_resolver
+INFO 07-21 21:58:31 [__init__.py:36] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 07-21 21:58:32 [api_server.py:1289] vLLM API server version 0.9.0.1
+INFO 07-21 21:58:32 [cli_args.py:300] non-default args: {'max_model_len': 8192, 'block_size': 16, 'gpu_memory_utilization': 0.9400000000000001, 'kv_cache_dtype': 'fp8', 'max_num_batched_tokens': 8192, 'cuda_graph_sizes': [15624], 'disable_log_requests': True}
+INFO 07-21 21:58:47 [config.py:793] This model supports multiple tasks: {'embed', 'reward', 'classify', 'score', 'generate'}. Defaulting to 'generate'.
+WARNING 07-21 21:58:47 [arg_utils.py:1583] --kv-cache-dtype is not supported by the V1 Engine. Falling back to V0. 
+INFO 07-21 21:58:47 [config.py:1503] Using fp8 data type to store kv cache. It reduces the GPU memory footprint and boosts the performance. Meanwhile, it may cause accuracy drop without a proper scaling factor
+INFO 07-21 21:58:47 [api_server.py:257] Started engine process with PID 164811
+INFO 07-21 21:58:51 [__init__.py:243] Automatically detected platform cuda.
+INFO 07-21 21:58:54 [__init__.py:31] Available plugins for group vllm.general_plugins:
+INFO 07-21 21:58:54 [__init__.py:33] - lora_filesystem_resolver -> vllm.plugins.lora_resolvers.filesystem_resolver:register_filesystem_resolver
+INFO 07-21 21:58:54 [__init__.py:36] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 07-21 21:58:54 [llm_engine.py:230] Initializing a V0 LLM engine (v0.9.0.1) with config: model='meta-llama/Llama-3.1-8B', speculative_config=None, tokenizer='meta-llama/Llama-3.1-8B', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, override_neuron_config={}, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=8192, download_dir=None, load_format=LoadFormat.AUTO, tensor_parallel_size=1, pipeline_parallel_size=1, disable_custom_all_reduce=False, quantization=None, enforce_eager=False, kv_cache_dtype=fp8,  device_config=cuda, decoding_config=DecodingConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_backend=''), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None), seed=0, served_model_name=meta-llama/Llama-3.1-8B, num_scheduler_steps=1, multi_step_stream_outputs=True, enable_prefix_caching=None, chunked_prefill_enabled=False, use_async_output_proc=True, pooler_config=None, compilation_config={"compile_sizes": [], "inductor_compile_config": {"enable_auto_functionalized_v2": false}, "cudagraph_capture_sizes": [256, 248, 240, 232, 224, 216, 208, 200, 192, 184, 176, 168, 160, 152, 144, 136, 128, 120, 112, 104, 96, 88, 80, 72, 64, 56, 48, 40, 32, 24, 16, 8, 4, 2, 1], "max_capture_size": 256}, use_cached_outputs=True, 
+INFO 07-21 21:58:56 [cuda.py:273] Cannot use FlashAttention backend for FP8 KV cache.
+WARNING 07-21 21:58:56 [cuda.py:275] Please use FlashInfer backend with FP8 KV Cache for better performance by setting environment variable VLLM_ATTENTION_BACKEND=FLASHINFER
+INFO 07-21 21:58:56 [cuda.py:289] Using XFormers backend.
+INFO 07-21 21:59:02 [parallel_state.py:1064] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, TP rank 0, EP rank 0
+INFO 07-21 21:59:02 [model_runner.py:1170] Starting to load model meta-llama/Llama-3.1-8B...
+INFO 07-21 21:59:03 [weight_utils.py:291] Using model weights format ['*.safetensors']
+INFO 07-21 21:59:04 [weight_utils.py:307] Time spent downloading weights for meta-llama/Llama-3.1-8B: 0.579680 seconds
+Loading safetensors checkpoint shards:   0% Completed | 0/4 [00:00<?, ?it/s]
+Loading safetensors checkpoint shards:  25% Completed | 1/4 [00:00<00:00,  6.60it/s]
+Loading safetensors checkpoint shards:  50% Completed | 2/4 [00:00<00:00,  2.10it/s]
+Loading safetensors checkpoint shards:  75% Completed | 3/4 [00:01<00:00,  1.68it/s]
+Loading safetensors checkpoint shards: 100% Completed | 4/4 [00:02<00:00,  1.53it/s]
+Loading safetensors checkpoint shards: 100% Completed | 4/4 [00:02<00:00,  1.71it/s]
+
+INFO 07-21 21:59:07 [default_loader.py:280] Loading weights took 2.39 seconds
+INFO 07-21 21:59:07 [model_runner.py:1202] Model loading took 14.9889 GiB and 4.730780 seconds
+INFO 07-21 21:59:08 [worker.py:291] Memory profiling takes 1.03 seconds
+INFO 07-21 21:59:08 [worker.py:291] the current vLLM instance can use total_gpu_memory (44.52GiB) x gpu_memory_utilization (0.94) = 41.85GiB
+INFO 07-21 21:59:08 [worker.py:291] model weights take 14.99GiB; non_torch_memory takes 0.08GiB; PyTorch activation peak memory takes 1.23GiB; the rest of the memory reserved for KV Cache is 25.55GiB.
+INFO 07-21 21:59:08 [executor_base.py:112] # cuda blocks: 26158, # CPU blocks: 4096
+INFO 07-21 21:59:08 [executor_base.py:117] Maximum concurrency for 8192 tokens per request: 51.09x
+INFO 07-21 21:59:09 [model_runner.py:1512] Capturing cudagraphs for decoding. This may lead to unexpected consequences if the model is not static. To run the model in eager mode, set 'enforce_eager=True' or use '--enforce-eager' in the CLI. If out-of-memory error occurs during cudagraph capture, consider decreasing `gpu_memory_utilization` or switching to eager mode. You can also reduce the `max_num_seqs` as needed to decrease memory usage.
+Capturing CUDA graph shapes:   0%|          | 0/35 [00:00<?, ?it/s]Capturing CUDA graph shapes:   3%|▎         | 1/35 [00:00<00:15,  2.18it/s]Capturing CUDA graph shapes:   6%|▌         | 2/35 [00:00<00:14,  2.34it/s]Capturing CUDA graph shapes:   9%|▊         | 3/35 [00:01<00:13,  2.40it/s]Capturing CUDA graph shapes:  11%|█▏        | 4/35 [00:01<00:12,  2.43it/s]Capturing CUDA graph shapes:  14%|█▍        | 5/35 [00:02<00:12,  2.46it/s]Capturing CUDA graph shapes:  17%|█▋        | 6/35 [00:02<00:11,  2.45it/s]Capturing CUDA graph shapes:  20%|██        | 7/35 [00:02<00:11,  2.49it/s]Capturing CUDA graph shapes:  23%|██▎       | 8/35 [00:03<00:10,  2.49it/s]Capturing CUDA graph shapes:  26%|██▌       | 9/35 [00:03<00:10,  2.42it/s]Capturing CUDA graph shapes:  29%|██▊       | 10/35 [00:04<00:10,  2.41it/s]Capturing CUDA graph shapes:  31%|███▏      | 11/35 [00:04<00:09,  2.44it/s]Capturing CUDA graph shapes:  34%|███▍      | 12/35 [00:04<00:09,  2.46it/s]Capturing CUDA graph shapes:  37%|███▋      | 13/35 [00:05<00:09,  2.44it/s]Capturing CUDA graph shapes:  40%|████      | 14/35 [00:05<00:08,  2.48it/s]Capturing CUDA graph shapes:  43%|████▎     | 15/35 [00:06<00:08,  2.45it/s]Capturing CUDA graph shapes:  46%|████▌     | 16/35 [00:06<00:07,  2.47it/s]Capturing CUDA graph shapes:  49%|████▊     | 17/35 [00:06<00:07,  2.52it/s]Capturing CUDA graph shapes:  51%|█████▏    | 18/35 [00:07<00:06,  2.48it/s]Capturing CUDA graph shapes:  54%|█████▍    | 19/35 [00:07<00:06,  2.53it/s]Capturing CUDA graph shapes:  57%|█████▋    | 20/35 [00:08<00:05,  2.58it/s]Capturing CUDA graph shapes:  60%|██████    | 21/35 [00:08<00:05,  2.46it/s]Capturing CUDA graph shapes:  63%|██████▎   | 22/35 [00:08<00:05,  2.52it/s]Capturing CUDA graph shapes:  66%|██████▌   | 23/35 [00:09<00:04,  2.49it/s]Capturing CUDA graph shapes:  69%|██████▊   | 24/35 [00:09<00:04,  2.48it/s]Capturing CUDA graph shapes:  71%|███████▏  | 25/35 [00:10<00:04,  2.49it/s]Capturing CUDA graph shapes:  74%|███████▍  | 26/35 [00:10<00:03,  2.49it/s]Capturing CUDA graph shapes:  77%|███████▋  | 27/35 [00:10<00:03,  2.48it/s]Capturing CUDA graph shapes:  80%|████████  | 28/35 [00:11<00:02,  2.53it/s]Capturing CUDA graph shapes:  83%|████████▎ | 29/35 [00:11<00:02,  2.59it/s]Capturing CUDA graph shapes:  86%|████████▌ | 30/35 [00:12<00:01,  2.57it/s]Capturing CUDA graph shapes:  89%|████████▊ | 31/35 [00:12<00:01,  2.53it/s]Capturing CUDA graph shapes:  91%|█████████▏| 32/35 [00:12<00:01,  2.59it/s]Capturing CUDA graph shapes:  94%|█████████▍| 33/35 [00:13<00:00,  2.58it/s]Capturing CUDA graph shapes:  97%|█████████▋| 34/35 [00:13<00:00,  2.53it/s]Capturing CUDA graph shapes: 100%|██████████| 35/35 [00:14<00:00,  2.47it/s]Capturing CUDA graph shapes: 100%|██████████| 35/35 [00:14<00:00,  2.48it/s]
+INFO 07-21 21:59:23 [model_runner.py:1670] Graph capturing finished in 14 secs, took 0.26 GiB
+INFO 07-21 21:59:23 [llm_engine.py:428] init engine (profile, create kv cache, warmup model) took 16.67 seconds
+WARNING 07-21 21:59:24 [config.py:1339] Default sampling parameters have been overridden by the model's Hugging Face generation config recommended from the model creator. If this is not intended, please relaunch vLLM instance with `--generation-config vllm`.
+INFO 07-21 21:59:24 [serving_chat.py:117] Using default chat sampling params from model: {'temperature': 0.6, 'top_p': 0.9}
+INFO 07-21 21:59:25 [serving_completion.py:65] Using default completion sampling params from model: {'temperature': 0.6, 'top_p': 0.9}
+INFO 07-21 21:59:25 [api_server.py:1336] Starting vLLM API server on http://0.0.0.0:8000
+INFO 07-21 21:59:25 [launcher.py:28] Available routes are:
+INFO 07-21 21:59:25 [launcher.py:36] Route: /openapi.json, Methods: HEAD, GET
+INFO 07-21 21:59:25 [launcher.py:36] Route: /docs, Methods: HEAD, GET
+INFO 07-21 21:59:25 [launcher.py:36] Route: /docs/oauth2-redirect, Methods: HEAD, GET
+INFO 07-21 21:59:25 [launcher.py:36] Route: /redoc, Methods: HEAD, GET
+INFO 07-21 21:59:25 [launcher.py:36] Route: /health, Methods: GET
+INFO 07-21 21:59:25 [launcher.py:36] Route: /load, Methods: GET
+INFO 07-21 21:59:25 [launcher.py:36] Route: /ping, Methods: POST
+INFO 07-21 21:59:25 [launcher.py:36] Route: /ping, Methods: GET
+INFO 07-21 21:59:25 [launcher.py:36] Route: /tokenize, Methods: POST
+INFO 07-21 21:59:25 [launcher.py:36] Route: /detokenize, Methods: POST
+INFO 07-21 21:59:25 [launcher.py:36] Route: /v1/models, Methods: GET
+INFO 07-21 21:59:25 [launcher.py:36] Route: /version, Methods: GET
+INFO 07-21 21:59:25 [launcher.py:36] Route: /v1/chat/completions, Methods: POST
+INFO 07-21 21:59:25 [launcher.py:36] Route: /v1/completions, Methods: POST
+INFO 07-21 21:59:25 [launcher.py:36] Route: /v1/embeddings, Methods: POST
+INFO 07-21 21:59:25 [launcher.py:36] Route: /pooling, Methods: POST
+INFO 07-21 21:59:25 [launcher.py:36] Route: /classify, Methods: POST
+INFO 07-21 21:59:25 [launcher.py:36] Route: /score, Methods: POST
+INFO 07-21 21:59:25 [launcher.py:36] Route: /v1/score, Methods: POST
+INFO 07-21 21:59:25 [launcher.py:36] Route: /v1/audio/transcriptions, Methods: POST
+INFO 07-21 21:59:25 [launcher.py:36] Route: /rerank, Methods: POST
+INFO 07-21 21:59:25 [launcher.py:36] Route: /v1/rerank, Methods: POST
+INFO 07-21 21:59:25 [launcher.py:36] Route: /v2/rerank, Methods: POST
+INFO 07-21 21:59:25 [launcher.py:36] Route: /invocations, Methods: POST
+INFO 07-21 21:59:25 [launcher.py:36] Route: /metrics, Methods: GET
+INFO:     Started server process [164504]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:47854 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58410 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58426 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58434 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58444 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58454 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58466 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58468 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58474 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58476 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55568 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55576 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55578 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55586 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55588 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55600 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55604 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55616 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55624 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49196 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49212 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49222 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49226 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49228 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49240 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49252 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49266 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49278 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49288 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40018 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40026 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40042 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40046 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40060 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40076 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40088 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40104 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40114 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33368 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33378 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33382 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33398 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33404 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33410 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33426 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33430 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33432 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50992 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50996 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51012 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51014 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51022 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51038 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51052 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51060 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51074 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51086 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56282 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56296 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56298 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56300 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56312 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56320 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56322 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56336 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56342 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39710 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39724 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39736 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39754 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39762 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39770 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39778 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39788 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60786 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60800 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60802 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60804 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60808 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60816 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60830 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60836 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60840 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60854 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51558 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51560 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51574 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51578 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51590 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51592 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51600 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51610 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51618 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44832 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44844 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44852 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44862 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44868 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44876 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44890 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44898 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44904 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49116 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49124 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49132 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49140 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49142 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49154 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49168 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49176 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49184 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49188 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52100 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52112 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52128 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52130 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52140 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52146 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52160 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52176 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52184 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42242 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42254 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42262 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42276 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42290 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42300 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42308 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42316 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42326 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42334 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52776 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52778 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52790 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52802 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52816 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52832 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52846 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52848 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52864 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52866 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48740 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48756 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48766 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48774 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48782 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48790 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:02:20 [metrics.py:486] Avg prompt throughput: 2793.9 tokens/s, Avg generation throughput: 3.2 tokens/s, Running: 11 reqs, Swapped: 0 reqs, Pending: 13341 reqs, GPU KV cache usage: 2.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:48798 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48812 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48818 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45096 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45104 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:02:25 [metrics.py:486] Avg prompt throughput: 12642.7 tokens/s, Avg generation throughput: 17.0 tokens/s, Running: 42 reqs, Swapped: 0 reqs, Pending: 13247 reqs, GPU KV cache usage: 7.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:45116 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45118 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45128 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45144 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45160 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:02:30 [metrics.py:486] Avg prompt throughput: 12510.8 tokens/s, Avg generation throughput: 16.0 tokens/s, Running: 65 reqs, Swapped: 0 reqs, Pending: 13167 reqs, GPU KV cache usage: 10.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:45170 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45178 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45182 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42642 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42652 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42666 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:02:36 [metrics.py:486] Avg prompt throughput: 12475.1 tokens/s, Avg generation throughput: 13.4 tokens/s, Running: 79 reqs, Swapped: 0 reqs, Pending: 13092 reqs, GPU KV cache usage: 13.6%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:42680 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42686 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42698 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42708 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42714 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:02:41 [metrics.py:486] Avg prompt throughput: 12517.3 tokens/s, Avg generation throughput: 16.8 tokens/s, Running: 120 reqs, Swapped: 0 reqs, Pending: 12997 reqs, GPU KV cache usage: 18.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:42726 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42736 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43424 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43440 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43452 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43464 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:02:47 [metrics.py:486] Avg prompt throughput: 12457.7 tokens/s, Avg generation throughput: 15.6 tokens/s, Running: 136 reqs, Swapped: 0 reqs, Pending: 12910 reqs, GPU KV cache usage: 21.3%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:43470 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43474 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43486 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43496 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43512 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:02:52 [metrics.py:486] Avg prompt throughput: 12449.8 tokens/s, Avg generation throughput: 15.3 tokens/s, Running: 155 reqs, Swapped: 0 reqs, Pending: 12824 reqs, GPU KV cache usage: 24.4%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:43514 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54264 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54274 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54276 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54280 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:02:57 [metrics.py:486] Avg prompt throughput: 12471.2 tokens/s, Avg generation throughput: 13.9 tokens/s, Running: 169 reqs, Swapped: 0 reqs, Pending: 12757 reqs, GPU KV cache usage: 27.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:54292 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54294 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54304 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54318 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54326 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36566 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:03:03 [metrics.py:486] Avg prompt throughput: 12361.7 tokens/s, Avg generation throughput: 13.8 tokens/s, Running: 183 reqs, Swapped: 0 reqs, Pending: 12682 reqs, GPU KV cache usage: 30.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:36572 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36588 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36600 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36606 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36614 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:03:08 [metrics.py:486] Avg prompt throughput: 12327.6 tokens/s, Avg generation throughput: 14.0 tokens/s, Running: 209 reqs, Swapped: 0 reqs, Pending: 12611 reqs, GPU KV cache usage: 35.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:36628 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36632 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36646 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36652 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34912 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:03:13 [metrics.py:486] Avg prompt throughput: 12337.7 tokens/s, Avg generation throughput: 14.4 tokens/s, Running: 221 reqs, Swapped: 0 reqs, Pending: 12537 reqs, GPU KV cache usage: 36.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:34922 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34932 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34940 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34942 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34950 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:03:19 [metrics.py:486] Avg prompt throughput: 12266.1 tokens/s, Avg generation throughput: 13.4 tokens/s, Running: 239 reqs, Swapped: 0 reqs, Pending: 12465 reqs, GPU KV cache usage: 40.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:34962 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34966 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34970 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34980 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53516 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:03:24 [metrics.py:486] Avg prompt throughput: 12285.5 tokens/s, Avg generation throughput: 12.9 tokens/s, Running: 252 reqs, Swapped: 0 reqs, Pending: 12401 reqs, GPU KV cache usage: 42.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:53530 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53538 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53542 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53558 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53568 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:03:29 [metrics.py:486] Avg prompt throughput: 5156.5 tokens/s, Avg generation throughput: 2230.7 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 12370 reqs, GPU KV cache usage: 45.6%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:53582 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53584 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53586 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53592 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39620 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:03:34 [metrics.py:486] Avg prompt throughput: 5229.1 tokens/s, Avg generation throughput: 2099.0 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 12341 reqs, GPU KV cache usage: 47.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:39622 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39634 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39644 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39658 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39672 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:03:39 [metrics.py:486] Avg prompt throughput: 7960.8 tokens/s, Avg generation throughput: 1121.8 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 12288 reqs, GPU KV cache usage: 48.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:39674 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39676 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39680 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39694 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55112 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:03:44 [metrics.py:486] Avg prompt throughput: 7271.8 tokens/s, Avg generation throughput: 948.6 tokens/s, Running: 39 reqs, Swapped: 0 reqs, Pending: 12239 reqs, GPU KV cache usage: 6.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:55114 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55126 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55142 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55152 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55160 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:03:49 [metrics.py:486] Avg prompt throughput: 12164.5 tokens/s, Avg generation throughput: 13.7 tokens/s, Running: 57 reqs, Swapped: 0 reqs, Pending: 12170 reqs, GPU KV cache usage: 10.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:55162 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55164 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55180 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55194 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38546 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38550 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:03:55 [metrics.py:486] Avg prompt throughput: 12208.1 tokens/s, Avg generation throughput: 14.8 tokens/s, Running: 75 reqs, Swapped: 0 reqs, Pending: 12092 reqs, GPU KV cache usage: 13.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:38552 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38554 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38568 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38570 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38578 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:04:00 [metrics.py:486] Avg prompt throughput: 12194.0 tokens/s, Avg generation throughput: 15.3 tokens/s, Running: 99 reqs, Swapped: 0 reqs, Pending: 12011 reqs, GPU KV cache usage: 16.6%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:38580 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38594 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38602 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44202 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44212 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:04:05 [metrics.py:486] Avg prompt throughput: 12189.6 tokens/s, Avg generation throughput: 15.5 tokens/s, Running: 117 reqs, Swapped: 0 reqs, Pending: 11932 reqs, GPU KV cache usage: 19.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:44222 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44238 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44254 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44260 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44262 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:04:10 [metrics.py:486] Avg prompt throughput: 12087.4 tokens/s, Avg generation throughput: 14.2 tokens/s, Running: 134 reqs, Swapped: 0 reqs, Pending: 11860 reqs, GPU KV cache usage: 23.1%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:44270 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44278 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51616 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51620 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51636 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:04:15 [metrics.py:486] Avg prompt throughput: 12133.9 tokens/s, Avg generation throughput: 14.2 tokens/s, Running: 151 reqs, Swapped: 0 reqs, Pending: 11788 reqs, GPU KV cache usage: 25.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:51646 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51648 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51656 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51670 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51672 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:04:20 [metrics.py:486] Avg prompt throughput: 12053.7 tokens/s, Avg generation throughput: 15.3 tokens/s, Running: 164 reqs, Swapped: 0 reqs, Pending: 11710 reqs, GPU KV cache usage: 28.1%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:51684 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51688 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33360 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33376 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33390 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:04:26 [metrics.py:486] Avg prompt throughput: 12057.5 tokens/s, Avg generation throughput: 14.6 tokens/s, Running: 174 reqs, Swapped: 0 reqs, Pending: 11639 reqs, GPU KV cache usage: 29.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:33398 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33406 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33416 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33432 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33442 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:04:31 [metrics.py:486] Avg prompt throughput: 12036.4 tokens/s, Avg generation throughput: 14.1 tokens/s, Running: 199 reqs, Swapped: 0 reqs, Pending: 11561 reqs, GPU KV cache usage: 33.6%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:33452 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33462 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41216 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41226 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41242 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:04:36 [metrics.py:486] Avg prompt throughput: 12118.6 tokens/s, Avg generation throughput: 13.1 tokens/s, Running: 205 reqs, Swapped: 0 reqs, Pending: 11497 reqs, GPU KV cache usage: 35.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:41244 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41248 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41256 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41268 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41270 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41284 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:04:41 [metrics.py:486] Avg prompt throughput: 12040.5 tokens/s, Avg generation throughput: 13.9 tokens/s, Running: 227 reqs, Swapped: 0 reqs, Pending: 11421 reqs, GPU KV cache usage: 39.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:41296 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52018 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52022 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52030 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52038 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:04:46 [metrics.py:486] Avg prompt throughput: 12041.6 tokens/s, Avg generation throughput: 14.3 tokens/s, Running: 243 reqs, Swapped: 0 reqs, Pending: 11347 reqs, GPU KV cache usage: 42.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:52052 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52064 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52080 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52082 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52090 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:04:51 [metrics.py:486] Avg prompt throughput: 12136.6 tokens/s, Avg generation throughput: 15.3 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 11278 reqs, GPU KV cache usage: 44.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:52092 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50058 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50070 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50074 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50078 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:04:56 [metrics.py:486] Avg prompt throughput: 3964.3 tokens/s, Avg generation throughput: 2509.6 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 11254 reqs, GPU KV cache usage: 47.1%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:50088 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50094 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50104 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50120 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50122 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:05:02 [metrics.py:486] Avg prompt throughput: 6478.2 tokens/s, Avg generation throughput: 1652.4 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 11216 reqs, GPU KV cache usage: 49.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:50136 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39364 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39368 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39374 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39384 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:05:07 [metrics.py:486] Avg prompt throughput: 9337.0 tokens/s, Avg generation throughput: 770.2 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 11160 reqs, GPU KV cache usage: 50.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:39400 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39402 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39410 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39426 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39432 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:05:12 [metrics.py:486] Avg prompt throughput: 9142.4 tokens/s, Avg generation throughput: 761.1 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 11111 reqs, GPU KV cache usage: 51.6%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:39436 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48912 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48920 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48924 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48928 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:05:17 [metrics.py:486] Avg prompt throughput: 9386.7 tokens/s, Avg generation throughput: 704.6 tokens/s, Running: 69 reqs, Swapped: 0 reqs, Pending: 11039 reqs, GPU KV cache usage: 12.4%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:48932 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48948 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48956 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48972 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48988 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:05:22 [metrics.py:486] Avg prompt throughput: 12037.2 tokens/s, Avg generation throughput: 15.7 tokens/s, Running: 92 reqs, Swapped: 0 reqs, Pending: 10958 reqs, GPU KV cache usage: 15.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:48998 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51356 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51366 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51380 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51396 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:05:28 [metrics.py:486] Avg prompt throughput: 12028.7 tokens/s, Avg generation throughput: 13.5 tokens/s, Running: 107 reqs, Swapped: 0 reqs, Pending: 10884 reqs, GPU KV cache usage: 18.3%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:51398 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51414 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51426 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51430 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51446 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:05:33 [metrics.py:486] Avg prompt throughput: 12096.9 tokens/s, Avg generation throughput: 17.2 tokens/s, Running: 123 reqs, Swapped: 0 reqs, Pending: 10798 reqs, GPU KV cache usage: 20.4%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:46006 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46010 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46018 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46022 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46036 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46044 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:05:38 [metrics.py:486] Avg prompt throughput: 11998.2 tokens/s, Avg generation throughput: 14.1 tokens/s, Running: 141 reqs, Swapped: 0 reqs, Pending: 10719 reqs, GPU KV cache usage: 23.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:46052 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46066 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46076 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46080 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35870 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:05:44 [metrics.py:486] Avg prompt throughput: 12008.8 tokens/s, Avg generation throughput: 14.1 tokens/s, Running: 184 reqs, Swapped: 0 reqs, Pending: 10637 reqs, GPU KV cache usage: 30.6%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:35886 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35892 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35904 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35916 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35930 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35946 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:05:49 [metrics.py:486] Avg prompt throughput: 11998.7 tokens/s, Avg generation throughput: 13.9 tokens/s, Running: 185 reqs, Swapped: 0 reqs, Pending: 10573 reqs, GPU KV cache usage: 31.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:35962 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35966 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35978 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43626 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43630 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:05:54 [metrics.py:486] Avg prompt throughput: 12008.6 tokens/s, Avg generation throughput: 14.0 tokens/s, Running: 206 reqs, Swapped: 0 reqs, Pending: 10492 reqs, GPU KV cache usage: 34.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:43646 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43658 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43674 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43676 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43686 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:05:59 [metrics.py:486] Avg prompt throughput: 11979.1 tokens/s, Avg generation throughput: 13.6 tokens/s, Running: 220 reqs, Swapped: 0 reqs, Pending: 10424 reqs, GPU KV cache usage: 37.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:43698 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43702 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43704 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54202 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54216 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:06:04 [metrics.py:486] Avg prompt throughput: 12058.7 tokens/s, Avg generation throughput: 13.7 tokens/s, Running: 244 reqs, Swapped: 0 reqs, Pending: 10353 reqs, GPU KV cache usage: 42.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:54218 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54232 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54248 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54262 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54274 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:06:10 [metrics.py:486] Avg prompt throughput: 12158.6 tokens/s, Avg generation throughput: 18.5 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 10271 reqs, GPU KV cache usage: 43.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:54288 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54292 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54298 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43954 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43970 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:06:15 [metrics.py:486] Avg prompt throughput: 6625.6 tokens/s, Avg generation throughput: 1626.4 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 10238 reqs, GPU KV cache usage: 45.4%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:43982 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43986 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43990 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44006 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44020 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:06:20 [metrics.py:486] Avg prompt throughput: 6235.1 tokens/s, Avg generation throughput: 1724.5 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 10201 reqs, GPU KV cache usage: 48.1%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:44036 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44048 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44058 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48380 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:06:25 [metrics.py:486] Avg prompt throughput: 8919.5 tokens/s, Avg generation throughput: 870.2 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 10146 reqs, GPU KV cache usage: 47.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:48382 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48388 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48390 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48402 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48404 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:06:30 [metrics.py:486] Avg prompt throughput: 10251.8 tokens/s, Avg generation throughput: 470.6 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 10086 reqs, GPU KV cache usage: 48.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:48416 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48432 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48444 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40368 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40372 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:06:35 [metrics.py:486] Avg prompt throughput: 7917.9 tokens/s, Avg generation throughput: 651.2 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 10040 reqs, GPU KV cache usage: 49.4%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:40382 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40388 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40402 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40416 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40424 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:06:40 [metrics.py:486] Avg prompt throughput: 9858.4 tokens/s, Avg generation throughput: 518.0 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 9987 reqs, GPU KV cache usage: 49.6%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:40434 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40446 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40454 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35458 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35466 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:06:45 [metrics.py:486] Avg prompt throughput: 9938.3 tokens/s, Avg generation throughput: 568.2 tokens/s, Running: 90 reqs, Swapped: 0 reqs, Pending: 9901 reqs, GPU KV cache usage: 16.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:35476 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35490 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35496 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35506 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35508 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:06:51 [metrics.py:486] Avg prompt throughput: 12062.6 tokens/s, Avg generation throughput: 16.7 tokens/s, Running: 121 reqs, Swapped: 0 reqs, Pending: 9813 reqs, GPU KV cache usage: 19.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:35510 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35524 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35536 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49512 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49514 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49516 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:06:56 [metrics.py:486] Avg prompt throughput: 11980.6 tokens/s, Avg generation throughput: 12.8 tokens/s, Running: 131 reqs, Swapped: 0 reqs, Pending: 9750 reqs, GPU KV cache usage: 22.1%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:49518 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49534 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49548 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49556 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:07:01 [metrics.py:486] Avg prompt throughput: 11953.0 tokens/s, Avg generation throughput: 11.5 tokens/s, Running: 145 reqs, Swapped: 0 reqs, Pending: 9692 reqs, GPU KV cache usage: 25.1%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:49564 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49568 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39376 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39384 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39398 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39406 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:07:06 [metrics.py:486] Avg prompt throughput: 11967.8 tokens/s, Avg generation throughput: 12.0 tokens/s, Running: 157 reqs, Swapped: 0 reqs, Pending: 9630 reqs, GPU KV cache usage: 28.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:39410 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39420 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39432 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39448 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39462 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:07:11 [metrics.py:486] Avg prompt throughput: 11919.9 tokens/s, Avg generation throughput: 11.4 tokens/s, Running: 169 reqs, Swapped: 0 reqs, Pending: 9572 reqs, GPU KV cache usage: 30.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:39472 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34414 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34430 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34432 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34446 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:07:16 [metrics.py:486] Avg prompt throughput: 12018.3 tokens/s, Avg generation throughput: 12.4 tokens/s, Running: 186 reqs, Swapped: 0 reqs, Pending: 9509 reqs, GPU KV cache usage: 35.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:34452 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34460 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34474 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34484 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34494 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:07:21 [metrics.py:486] Avg prompt throughput: 11952.2 tokens/s, Avg generation throughput: 12.4 tokens/s, Running: 196 reqs, Swapped: 0 reqs, Pending: 9446 reqs, GPU KV cache usage: 37.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:34502 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36476 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36482 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36484 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:07:26 [metrics.py:486] Avg prompt throughput: 11972.6 tokens/s, Avg generation throughput: 13.6 tokens/s, Running: 218 reqs, Swapped: 0 reqs, Pending: 9379 reqs, GPU KV cache usage: 42.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:36498 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36510 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36520 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36526 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36528 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:07:31 [metrics.py:486] Avg prompt throughput: 11892.1 tokens/s, Avg generation throughput: 12.2 tokens/s, Running: 237 reqs, Swapped: 0 reqs, Pending: 9318 reqs, GPU KV cache usage: 47.1%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:36532 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36536 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40030 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40036 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40052 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40062 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:07:36 [metrics.py:486] Avg prompt throughput: 11943.2 tokens/s, Avg generation throughput: 11.7 tokens/s, Running: 251 reqs, Swapped: 0 reqs, Pending: 9259 reqs, GPU KV cache usage: 50.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:40066 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40076 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40092 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40108 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:07:42 [metrics.py:486] Avg prompt throughput: 10912.6 tokens/s, Avg generation throughput: 365.0 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 9214 reqs, GPU KV cache usage: 52.3%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:40116 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40126 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57972 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57984 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58000 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:07:47 [metrics.py:486] Avg prompt throughput: 4246.6 tokens/s, Avg generation throughput: 2295.9 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 9189 reqs, GPU KV cache usage: 54.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:58016 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58030 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58042 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58054 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58060 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:07:52 [metrics.py:486] Avg prompt throughput: 8416.3 tokens/s, Avg generation throughput: 974.7 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 9146 reqs, GPU KV cache usage: 55.3%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:58074 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51742 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51746 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51756 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51762 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:07:57 [metrics.py:486] Avg prompt throughput: 9459.3 tokens/s, Avg generation throughput: 700.9 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 9094 reqs, GPU KV cache usage: 57.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:51764 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51778 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51794 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51798 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51802 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:08:02 [metrics.py:486] Avg prompt throughput: 10099.6 tokens/s, Avg generation throughput: 516.2 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 9045 reqs, GPU KV cache usage: 58.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:51806 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60360 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60362 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60372 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60380 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:08:07 [metrics.py:486] Avg prompt throughput: 10523.5 tokens/s, Avg generation throughput: 415.8 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 8994 reqs, GPU KV cache usage: 59.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:60392 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60396 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60412 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60418 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60426 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:08:12 [metrics.py:486] Avg prompt throughput: 8579.2 tokens/s, Avg generation throughput: 968.6 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 8947 reqs, GPU KV cache usage: 60.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:60430 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41706 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41722 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41724 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41740 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:08:17 [metrics.py:486] Avg prompt throughput: 11132.8 tokens/s, Avg generation throughput: 263.8 tokens/s, Running: 120 reqs, Swapped: 0 reqs, Pending: 8871 reqs, GPU KV cache usage: 26.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:41748 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41764 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41768 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41780 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41794 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:08:22 [metrics.py:486] Avg prompt throughput: 11965.4 tokens/s, Avg generation throughput: 13.1 tokens/s, Running: 137 reqs, Swapped: 0 reqs, Pending: 8808 reqs, GPU KV cache usage: 31.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:41802 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36034 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36044 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36046 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36050 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:08:27 [metrics.py:486] Avg prompt throughput: 12011.1 tokens/s, Avg generation throughput: 13.1 tokens/s, Running: 160 reqs, Swapped: 0 reqs, Pending: 8740 reqs, GPU KV cache usage: 36.4%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:36060 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36076 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36086 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36092 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36098 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:08:32 [metrics.py:486] Avg prompt throughput: 11921.1 tokens/s, Avg generation throughput: 11.2 tokens/s, Running: 174 reqs, Swapped: 0 reqs, Pending: 8680 reqs, GPU KV cache usage: 39.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:53706 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53716 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53732 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53736 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53746 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:08:37 [metrics.py:486] Avg prompt throughput: 12032.6 tokens/s, Avg generation throughput: 13.7 tokens/s, Running: 190 reqs, Swapped: 0 reqs, Pending: 8611 reqs, GPU KV cache usage: 42.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:53748 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53754 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53760 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53774 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53790 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:08:43 [metrics.py:486] Avg prompt throughput: 11913.3 tokens/s, Avg generation throughput: 12.2 tokens/s, Running: 202 reqs, Swapped: 0 reqs, Pending: 8550 reqs, GPU KV cache usage: 45.1%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:43944 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43956 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43970 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43976 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43978 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:08:48 [metrics.py:486] Avg prompt throughput: 11966.0 tokens/s, Avg generation throughput: 13.6 tokens/s, Running: 209 reqs, Swapped: 0 reqs, Pending: 8481 reqs, GPU KV cache usage: 46.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:43988 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43994 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44006 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44016 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44020 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:08:53 [metrics.py:486] Avg prompt throughput: 11943.3 tokens/s, Avg generation throughput: 12.6 tokens/s, Running: 221 reqs, Swapped: 0 reqs, Pending: 8415 reqs, GPU KV cache usage: 49.1%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:43736 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43740 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43750 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43752 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43756 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:08:58 [metrics.py:486] Avg prompt throughput: 11999.6 tokens/s, Avg generation throughput: 13.3 tokens/s, Running: 232 reqs, Swapped: 0 reqs, Pending: 8349 reqs, GPU KV cache usage: 50.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:43764 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43780 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43792 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43796 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43802 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:09:03 [metrics.py:486] Avg prompt throughput: 12015.4 tokens/s, Avg generation throughput: 14.2 tokens/s, Running: 245 reqs, Swapped: 0 reqs, Pending: 8278 reqs, GPU KV cache usage: 53.1%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:35498 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35510 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35524 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35536 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35540 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:09:08 [metrics.py:486] Avg prompt throughput: 11745.8 tokens/s, Avg generation throughput: 64.4 tokens/s, Running: 253 reqs, Swapped: 0 reqs, Pending: 8216 reqs, GPU KV cache usage: 53.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:35542 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35558 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35562 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35578 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35592 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:09:13 [metrics.py:486] Avg prompt throughput: 4986.8 tokens/s, Avg generation throughput: 1989.2 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 8183 reqs, GPU KV cache usage: 57.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:44948 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44954 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44956 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44960 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44970 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:09:18 [metrics.py:486] Avg prompt throughput: 7318.8 tokens/s, Avg generation throughput: 1234.7 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 8131 reqs, GPU KV cache usage: 57.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:44986 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44996 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45006 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45018 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45020 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:09:23 [metrics.py:486] Avg prompt throughput: 8478.1 tokens/s, Avg generation throughput: 959.0 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 8075 reqs, GPU KV cache usage: 57.6%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:55146 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55152 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55162 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55172 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55182 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:09:28 [metrics.py:486] Avg prompt throughput: 11567.2 tokens/s, Avg generation throughput: 115.0 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 8009 reqs, GPU KV cache usage: 56.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:55192 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55202 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55206 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55222 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55236 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:09:33 [metrics.py:486] Avg prompt throughput: 10938.9 tokens/s, Avg generation throughput: 263.0 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 7949 reqs, GPU KV cache usage: 56.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:36198 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36210 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36224 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36226 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36234 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:09:38 [metrics.py:486] Avg prompt throughput: 10754.7 tokens/s, Avg generation throughput: 317.3 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 7888 reqs, GPU KV cache usage: 55.4%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:36244 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36246 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36262 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36274 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43350 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:09:43 [metrics.py:486] Avg prompt throughput: 8421.7 tokens/s, Avg generation throughput: 513.5 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 7841 reqs, GPU KV cache usage: 55.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:43364 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43380 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43388 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43402 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43404 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:09:48 [metrics.py:486] Avg prompt throughput: 10526.4 tokens/s, Avg generation throughput: 414.7 tokens/s, Running: 253 reqs, Swapped: 0 reqs, Pending: 7775 reqs, GPU KV cache usage: 54.3%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:43420 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43432 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43434 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43446 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:09:53 [metrics.py:486] Avg prompt throughput: 10886.8 tokens/s, Avg generation throughput: 410.3 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 7718 reqs, GPU KV cache usage: 54.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:52662 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52668 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52682 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52690 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52706 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:09:58 [metrics.py:486] Avg prompt throughput: 11811.0 tokens/s, Avg generation throughput: 62.6 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 7659 reqs, GPU KV cache usage: 55.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:52714 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52726 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52732 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52736 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35900 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:10:04 [metrics.py:486] Avg prompt throughput: 11361.9 tokens/s, Avg generation throughput: 209.7 tokens/s, Running: 112 reqs, Swapped: 0 reqs, Pending: 7595 reqs, GPU KV cache usage: 22.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:35902 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35910 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35918 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35934 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35938 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:10:09 [metrics.py:486] Avg prompt throughput: 11949.5 tokens/s, Avg generation throughput: 10.9 tokens/s, Running: 120 reqs, Swapped: 0 reqs, Pending: 7539 reqs, GPU KV cache usage: 24.1%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:35940 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35944 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35946 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35952 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52920 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:10:14 [metrics.py:486] Avg prompt throughput: 11921.6 tokens/s, Avg generation throughput: 11.4 tokens/s, Running: 130 reqs, Swapped: 0 reqs, Pending: 7480 reqs, GPU KV cache usage: 26.6%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:52932 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52942 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52948 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52964 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52980 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:10:19 [metrics.py:486] Avg prompt throughput: 11990.8 tokens/s, Avg generation throughput: 14.0 tokens/s, Running: 143 reqs, Swapped: 0 reqs, Pending: 7407 reqs, GPU KV cache usage: 29.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:52982 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52986 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52988 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52994 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60238 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:10:24 [metrics.py:486] Avg prompt throughput: 12030.5 tokens/s, Avg generation throughput: 13.1 tokens/s, Running: 148 reqs, Swapped: 0 reqs, Pending: 7341 reqs, GPU KV cache usage: 30.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:60248 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60252 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60262 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60272 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60282 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60290 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:10:29 [metrics.py:486] Avg prompt throughput: 11904.7 tokens/s, Avg generation throughput: 11.1 tokens/s, Running: 156 reqs, Swapped: 0 reqs, Pending: 7283 reqs, GPU KV cache usage: 32.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:60302 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60310 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60322 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46952 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46962 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:10:35 [metrics.py:486] Avg prompt throughput: 11982.4 tokens/s, Avg generation throughput: 14.6 tokens/s, Running: 177 reqs, Swapped: 0 reqs, Pending: 7202 reqs, GPU KV cache usage: 35.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:46976 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46986 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47000 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47004 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47010 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:10:40 [metrics.py:486] Avg prompt throughput: 11985.9 tokens/s, Avg generation throughput: 13.6 tokens/s, Running: 192 reqs, Swapped: 0 reqs, Pending: 7135 reqs, GPU KV cache usage: 39.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:47012 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47026 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47028 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37996 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38000 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:10:45 [metrics.py:486] Avg prompt throughput: 11927.2 tokens/s, Avg generation throughput: 11.0 tokens/s, Running: 192 reqs, Swapped: 0 reqs, Pending: 7082 reqs, GPU KV cache usage: 39.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:38016 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38032 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38046 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38050 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38064 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:10:50 [metrics.py:486] Avg prompt throughput: 11985.5 tokens/s, Avg generation throughput: 11.6 tokens/s, Running: 202 reqs, Swapped: 0 reqs, Pending: 7019 reqs, GPU KV cache usage: 40.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:38072 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38082 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38096 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50620 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50626 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:10:55 [metrics.py:486] Avg prompt throughput: 12027.7 tokens/s, Avg generation throughput: 14.1 tokens/s, Running: 212 reqs, Swapped: 0 reqs, Pending: 6945 reqs, GPU KV cache usage: 42.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:50630 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50640 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50650 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50660 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50670 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:11:00 [metrics.py:486] Avg prompt throughput: 11928.4 tokens/s, Avg generation throughput: 13.4 tokens/s, Running: 219 reqs, Swapped: 0 reqs, Pending: 6876 reqs, GPU KV cache usage: 42.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:50678 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50690 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50696 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39022 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39030 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:11:05 [metrics.py:486] Avg prompt throughput: 11962.6 tokens/s, Avg generation throughput: 17.4 tokens/s, Running: 226 reqs, Swapped: 0 reqs, Pending: 6791 reqs, GPU KV cache usage: 44.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:39042 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39044 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39054 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39066 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39074 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:11:10 [metrics.py:486] Avg prompt throughput: 11982.9 tokens/s, Avg generation throughput: 14.4 tokens/s, Running: 235 reqs, Swapped: 0 reqs, Pending: 6719 reqs, GPU KV cache usage: 46.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:39084 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39086 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34724 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34734 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34744 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:11:16 [metrics.py:486] Avg prompt throughput: 11962.6 tokens/s, Avg generation throughput: 12.9 tokens/s, Running: 245 reqs, Swapped: 0 reqs, Pending: 6649 reqs, GPU KV cache usage: 48.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:34748 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34752 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34764 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34778 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34780 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:11:21 [metrics.py:486] Avg prompt throughput: 12077.4 tokens/s, Avg generation throughput: 15.1 tokens/s, Running: 248 reqs, Swapped: 0 reqs, Pending: 6571 reqs, GPU KV cache usage: 48.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:34790 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34804 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55820 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55830 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55836 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:11:26 [metrics.py:486] Avg prompt throughput: 12183.2 tokens/s, Avg generation throughput: 13.7 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 6504 reqs, GPU KV cache usage: 49.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:55840 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55856 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55872 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55874 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55888 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:11:31 [metrics.py:486] Avg prompt throughput: 9838.9 tokens/s, Avg generation throughput: 468.3 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 6446 reqs, GPU KV cache usage: 49.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:55902 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55916 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60518 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60520 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60526 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:11:36 [metrics.py:486] Avg prompt throughput: 8598.5 tokens/s, Avg generation throughput: 871.1 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 6402 reqs, GPU KV cache usage: 50.3%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:60538 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60548 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60562 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60572 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60586 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:11:41 [metrics.py:486] Avg prompt throughput: 7879.4 tokens/s, Avg generation throughput: 1177.1 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 6354 reqs, GPU KV cache usage: 52.3%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:60598 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60604 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55770 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55782 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55798 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:11:46 [metrics.py:486] Avg prompt throughput: 10751.2 tokens/s, Avg generation throughput: 266.3 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 6284 reqs, GPU KV cache usage: 51.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:55800 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55808 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55814 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55830 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55840 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:11:51 [metrics.py:486] Avg prompt throughput: 10624.3 tokens/s, Avg generation throughput: 214.2 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 6219 reqs, GPU KV cache usage: 52.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:55850 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45086 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45100 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45116 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45126 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:11:56 [metrics.py:486] Avg prompt throughput: 10713.4 tokens/s, Avg generation throughput: 262.5 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 6156 reqs, GPU KV cache usage: 52.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:45142 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45158 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45160 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45170 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45178 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:12:02 [metrics.py:486] Avg prompt throughput: 11605.3 tokens/s, Avg generation throughput: 65.1 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 6081 reqs, GPU KV cache usage: 52.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:45190 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50164 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50176 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50192 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50204 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:12:07 [metrics.py:486] Avg prompt throughput: 10381.6 tokens/s, Avg generation throughput: 317.6 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 6012 reqs, GPU KV cache usage: 53.3%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:50206 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50222 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50234 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50242 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:12:12 [metrics.py:486] Avg prompt throughput: 10651.5 tokens/s, Avg generation throughput: 367.2 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 5950 reqs, GPU KV cache usage: 54.3%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:50256 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50258 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39358 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39366 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39376 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:12:17 [metrics.py:486] Avg prompt throughput: 9535.4 tokens/s, Avg generation throughput: 718.1 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 5889 reqs, GPU KV cache usage: 53.1%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:39390 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39404 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39418 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39424 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39430 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39444 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:12:22 [metrics.py:486] Avg prompt throughput: 9571.1 tokens/s, Avg generation throughput: 609.5 tokens/s, Running: 253 reqs, Swapped: 0 reqs, Pending: 5825 reqs, GPU KV cache usage: 52.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:39446 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47694 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47710 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47716 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47722 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:12:27 [metrics.py:486] Avg prompt throughput: 9269.7 tokens/s, Avg generation throughput: 771.2 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 5763 reqs, GPU KV cache usage: 52.3%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:47738 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47746 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47762 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47776 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47786 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:12:32 [metrics.py:486] Avg prompt throughput: 10331.9 tokens/s, Avg generation throughput: 458.5 tokens/s, Running: 138 reqs, Swapped: 0 reqs, Pending: 5708 reqs, GPU KV cache usage: 25.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:47796 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58506 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58508 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58518 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58530 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:12:37 [metrics.py:486] Avg prompt throughput: 11935.2 tokens/s, Avg generation throughput: 10.8 tokens/s, Running: 146 reqs, Swapped: 0 reqs, Pending: 5650 reqs, GPU KV cache usage: 26.6%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:58536 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58542 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58556 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58558 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58574 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:12:42 [metrics.py:486] Avg prompt throughput: 12013.8 tokens/s, Avg generation throughput: 12.9 tokens/s, Running: 147 reqs, Swapped: 0 reqs, Pending: 5588 reqs, GPU KV cache usage: 27.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:58582 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48124 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48126 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48132 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48136 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:12:47 [metrics.py:486] Avg prompt throughput: 11967.7 tokens/s, Avg generation throughput: 12.9 tokens/s, Running: 155 reqs, Swapped: 0 reqs, Pending: 5521 reqs, GPU KV cache usage: 28.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:48152 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48156 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48168 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48184 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48192 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:12:52 [metrics.py:486] Avg prompt throughput: 11952.3 tokens/s, Avg generation throughput: 10.5 tokens/s, Running: 159 reqs, Swapped: 0 reqs, Pending: 5468 reqs, GPU KV cache usage: 30.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:48200 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37384 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37386 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37390 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37402 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:12:57 [metrics.py:486] Avg prompt throughput: 11961.0 tokens/s, Avg generation throughput: 10.7 tokens/s, Running: 170 reqs, Swapped: 0 reqs, Pending: 5412 reqs, GPU KV cache usage: 32.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:37404 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37408 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37422 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37434 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37438 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:13:02 [metrics.py:486] Avg prompt throughput: 11989.6 tokens/s, Avg generation throughput: 11.8 tokens/s, Running: 176 reqs, Swapped: 0 reqs, Pending: 5353 reqs, GPU KV cache usage: 33.6%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:43248 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43262 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43266 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43270 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43286 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:13:07 [metrics.py:486] Avg prompt throughput: 11912.9 tokens/s, Avg generation throughput: 11.6 tokens/s, Running: 185 reqs, Swapped: 0 reqs, Pending: 5294 reqs, GPU KV cache usage: 35.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:43294 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43304 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43318 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43320 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43330 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:13:13 [metrics.py:486] Avg prompt throughput: 12016.2 tokens/s, Avg generation throughput: 14.1 tokens/s, Running: 201 reqs, Swapped: 0 reqs, Pending: 5222 reqs, GPU KV cache usage: 38.4%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:56566 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56576 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56592 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56596 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56606 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:13:18 [metrics.py:486] Avg prompt throughput: 11959.6 tokens/s, Avg generation throughput: 12.5 tokens/s, Running: 212 reqs, Swapped: 0 reqs, Pending: 5158 reqs, GPU KV cache usage: 40.1%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:56620 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56624 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56626 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56630 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56634 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:13:23 [metrics.py:486] Avg prompt throughput: 11941.5 tokens/s, Avg generation throughput: 12.1 tokens/s, Running: 222 reqs, Swapped: 0 reqs, Pending: 5094 reqs, GPU KV cache usage: 42.1%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:45538 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45548 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45550 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45556 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45564 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45574 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:13:28 [metrics.py:486] Avg prompt throughput: 12004.6 tokens/s, Avg generation throughput: 12.9 tokens/s, Running: 229 reqs, Swapped: 0 reqs, Pending: 5026 reqs, GPU KV cache usage: 44.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:45578 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45592 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45598 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45608 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55960 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:13:33 [metrics.py:486] Avg prompt throughput: 11980.1 tokens/s, Avg generation throughput: 11.5 tokens/s, Running: 241 reqs, Swapped: 0 reqs, Pending: 4968 reqs, GPU KV cache usage: 46.6%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:55972 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55980 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55982 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55992 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56000 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:13:39 [metrics.py:486] Avg prompt throughput: 12009.0 tokens/s, Avg generation throughput: 11.7 tokens/s, Running: 247 reqs, Swapped: 0 reqs, Pending: 4907 reqs, GPU KV cache usage: 48.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:56006 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56018 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56032 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56044 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34158 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:13:44 [metrics.py:486] Avg prompt throughput: 12075.0 tokens/s, Avg generation throughput: 11.7 tokens/s, Running: 251 reqs, Swapped: 0 reqs, Pending: 4850 reqs, GPU KV cache usage: 49.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:34174 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34182 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34198 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34208 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34214 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:13:49 [metrics.py:486] Avg prompt throughput: 10853.3 tokens/s, Avg generation throughput: 363.7 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 4797 reqs, GPU KV cache usage: 50.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:34216 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34218 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34230 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34244 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55310 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:13:54 [metrics.py:486] Avg prompt throughput: 8573.0 tokens/s, Avg generation throughput: 873.1 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 4748 reqs, GPU KV cache usage: 50.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:55312 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55324 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55332 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55344 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55354 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:13:59 [metrics.py:486] Avg prompt throughput: 9226.3 tokens/s, Avg generation throughput: 718.5 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 4703 reqs, GPU KV cache usage: 51.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:55360 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55362 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55366 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55378 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56552 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:14:04 [metrics.py:486] Avg prompt throughput: 9261.3 tokens/s, Avg generation throughput: 716.6 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 4649 reqs, GPU KV cache usage: 52.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:56566 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56572 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56574 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56582 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56592 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:14:09 [metrics.py:486] Avg prompt throughput: 10358.2 tokens/s, Avg generation throughput: 363.5 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 4587 reqs, GPU KV cache usage: 53.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:56594 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56606 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56614 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49094 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49104 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:14:14 [metrics.py:486] Avg prompt throughput: 10091.0 tokens/s, Avg generation throughput: 470.8 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 4519 reqs, GPU KV cache usage: 53.3%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:49112 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49128 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49140 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49142 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49158 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:14:19 [metrics.py:486] Avg prompt throughput: 10492.1 tokens/s, Avg generation throughput: 363.8 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 4457 reqs, GPU KV cache usage: 53.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:49174 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49186 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49198 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58664 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58670 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:14:24 [metrics.py:486] Avg prompt throughput: 10357.2 tokens/s, Avg generation throughput: 420.1 tokens/s, Running: 251 reqs, Swapped: 0 reqs, Pending: 4391 reqs, GPU KV cache usage: 52.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:58676 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58686 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58694 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58700 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58706 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:14:29 [metrics.py:486] Avg prompt throughput: 11333.7 tokens/s, Avg generation throughput: 212.8 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 4334 reqs, GPU KV cache usage: 53.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:58716 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58722 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58724 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52236 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:14:34 [metrics.py:486] Avg prompt throughput: 11123.4 tokens/s, Avg generation throughput: 314.5 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 4274 reqs, GPU KV cache usage: 54.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:52238 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52250 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52252 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52258 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52268 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52284 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:14:39 [metrics.py:486] Avg prompt throughput: 11009.7 tokens/s, Avg generation throughput: 264.0 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 4213 reqs, GPU KV cache usage: 55.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:52290 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52292 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52308 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55256 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55268 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:14:45 [metrics.py:486] Avg prompt throughput: 9923.0 tokens/s, Avg generation throughput: 494.3 tokens/s, Running: 253 reqs, Swapped: 0 reqs, Pending: 4161 reqs, GPU KV cache usage: 55.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:55282 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55296 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55312 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55324 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55330 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:14:50 [metrics.py:486] Avg prompt throughput: 10735.1 tokens/s, Avg generation throughput: 366.3 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 4097 reqs, GPU KV cache usage: 56.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:55334 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55346 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55350 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56484 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56486 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:14:55 [metrics.py:486] Avg prompt throughput: 8682.6 tokens/s, Avg generation throughput: 596.7 tokens/s, Running: 165 reqs, Swapped: 0 reqs, Pending: 4038 reqs, GPU KV cache usage: 33.3%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:56496 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56512 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56520 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56536 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56546 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:15:00 [metrics.py:486] Avg prompt throughput: 12019.4 tokens/s, Avg generation throughput: 13.6 tokens/s, Running: 182 reqs, Swapped: 0 reqs, Pending: 3968 reqs, GPU KV cache usage: 36.3%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:56548 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56552 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56560 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51592 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51598 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:15:05 [metrics.py:486] Avg prompt throughput: 11981.3 tokens/s, Avg generation throughput: 13.7 tokens/s, Running: 205 reqs, Swapped: 0 reqs, Pending: 3895 reqs, GPU KV cache usage: 40.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:51604 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51616 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51626 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51636 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51644 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:15:10 [metrics.py:486] Avg prompt throughput: 12053.1 tokens/s, Avg generation throughput: 16.4 tokens/s, Running: 232 reqs, Swapped: 0 reqs, Pending: 3808 reqs, GPU KV cache usage: 44.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:51650 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51658 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51672 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35630 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35632 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:15:15 [metrics.py:486] Avg prompt throughput: 11947.6 tokens/s, Avg generation throughput: 13.8 tokens/s, Running: 248 reqs, Swapped: 0 reqs, Pending: 3743 reqs, GPU KV cache usage: 47.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:35642 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35644 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35652 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35666 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35668 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:15:21 [metrics.py:486] Avg prompt throughput: 11003.3 tokens/s, Avg generation throughput: 268.2 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 3678 reqs, GPU KV cache usage: 48.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:35676 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35678 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35682 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60466 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60470 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:15:26 [metrics.py:486] Avg prompt throughput: 5126.9 tokens/s, Avg generation throughput: 2050.1 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 3642 reqs, GPU KV cache usage: 49.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:60472 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60484 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60496 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60508 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60520 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:15:31 [metrics.py:486] Avg prompt throughput: 9069.0 tokens/s, Avg generation throughput: 818.5 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 3576 reqs, GPU KV cache usage: 47.4%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:60526 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60530 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60542 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51192 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51198 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:15:36 [metrics.py:486] Avg prompt throughput: 10533.7 tokens/s, Avg generation throughput: 420.0 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 3518 reqs, GPU KV cache usage: 48.1%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:51200 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51214 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51228 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51240 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51246 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:15:41 [metrics.py:486] Avg prompt throughput: 10344.0 tokens/s, Avg generation throughput: 461.3 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 3453 reqs, GPU KV cache usage: 48.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:51256 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51272 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56162 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56172 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56186 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:15:46 [metrics.py:486] Avg prompt throughput: 9382.2 tokens/s, Avg generation throughput: 776.5 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 3388 reqs, GPU KV cache usage: 47.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:56202 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56210 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56218 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56226 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56234 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:15:51 [metrics.py:486] Avg prompt throughput: 10245.6 tokens/s, Avg generation throughput: 514.5 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 3340 reqs, GPU KV cache usage: 48.6%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:56246 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56258 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51576 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51588 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51598 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:15:56 [metrics.py:486] Avg prompt throughput: 10383.4 tokens/s, Avg generation throughput: 456.7 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 3279 reqs, GPU KV cache usage: 48.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:51602 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51610 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51612 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51624 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51636 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:16:01 [metrics.py:486] Avg prompt throughput: 10667.1 tokens/s, Avg generation throughput: 412.4 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 3207 reqs, GPU KV cache usage: 49.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:51646 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51652 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41838 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41842 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41856 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41872 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:16:06 [metrics.py:486] Avg prompt throughput: 10820.5 tokens/s, Avg generation throughput: 385.4 tokens/s, Running: 173 reqs, Swapped: 0 reqs, Pending: 3139 reqs, GPU KV cache usage: 32.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:41884 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41886 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41898 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41912 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41922 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:16:12 [metrics.py:486] Avg prompt throughput: 11937.2 tokens/s, Avg generation throughput: 12.3 tokens/s, Running: 186 reqs, Swapped: 0 reqs, Pending: 3068 reqs, GPU KV cache usage: 34.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:41934 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37080 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37096 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37098 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37112 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:16:17 [metrics.py:486] Avg prompt throughput: 12019.7 tokens/s, Avg generation throughput: 18.7 tokens/s, Running: 208 reqs, Swapped: 0 reqs, Pending: 2972 reqs, GPU KV cache usage: 36.3%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:37114 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37126 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37136 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37144 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37158 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37170 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:16:22 [metrics.py:486] Avg prompt throughput: 12005.2 tokens/s, Avg generation throughput: 15.2 tokens/s, Running: 234 reqs, Swapped: 0 reqs, Pending: 2890 reqs, GPU KV cache usage: 40.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:55198 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55204 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55212 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55218 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55228 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:16:28 [metrics.py:486] Avg prompt throughput: 11941.5 tokens/s, Avg generation throughput: 12.8 tokens/s, Running: 239 reqs, Swapped: 0 reqs, Pending: 2824 reqs, GPU KV cache usage: 41.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:55244 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55256 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55264 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55278 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55282 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:16:33 [metrics.py:486] Avg prompt throughput: 12005.0 tokens/s, Avg generation throughput: 13.0 tokens/s, Running: 251 reqs, Swapped: 0 reqs, Pending: 2763 reqs, GPU KV cache usage: 45.6%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:58252 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58264 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58268 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58280 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58296 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:16:38 [metrics.py:486] Avg prompt throughput: 12014.8 tokens/s, Avg generation throughput: 64.0 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 2697 reqs, GPU KV cache usage: 46.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:58304 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58312 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58324 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58328 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58330 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:16:43 [metrics.py:486] Avg prompt throughput: 7706.8 tokens/s, Avg generation throughput: 1234.4 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 2653 reqs, GPU KV cache usage: 46.6%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:34390 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34406 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34416 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34420 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34422 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:16:48 [metrics.py:486] Avg prompt throughput: 8120.9 tokens/s, Avg generation throughput: 1129.8 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 2605 reqs, GPU KV cache usage: 48.6%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:34424 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34436 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34438 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34446 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34450 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:16:53 [metrics.py:486] Avg prompt throughput: 9726.1 tokens/s, Avg generation throughput: 691.5 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 2550 reqs, GPU KV cache usage: 51.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:36084 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36090 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36106 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36108 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36116 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:16:58 [metrics.py:486] Avg prompt throughput: 11703.5 tokens/s, Avg generation throughput: 114.2 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 2491 reqs, GPU KV cache usage: 50.1%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:36120 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36132 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36138 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36144 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36156 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:17:03 [metrics.py:486] Avg prompt throughput: 10288.8 tokens/s, Avg generation throughput: 363.5 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 2429 reqs, GPU KV cache usage: 50.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:56078 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56080 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56088 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56100 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56108 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:17:08 [metrics.py:486] Avg prompt throughput: 10522.3 tokens/s, Avg generation throughput: 412.2 tokens/s, Running: 253 reqs, Swapped: 0 reqs, Pending: 2367 reqs, GPU KV cache usage: 50.1%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:56114 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56130 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56132 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56142 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45436 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:17:13 [metrics.py:486] Avg prompt throughput: 9891.4 tokens/s, Avg generation throughput: 612.9 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 2310 reqs, GPU KV cache usage: 51.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:45442 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45454 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45470 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45474 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45486 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:17:18 [metrics.py:486] Avg prompt throughput: 10219.2 tokens/s, Avg generation throughput: 506.4 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 2246 reqs, GPU KV cache usage: 50.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:45498 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45500 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45508 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45524 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35902 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:17:23 [metrics.py:486] Avg prompt throughput: 10178.3 tokens/s, Avg generation throughput: 457.3 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 2183 reqs, GPU KV cache usage: 48.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:35918 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35932 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35934 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35946 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35956 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:17:28 [metrics.py:486] Avg prompt throughput: 8476.7 tokens/s, Avg generation throughput: 616.1 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 2128 reqs, GPU KV cache usage: 48.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:35966 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35972 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35980 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35996 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56838 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:17:34 [metrics.py:486] Avg prompt throughput: 10810.4 tokens/s, Avg generation throughput: 330.9 tokens/s, Running: 184 reqs, Swapped: 0 reqs, Pending: 2067 reqs, GPU KV cache usage: 35.6%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:56844 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56848 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56864 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56878 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56886 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56888 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:17:39 [metrics.py:486] Avg prompt throughput: 11959.6 tokens/s, Avg generation throughput: 15.2 tokens/s, Running: 209 reqs, Swapped: 0 reqs, Pending: 1985 reqs, GPU KV cache usage: 39.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:56900 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56904 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56908 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40216 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40218 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:17:44 [metrics.py:486] Avg prompt throughput: 11947.4 tokens/s, Avg generation throughput: 12.8 tokens/s, Running: 220 reqs, Swapped: 0 reqs, Pending: 1918 reqs, GPU KV cache usage: 40.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:40232 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40244 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40252 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40264 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40272 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:17:49 [metrics.py:486] Avg prompt throughput: 12019.8 tokens/s, Avg generation throughput: 15.2 tokens/s, Running: 240 reqs, Swapped: 0 reqs, Pending: 1841 reqs, GPU KV cache usage: 44.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:40282 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40296 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40304 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53510 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53524 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:17:54 [metrics.py:486] Avg prompt throughput: 11991.2 tokens/s, Avg generation throughput: 13.1 tokens/s, Running: 252 reqs, Swapped: 0 reqs, Pending: 1776 reqs, GPU KV cache usage: 46.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:53532 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53542 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53554 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53556 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53570 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:18:00 [metrics.py:486] Avg prompt throughput: 10909.2 tokens/s, Avg generation throughput: 214.3 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 1713 reqs, GPU KV cache usage: 47.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:53584 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53594 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53600 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55636 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55642 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:18:05 [metrics.py:486] Avg prompt throughput: 7656.2 tokens/s, Avg generation throughput: 1174.1 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 1669 reqs, GPU KV cache usage: 49.3%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:55654 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55656 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55670 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55678 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55694 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:18:10 [metrics.py:486] Avg prompt throughput: 8941.3 tokens/s, Avg generation throughput: 823.9 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 1613 reqs, GPU KV cache usage: 50.1%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:55704 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55706 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55716 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53804 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53812 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:18:15 [metrics.py:486] Avg prompt throughput: 9883.3 tokens/s, Avg generation throughput: 613.1 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 1553 reqs, GPU KV cache usage: 50.3%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:53826 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53834 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53838 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53848 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53854 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:18:20 [metrics.py:486] Avg prompt throughput: 11190.9 tokens/s, Avg generation throughput: 267.7 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 1490 reqs, GPU KV cache usage: 50.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:53864 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53874 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53886 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51952 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51956 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:18:25 [metrics.py:486] Avg prompt throughput: 11280.1 tokens/s, Avg generation throughput: 213.9 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 1434 reqs, GPU KV cache usage: 50.6%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:51970 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51984 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51998 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52004 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52016 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:18:30 [metrics.py:486] Avg prompt throughput: 10298.9 tokens/s, Avg generation throughput: 504.7 tokens/s, Running: 252 reqs, Swapped: 0 reqs, Pending: 1369 reqs, GPU KV cache usage: 49.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:52032 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52040 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52050 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33196 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33208 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:18:35 [metrics.py:486] Avg prompt throughput: 10779.7 tokens/s, Avg generation throughput: 317.9 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 1307 reqs, GPU KV cache usage: 50.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:33210 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33214 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33216 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33228 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33244 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:18:40 [metrics.py:486] Avg prompt throughput: 10009.2 tokens/s, Avg generation throughput: 621.0 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 1244 reqs, GPU KV cache usage: 49.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:33252 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33258 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33260 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35968 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35978 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:18:45 [metrics.py:486] Avg prompt throughput: 11157.3 tokens/s, Avg generation throughput: 264.5 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 1179 reqs, GPU KV cache usage: 50.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:35988 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36002 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36010 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36016 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36018 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:18:50 [metrics.py:486] Avg prompt throughput: 10507.1 tokens/s, Avg generation throughput: 363.7 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 1110 reqs, GPU KV cache usage: 50.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:36028 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36036 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36040 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44904 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44920 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:18:55 [metrics.py:486] Avg prompt throughput: 10469.9 tokens/s, Avg generation throughput: 409.6 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 1044 reqs, GPU KV cache usage: 50.9%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:44922 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44936 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44952 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44964 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44972 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:19:00 [metrics.py:486] Avg prompt throughput: 9569.8 tokens/s, Avg generation throughput: 668.6 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 968 reqs, GPU KV cache usage: 49.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:44980 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44984 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44992 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47286 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47300 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:19:06 [metrics.py:486] Avg prompt throughput: 11692.0 tokens/s, Avg generation throughput: 111.4 tokens/s, Running: 191 reqs, Swapped: 0 reqs, Pending: 876 reqs, GPU KV cache usage: 35.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:47306 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47314 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47322 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47332 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47346 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47360 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:19:11 [metrics.py:486] Avg prompt throughput: 11998.7 tokens/s, Avg generation throughput: 15.1 tokens/s, Running: 211 reqs, Swapped: 0 reqs, Pending: 791 reqs, GPU KV cache usage: 38.1%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:47370 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47380 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43218 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43234 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43248 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:19:17 [metrics.py:486] Avg prompt throughput: 11973.2 tokens/s, Avg generation throughput: 14.2 tokens/s, Running: 234 reqs, Swapped: 0 reqs, Pending: 713 reqs, GPU KV cache usage: 43.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:43264 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43274 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43284 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43290 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43306 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43322 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:19:22 [metrics.py:486] Avg prompt throughput: 11997.5 tokens/s, Avg generation throughput: 14.0 tokens/s, Running: 248 reqs, Swapped: 0 reqs, Pending: 645 reqs, GPU KV cache usage: 46.3%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:43334 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36072 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36088 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36098 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36112 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:19:27 [metrics.py:486] Avg prompt throughput: 7683.5 tokens/s, Avg generation throughput: 1281.5 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 584 reqs, GPU KV cache usage: 46.8%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:36120 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36122 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36138 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36140 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36144 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:19:32 [metrics.py:486] Avg prompt throughput: 9224.4 tokens/s, Avg generation throughput: 774.0 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 529 reqs, GPU KV cache usage: 47.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:36148 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54764 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54776 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54778 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54792 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:19:37 [metrics.py:486] Avg prompt throughput: 9604.2 tokens/s, Avg generation throughput: 665.3 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 467 reqs, GPU KV cache usage: 48.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:54808 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54822 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54826 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54842 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54858 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:19:42 [metrics.py:486] Avg prompt throughput: 9953.2 tokens/s, Avg generation throughput: 670.9 tokens/s, Running: 256 reqs, Swapped: 0 reqs, Pending: 397 reqs, GPU KV cache usage: 47.4%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:54874 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40432 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40446 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40462 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40466 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:19:47 [metrics.py:486] Avg prompt throughput: 10567.6 tokens/s, Avg generation throughput: 461.2 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 341 reqs, GPU KV cache usage: 48.5%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:40482 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40496 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40504 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40510 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40512 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:19:52 [metrics.py:486] Avg prompt throughput: 11276.6 tokens/s, Avg generation throughput: 264.1 tokens/s, Running: 252 reqs, Swapped: 0 reqs, Pending: 287 reqs, GPU KV cache usage: 48.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:49814 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49830 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49846 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49858 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49870 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:19:57 [metrics.py:486] Avg prompt throughput: 11229.7 tokens/s, Avg generation throughput: 262.9 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 219 reqs, GPU KV cache usage: 48.3%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:49884 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49900 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49912 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49920 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49926 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:20:02 [metrics.py:486] Avg prompt throughput: 9666.2 tokens/s, Avg generation throughput: 665.7 tokens/s, Running: 252 reqs, Swapped: 0 reqs, Pending: 153 reqs, GPU KV cache usage: 48.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:46594 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46606 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46622 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46636 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46652 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:20:07 [metrics.py:486] Avg prompt throughput: 10622.8 tokens/s, Avg generation throughput: 364.1 tokens/s, Running: 255 reqs, Swapped: 0 reqs, Pending: 89 reqs, GPU KV cache usage: 48.7%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:46660 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46672 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46680 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46694 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46710 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:20:13 [metrics.py:486] Avg prompt throughput: 10362.2 tokens/s, Avg generation throughput: 459.3 tokens/s, Running: 254 reqs, Swapped: 0 reqs, Pending: 31 reqs, GPU KV cache usage: 49.2%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:54182 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54186 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54198 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54202 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54206 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:20:18 [metrics.py:486] Avg prompt throughput: 5571.5 tokens/s, Avg generation throughput: 1434.7 tokens/s, Running: 162 reqs, Swapped: 0 reqs, Pending: 0 reqs, GPU KV cache usage: 33.1%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:54220 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54228 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54234 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54244 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42250 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54252 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47354 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47358 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47368 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47374 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47386 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47388 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47398 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47414 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47418 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:20:32 [metrics.py:486] Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 645.6 tokens/s, Running: 0 reqs, Swapped: 0 reqs, Pending: 0 reqs, GPU KV cache usage: 0.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:47420 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51014 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51016 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51020 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51026 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51034 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51040 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51044 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51052 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:20:42 [metrics.py:486] Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Swapped: 0 reqs, Pending: 0 reqs, GPU KV cache usage: 0.0%, CPU KV cache usage: 0.0%.
+INFO:     127.0.0.1:51062 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50114 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50122 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50128 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50138 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50152 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50154 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50166 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50176 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50188 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50202 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60974 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60980 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60986 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60988 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60990 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60992 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32776 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32778 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32782 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32798 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60996 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32772 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32774 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32784 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32790 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32804 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32818 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32834 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32840 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32848 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55586 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55602 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55618 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55628 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55642 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55648 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55650 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55666 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55668 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47882 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47892 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47898 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47910 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47926 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47942 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47958 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47970 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47976 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47980 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48502 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48514 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48530 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48546 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48550 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48560 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48576 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48588 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48602 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48612 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58706 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58722 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58736 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58754 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58766 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58778 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58794 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58804 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58138 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58154 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58162 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58172 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58184 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58194 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58198 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58200 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58206 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58208 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45754 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45760 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45774 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45786 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45792 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45802 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45814 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45818 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45826 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49286 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49288 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49302 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49308 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49320 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49328 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49332 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49338 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49342 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49346 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48204 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48208 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48212 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48220 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 22:22:29 [launcher.py:79] Shutting down FastAPI HTTP server.
+Exception ignored in: <function Socket.__del__ at 0x7ffa42f48c20>
+Traceback (most recent call last):
+  File "/root/rehan/.venv/lib/python3.12/site-packages/zmq/sugar/socket.py", line 184, in __del__
+    def __del__(self):
+
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/engine/multiprocessing/engine.py", line 435, in signal_handler
+    raise KeyboardInterrupt("MQLLMEngine terminated")
+KeyboardInterrupt: MQLLMEngine terminated
+[rank0]:[W721 22:22:30.618641454 ProcessGroupNCCL.cpp:1476] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.

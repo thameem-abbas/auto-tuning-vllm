@@ -1,0 +1,6 @@
+INFO 07-21 20:37:14 [__init__.py:243] Automatically detected platform cuda.
+INFO 07-21 20:37:20 [__init__.py:31] Available plugins for group vllm.general_plugins:
+INFO 07-21 20:37:20 [__init__.py:33] - lora_filesystem_resolver -> vllm.plugins.lora_resolvers.filesystem_resolver:register_filesystem_resolver
+INFO 07-21 20:37:20 [__init__.py:36] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+usage: vllm [-h] [-v] {chat,complete,serve,bench,collect-env} ...
+vllm: error: unrecognized arguments: --tp 1

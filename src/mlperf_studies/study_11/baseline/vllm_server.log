@@ -1,0 +1,282 @@
+INFO 07-22 20:11:33 [__init__.py:243] Automatically detected platform cuda.
+INFO 07-22 20:11:36 [__init__.py:31] Available plugins for group vllm.general_plugins:
+INFO 07-22 20:11:36 [__init__.py:33] - lora_filesystem_resolver -> vllm.plugins.lora_resolvers.filesystem_resolver:register_filesystem_resolver
+INFO 07-22 20:11:36 [__init__.py:36] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 07-22 20:11:37 [api_server.py:1289] vLLM API server version 0.9.0.1
+INFO 07-22 20:11:37 [cli_args.py:300] non-default args: {'disable_log_requests': True}
+INFO 07-22 20:11:47 [config.py:793] This model supports multiple tasks: {'generate', 'score', 'embed', 'reward', 'classify'}. Defaulting to 'generate'.
+INFO 07-22 20:11:47 [config.py:2118] Chunked prefill is enabled with max_num_batched_tokens=2048.
+INFO 07-22 20:11:53 [__init__.py:243] Automatically detected platform cuda.
+INFO 07-22 20:11:55 [core.py:438] Waiting for init message from front-end.
+INFO 07-22 20:11:55 [__init__.py:31] Available plugins for group vllm.general_plugins:
+INFO 07-22 20:11:55 [__init__.py:33] - lora_filesystem_resolver -> vllm.plugins.lora_resolvers.filesystem_resolver:register_filesystem_resolver
+INFO 07-22 20:11:55 [__init__.py:36] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 07-22 20:11:55 [core.py:65] Initializing a V1 LLM engine (v0.9.0.1) with config: model='meta-llama/Llama-3.1-8B', speculative_config=None, tokenizer='meta-llama/Llama-3.1-8B', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, override_neuron_config={}, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=131072, download_dir=None, load_format=LoadFormat.AUTO, tensor_parallel_size=1, pipeline_parallel_size=1, disable_custom_all_reduce=False, quantization=None, enforce_eager=False, kv_cache_dtype=auto,  device_config=cuda, decoding_config=DecodingConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_backend=''), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None), seed=0, served_model_name=meta-llama/Llama-3.1-8B, num_scheduler_steps=1, multi_step_stream_outputs=True, enable_prefix_caching=True, chunked_prefill_enabled=True, use_async_output_proc=True, pooler_config=None, compilation_config={"level": 3, "custom_ops": ["none"], "splitting_ops": ["vllm.unified_attention", "vllm.unified_attention_with_output"], "compile_sizes": [], "inductor_compile_config": {"enable_auto_functionalized_v2": false}, "use_cudagraph": true, "cudagraph_num_of_warmups": 1, "cudagraph_capture_sizes": [512, 504, 496, 488, 480, 472, 464, 456, 448, 440, 432, 424, 416, 408, 400, 392, 384, 376, 368, 360, 352, 344, 336, 328, 320, 312, 304, 296, 288, 280, 272, 264, 256, 248, 240, 232, 224, 216, 208, 200, 192, 184, 176, 168, 160, 152, 144, 136, 128, 120, 112, 104, 96, 88, 80, 72, 64, 56, 48, 40, 32, 24, 16, 8, 4, 2, 1], "max_capture_size": 512}
+WARNING 07-22 20:11:56 [utils.py:2671] Methods determine_num_available_blocks,device_config,get_cache_block_size_bytes,initialize_cache not implemented in <vllm.v1.worker.gpu_worker.Worker object at 0x7fc94d820ec0>
+INFO 07-22 20:12:01 [parallel_state.py:1064] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, TP rank 0, EP rank 0
+WARNING 07-22 20:12:01 [topk_topp_sampler.py:58] FlashInfer is not available. Falling back to the PyTorch-native implementation of top-p & top-k sampling. For the best performance, please install FlashInfer.
+INFO 07-22 20:12:01 [gpu_model_runner.py:1531] Starting to load model meta-llama/Llama-3.1-8B...
+INFO 07-22 20:12:01 [cuda.py:217] Using Flash Attention backend on V1 engine.
+INFO 07-22 20:12:01 [backends.py:35] Using InductorAdaptor
+INFO 07-22 20:12:03 [weight_utils.py:291] Using model weights format ['*.safetensors']
+INFO 07-22 20:12:03 [weight_utils.py:307] Time spent downloading weights for meta-llama/Llama-3.1-8B: 0.571353 seconds
+Loading safetensors checkpoint shards:   0% Completed | 0/4 [00:00<?, ?it/s]
+Loading safetensors checkpoint shards:  25% Completed | 1/4 [00:00<00:00,  6.69it/s]
+Loading safetensors checkpoint shards:  50% Completed | 2/4 [00:00<00:00,  2.15it/s]
+Loading safetensors checkpoint shards:  75% Completed | 3/4 [00:01<00:00,  1.72it/s]
+Loading safetensors checkpoint shards: 100% Completed | 4/4 [00:02<00:00,  1.57it/s]
+Loading safetensors checkpoint shards: 100% Completed | 4/4 [00:02<00:00,  1.75it/s]
+
+INFO 07-22 20:12:06 [default_loader.py:280] Loading weights took 2.33 seconds
+INFO 07-22 20:12:06 [gpu_model_runner.py:1549] Model loading took 14.9889 GiB and 5.352946 seconds
+INFO 07-22 20:12:13 [backends.py:459] Using cache directory: /root/.cache/vllm/torch_compile_cache/842d7db6ee/rank_0_0 for vLLM's torch.compile
+INFO 07-22 20:12:13 [backends.py:469] Dynamo bytecode transform time: 6.09 s
+INFO 07-22 20:12:17 [backends.py:132] Directly load the compiled graph(s) for shape None from the cache, took 4.266 s
+INFO 07-22 20:12:18 [monitor.py:33] torch.compile takes 6.09 s in total
+INFO 07-22 20:12:18 [kv_cache_utils.py:637] GPU KV cache size: 191,328 tokens
+INFO 07-22 20:12:18 [kv_cache_utils.py:640] Maximum concurrency for 131,072 tokens per request: 1.46x
+INFO 07-22 20:12:38 [gpu_model_runner.py:1933] Graph capturing finished in 20 secs, took 0.52 GiB
+INFO 07-22 20:12:38 [core.py:167] init engine (profile, create kv cache, warmup model) took 31.65 seconds
+INFO 07-22 20:12:40 [loggers.py:134] vllm cache_config_info with initialization after num_gpu_blocks is: 11958
+WARNING 07-22 20:12:40 [config.py:1339] Default sampling parameters have been overridden by the model's Hugging Face generation config recommended from the model creator. If this is not intended, please relaunch vLLM instance with `--generation-config vllm`.
+INFO 07-22 20:12:40 [serving_chat.py:117] Using default chat sampling params from model: {'temperature': 0.6, 'top_p': 0.9}
+INFO 07-22 20:12:41 [serving_completion.py:65] Using default completion sampling params from model: {'temperature': 0.6, 'top_p': 0.9}
+INFO 07-22 20:12:41 [api_server.py:1336] Starting vLLM API server on http://0.0.0.0:8000
+INFO 07-22 20:12:41 [launcher.py:28] Available routes are:
+INFO 07-22 20:12:41 [launcher.py:36] Route: /openapi.json, Methods: GET, HEAD
+INFO 07-22 20:12:41 [launcher.py:36] Route: /docs, Methods: GET, HEAD
+INFO 07-22 20:12:41 [launcher.py:36] Route: /docs/oauth2-redirect, Methods: GET, HEAD
+INFO 07-22 20:12:41 [launcher.py:36] Route: /redoc, Methods: GET, HEAD
+INFO 07-22 20:12:41 [launcher.py:36] Route: /health, Methods: GET
+INFO 07-22 20:12:41 [launcher.py:36] Route: /load, Methods: GET
+INFO 07-22 20:12:41 [launcher.py:36] Route: /ping, Methods: POST
+INFO 07-22 20:12:41 [launcher.py:36] Route: /ping, Methods: GET
+INFO 07-22 20:12:41 [launcher.py:36] Route: /tokenize, Methods: POST
+INFO 07-22 20:12:41 [launcher.py:36] Route: /detokenize, Methods: POST
+INFO 07-22 20:12:41 [launcher.py:36] Route: /v1/models, Methods: GET
+INFO 07-22 20:12:41 [launcher.py:36] Route: /version, Methods: GET
+INFO 07-22 20:12:41 [launcher.py:36] Route: /v1/chat/completions, Methods: POST
+INFO 07-22 20:12:41 [launcher.py:36] Route: /v1/completions, Methods: POST
+INFO 07-22 20:12:41 [launcher.py:36] Route: /v1/embeddings, Methods: POST
+INFO 07-22 20:12:41 [launcher.py:36] Route: /pooling, Methods: POST
+INFO 07-22 20:12:41 [launcher.py:36] Route: /classify, Methods: POST
+INFO 07-22 20:12:41 [launcher.py:36] Route: /score, Methods: POST
+INFO 07-22 20:12:41 [launcher.py:36] Route: /v1/score, Methods: POST
+INFO 07-22 20:12:41 [launcher.py:36] Route: /v1/audio/transcriptions, Methods: POST
+INFO 07-22 20:12:41 [launcher.py:36] Route: /rerank, Methods: POST
+INFO 07-22 20:12:41 [launcher.py:36] Route: /v1/rerank, Methods: POST
+INFO 07-22 20:12:41 [launcher.py:36] Route: /v2/rerank, Methods: POST
+INFO 07-22 20:12:41 [launcher.py:36] Route: /invocations, Methods: POST
+INFO 07-22 20:12:41 [launcher.py:36] Route: /metrics, Methods: GET
+INFO:     Started server process [224071]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:49520 - "GET /health HTTP/1.1" 200 OK
+INFO 07-22 20:15:41 [loggers.py:116] Engine 000: Avg prompt throughput: 6062.0 tokens/s, Avg generation throughput: 19.4 tokens/s, Running: 13 reqs, Waiting: 13306 reqs, GPU KV cache usage: 5.2%, Prefix cache hit rate: 1.6%
+INFO 07-22 20:15:51 [loggers.py:116] Engine 000: Avg prompt throughput: 12966.2 tokens/s, Avg generation throughput: 200.5 tokens/s, Running: 46 reqs, Waiting: 13145 reqs, GPU KV cache usage: 19.3%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:16:01 [loggers.py:116] Engine 000: Avg prompt throughput: 12235.5 tokens/s, Avg generation throughput: 343.9 tokens/s, Running: 65 reqs, Waiting: 13002 reqs, GPU KV cache usage: 27.2%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:16:11 [loggers.py:116] Engine 000: Avg prompt throughput: 11958.2 tokens/s, Avg generation throughput: 358.8 tokens/s, Running: 57 reqs, Waiting: 12866 reqs, GPU KV cache usage: 24.7%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:16:21 [loggers.py:116] Engine 000: Avg prompt throughput: 11833.7 tokens/s, Avg generation throughput: 351.8 tokens/s, Running: 57 reqs, Waiting: 12722 reqs, GPU KV cache usage: 24.0%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:16:31 [loggers.py:116] Engine 000: Avg prompt throughput: 12175.9 tokens/s, Avg generation throughput: 365.8 tokens/s, Running: 67 reqs, Waiting: 12577 reqs, GPU KV cache usage: 28.5%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:16:41 [loggers.py:116] Engine 000: Avg prompt throughput: 11672.9 tokens/s, Avg generation throughput: 428.8 tokens/s, Running: 67 reqs, Waiting: 12439 reqs, GPU KV cache usage: 30.2%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:16:51 [loggers.py:116] Engine 000: Avg prompt throughput: 11656.3 tokens/s, Avg generation throughput: 410.5 tokens/s, Running: 63 reqs, Waiting: 12302 reqs, GPU KV cache usage: 26.9%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:17:01 [loggers.py:116] Engine 000: Avg prompt throughput: 12225.4 tokens/s, Avg generation throughput: 352.5 tokens/s, Running: 65 reqs, Waiting: 12163 reqs, GPU KV cache usage: 24.7%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:17:11 [loggers.py:116] Engine 000: Avg prompt throughput: 11673.0 tokens/s, Avg generation throughput: 402.4 tokens/s, Running: 71 reqs, Waiting: 12026 reqs, GPU KV cache usage: 28.4%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:17:21 [loggers.py:116] Engine 000: Avg prompt throughput: 11646.2 tokens/s, Avg generation throughput: 424.9 tokens/s, Running: 66 reqs, Waiting: 11888 reqs, GPU KV cache usage: 28.4%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:17:31 [loggers.py:116] Engine 000: Avg prompt throughput: 11768.6 tokens/s, Avg generation throughput: 392.4 tokens/s, Running: 64 reqs, Waiting: 11754 reqs, GPU KV cache usage: 30.3%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:17:41 [loggers.py:116] Engine 000: Avg prompt throughput: 11811.9 tokens/s, Avg generation throughput: 349.6 tokens/s, Running: 57 reqs, Waiting: 11627 reqs, GPU KV cache usage: 29.0%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:17:51 [loggers.py:116] Engine 000: Avg prompt throughput: 11761.2 tokens/s, Avg generation throughput: 308.0 tokens/s, Running: 59 reqs, Waiting: 11496 reqs, GPU KV cache usage: 29.4%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:18:01 [loggers.py:116] Engine 000: Avg prompt throughput: 11631.9 tokens/s, Avg generation throughput: 379.3 tokens/s, Running: 72 reqs, Waiting: 11361 reqs, GPU KV cache usage: 32.6%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:18:11 [loggers.py:116] Engine 000: Avg prompt throughput: 11354.3 tokens/s, Avg generation throughput: 434.2 tokens/s, Running: 73 reqs, Waiting: 11238 reqs, GPU KV cache usage: 28.9%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:18:21 [loggers.py:116] Engine 000: Avg prompt throughput: 11642.5 tokens/s, Avg generation throughput: 411.4 tokens/s, Running: 64 reqs, Waiting: 11108 reqs, GPU KV cache usage: 26.1%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:18:31 [loggers.py:116] Engine 000: Avg prompt throughput: 11771.9 tokens/s, Avg generation throughput: 372.6 tokens/s, Running: 65 reqs, Waiting: 10964 reqs, GPU KV cache usage: 25.3%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:18:41 [loggers.py:116] Engine 000: Avg prompt throughput: 11926.7 tokens/s, Avg generation throughput: 397.7 tokens/s, Running: 68 reqs, Waiting: 10819 reqs, GPU KV cache usage: 24.5%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:18:51 [loggers.py:116] Engine 000: Avg prompt throughput: 11469.4 tokens/s, Avg generation throughput: 399.7 tokens/s, Running: 68 reqs, Waiting: 10694 reqs, GPU KV cache usage: 26.7%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:19:01 [loggers.py:116] Engine 000: Avg prompt throughput: 11782.7 tokens/s, Avg generation throughput: 377.0 tokens/s, Running: 65 reqs, Waiting: 10555 reqs, GPU KV cache usage: 28.4%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:19:11 [loggers.py:116] Engine 000: Avg prompt throughput: 11737.2 tokens/s, Avg generation throughput: 366.9 tokens/s, Running: 69 reqs, Waiting: 10420 reqs, GPU KV cache usage: 29.8%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:19:21 [loggers.py:116] Engine 000: Avg prompt throughput: 11651.2 tokens/s, Avg generation throughput: 396.2 tokens/s, Running: 69 reqs, Waiting: 10276 reqs, GPU KV cache usage: 26.4%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:19:31 [loggers.py:116] Engine 000: Avg prompt throughput: 11559.8 tokens/s, Avg generation throughput: 410.5 tokens/s, Running: 68 reqs, Waiting: 10144 reqs, GPU KV cache usage: 26.2%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:19:41 [loggers.py:116] Engine 000: Avg prompt throughput: 11730.4 tokens/s, Avg generation throughput: 364.2 tokens/s, Running: 60 reqs, Waiting: 10007 reqs, GPU KV cache usage: 25.4%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:19:51 [loggers.py:116] Engine 000: Avg prompt throughput: 11989.1 tokens/s, Avg generation throughput: 328.7 tokens/s, Running: 58 reqs, Waiting: 9868 reqs, GPU KV cache usage: 24.6%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:20:01 [loggers.py:116] Engine 000: Avg prompt throughput: 11639.0 tokens/s, Avg generation throughput: 382.0 tokens/s, Running: 71 reqs, Waiting: 9723 reqs, GPU KV cache usage: 28.0%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:20:11 [loggers.py:116] Engine 000: Avg prompt throughput: 11506.2 tokens/s, Avg generation throughput: 417.4 tokens/s, Running: 68 reqs, Waiting: 9603 reqs, GPU KV cache usage: 28.8%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:20:21 [loggers.py:116] Engine 000: Avg prompt throughput: 11789.0 tokens/s, Avg generation throughput: 352.1 tokens/s, Running: 49 reqs, Waiting: 9464 reqs, GPU KV cache usage: 22.0%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:20:31 [loggers.py:116] Engine 000: Avg prompt throughput: 11964.5 tokens/s, Avg generation throughput: 280.8 tokens/s, Running: 52 reqs, Waiting: 9331 reqs, GPU KV cache usage: 22.4%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:20:41 [loggers.py:116] Engine 000: Avg prompt throughput: 11761.7 tokens/s, Avg generation throughput: 346.8 tokens/s, Running: 59 reqs, Waiting: 9201 reqs, GPU KV cache usage: 25.2%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:20:51 [loggers.py:116] Engine 000: Avg prompt throughput: 11710.6 tokens/s, Avg generation throughput: 373.8 tokens/s, Running: 60 reqs, Waiting: 9063 reqs, GPU KV cache usage: 24.1%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:21:01 [loggers.py:116] Engine 000: Avg prompt throughput: 11676.2 tokens/s, Avg generation throughput: 338.9 tokens/s, Running: 53 reqs, Waiting: 8927 reqs, GPU KV cache usage: 23.3%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:21:11 [loggers.py:116] Engine 000: Avg prompt throughput: 11844.6 tokens/s, Avg generation throughput: 323.4 tokens/s, Running: 61 reqs, Waiting: 8799 reqs, GPU KV cache usage: 28.2%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:21:21 [loggers.py:116] Engine 000: Avg prompt throughput: 11878.3 tokens/s, Avg generation throughput: 341.8 tokens/s, Running: 63 reqs, Waiting: 8663 reqs, GPU KV cache usage: 28.1%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:21:31 [loggers.py:116] Engine 000: Avg prompt throughput: 11527.7 tokens/s, Avg generation throughput: 366.1 tokens/s, Running: 59 reqs, Waiting: 8538 reqs, GPU KV cache usage: 24.7%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:21:41 [loggers.py:116] Engine 000: Avg prompt throughput: 11621.2 tokens/s, Avg generation throughput: 388.3 tokens/s, Running: 68 reqs, Waiting: 8402 reqs, GPU KV cache usage: 28.8%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:21:51 [loggers.py:116] Engine 000: Avg prompt throughput: 11625.8 tokens/s, Avg generation throughput: 379.6 tokens/s, Running: 64 reqs, Waiting: 8272 reqs, GPU KV cache usage: 29.5%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:22:01 [loggers.py:116] Engine 000: Avg prompt throughput: 11715.4 tokens/s, Avg generation throughput: 363.4 tokens/s, Running: 60 reqs, Waiting: 8141 reqs, GPU KV cache usage: 29.7%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:22:11 [loggers.py:116] Engine 000: Avg prompt throughput: 11489.1 tokens/s, Avg generation throughput: 343.1 tokens/s, Running: 57 reqs, Waiting: 8016 reqs, GPU KV cache usage: 24.5%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:22:21 [loggers.py:116] Engine 000: Avg prompt throughput: 11834.8 tokens/s, Avg generation throughput: 375.2 tokens/s, Running: 63 reqs, Waiting: 7875 reqs, GPU KV cache usage: 24.4%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:22:31 [loggers.py:116] Engine 000: Avg prompt throughput: 11706.3 tokens/s, Avg generation throughput: 394.2 tokens/s, Running: 65 reqs, Waiting: 7744 reqs, GPU KV cache usage: 25.3%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:22:41 [loggers.py:116] Engine 000: Avg prompt throughput: 11632.6 tokens/s, Avg generation throughput: 369.1 tokens/s, Running: 63 reqs, Waiting: 7610 reqs, GPU KV cache usage: 28.1%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:22:51 [loggers.py:116] Engine 000: Avg prompt throughput: 11858.3 tokens/s, Avg generation throughput: 338.8 tokens/s, Running: 58 reqs, Waiting: 7481 reqs, GPU KV cache usage: 27.6%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:23:01 [loggers.py:116] Engine 000: Avg prompt throughput: 11476.1 tokens/s, Avg generation throughput: 375.0 tokens/s, Running: 64 reqs, Waiting: 7356 reqs, GPU KV cache usage: 29.4%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:23:11 [loggers.py:116] Engine 000: Avg prompt throughput: 11582.1 tokens/s, Avg generation throughput: 383.2 tokens/s, Running: 67 reqs, Waiting: 7227 reqs, GPU KV cache usage: 29.6%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:23:21 [loggers.py:116] Engine 000: Avg prompt throughput: 11470.2 tokens/s, Avg generation throughput: 417.9 tokens/s, Running: 75 reqs, Waiting: 7084 reqs, GPU KV cache usage: 30.8%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:23:31 [loggers.py:116] Engine 000: Avg prompt throughput: 11411.1 tokens/s, Avg generation throughput: 447.7 tokens/s, Running: 76 reqs, Waiting: 6954 reqs, GPU KV cache usage: 30.6%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:23:41 [loggers.py:116] Engine 000: Avg prompt throughput: 11680.4 tokens/s, Avg generation throughput: 408.8 tokens/s, Running: 63 reqs, Waiting: 6816 reqs, GPU KV cache usage: 25.5%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:23:51 [loggers.py:116] Engine 000: Avg prompt throughput: 11793.0 tokens/s, Avg generation throughput: 370.2 tokens/s, Running: 69 reqs, Waiting: 6683 reqs, GPU KV cache usage: 28.8%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:24:01 [loggers.py:116] Engine 000: Avg prompt throughput: 11440.0 tokens/s, Avg generation throughput: 403.3 tokens/s, Running: 72 reqs, Waiting: 6553 reqs, GPU KV cache usage: 31.9%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:24:11 [loggers.py:116] Engine 000: Avg prompt throughput: 11439.9 tokens/s, Avg generation throughput: 421.7 tokens/s, Running: 75 reqs, Waiting: 6423 reqs, GPU KV cache usage: 30.5%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:24:21 [loggers.py:116] Engine 000: Avg prompt throughput: 11570.0 tokens/s, Avg generation throughput: 410.0 tokens/s, Running: 66 reqs, Waiting: 6291 reqs, GPU KV cache usage: 24.8%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:24:31 [loggers.py:116] Engine 000: Avg prompt throughput: 11711.8 tokens/s, Avg generation throughput: 359.2 tokens/s, Running: 54 reqs, Waiting: 6149 reqs, GPU KV cache usage: 20.6%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:24:41 [loggers.py:116] Engine 000: Avg prompt throughput: 11980.1 tokens/s, Avg generation throughput: 328.5 tokens/s, Running: 62 reqs, Waiting: 6015 reqs, GPU KV cache usage: 25.5%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:24:51 [loggers.py:116] Engine 000: Avg prompt throughput: 11686.2 tokens/s, Avg generation throughput: 371.5 tokens/s, Running: 61 reqs, Waiting: 5879 reqs, GPU KV cache usage: 26.5%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:25:01 [loggers.py:116] Engine 000: Avg prompt throughput: 11829.6 tokens/s, Avg generation throughput: 393.5 tokens/s, Running: 64 reqs, Waiting: 5743 reqs, GPU KV cache usage: 24.8%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:25:11 [loggers.py:116] Engine 000: Avg prompt throughput: 11751.5 tokens/s, Avg generation throughput: 354.2 tokens/s, Running: 59 reqs, Waiting: 5609 reqs, GPU KV cache usage: 21.7%, Prefix cache hit rate: 1.9%
+INFO 07-22 20:25:21 [loggers.py:116] Engine 000: Avg prompt throughput: 11725.9 tokens/s, Avg generation throughput: 336.6 tokens/s, Running: 57 reqs, Waiting: 5476 reqs, GPU KV cache usage: 23.4%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:25:31 [loggers.py:116] Engine 000: Avg prompt throughput: 11934.9 tokens/s, Avg generation throughput: 321.9 tokens/s, Running: 48 reqs, Waiting: 5349 reqs, GPU KV cache usage: 22.2%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:25:41 [loggers.py:116] Engine 000: Avg prompt throughput: 11823.5 tokens/s, Avg generation throughput: 326.1 tokens/s, Running: 54 reqs, Waiting: 5214 reqs, GPU KV cache usage: 21.9%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:25:51 [loggers.py:116] Engine 000: Avg prompt throughput: 11606.9 tokens/s, Avg generation throughput: 388.9 tokens/s, Running: 71 reqs, Waiting: 5074 reqs, GPU KV cache usage: 28.5%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:26:01 [loggers.py:116] Engine 000: Avg prompt throughput: 11756.9 tokens/s, Avg generation throughput: 428.7 tokens/s, Running: 74 reqs, Waiting: 4941 reqs, GPU KV cache usage: 32.6%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:26:11 [loggers.py:116] Engine 000: Avg prompt throughput: 11484.4 tokens/s, Avg generation throughput: 425.4 tokens/s, Running: 69 reqs, Waiting: 4810 reqs, GPU KV cache usage: 30.8%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:26:21 [loggers.py:116] Engine 000: Avg prompt throughput: 11496.4 tokens/s, Avg generation throughput: 403.6 tokens/s, Running: 69 reqs, Waiting: 4677 reqs, GPU KV cache usage: 30.2%, Prefix cache hit rate: 1.8%
+INFO 07-22 20:26:31 [loggers.py:116] Engine 000: Avg prompt throughput: 11220.6 tokens/s, Avg generation throughput: 416.1 tokens/s, Running: 74 reqs, Waiting: 4545 reqs, GPU KV cache usage: 32.9%, Prefix cache hit rate: 1.8%
+INFO:     Shutting down
+INFO 07-22 20:26:32 [launcher.py:79] Shutting down FastAPI HTTP server.
+ERROR 07-22 20:26:32 [dump_input.py:68] Dumping input data
+--- Logging error ---
+Traceback (most recent call last):
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 207, in execute_model
+    return self.model_executor.execute_model(scheduler_output)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/executor/abstract.py", line 86, in execute_model
+    output = self.collective_rpc("execute_model",
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/executor/uniproc_executor.py", line 56, in collective_rpc
+    answer = run_method(self.driver_worker, method, args, kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/utils.py", line 2605, in run_method
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 276, in execute_model
+    output = self.model_runner.execute_model(scheduler_output,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/worker/gpu_model_runner.py", line 1310, in execute_model
+    valid_sampled_token_ids = sampled_token_ids.tolist()
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 475, in signal_handler
+    raise SystemExit()
+SystemExit
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/logging/__init__.py", line 1160, in emit
+    msg = self.format(record)
+          ^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/logging/__init__.py", line 999, in format
+    return fmt.format(record)
+           ^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/logging_utils/formatter.py", line 13, in format
+    msg = logging.Formatter.format(self, record)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/logging/__init__.py", line 703, in format
+    record.message = record.getMessage()
+                     ^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/logging/__init__.py", line 392, in getMessage
+    msg = msg % self.args
+          ~~~~^~~~~~~~~~~
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/config.py", line 4506, in __str__
+    f"compilation_config={self.compilation_config!r}")
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/config.py", line 3896, in __repr__
+    for k, v in asdict(self).items():
+                ^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/dataclasses.py", line 1329, in asdict
+    return _asdict_inner(obj, dict_factory)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/dataclasses.py", line 1339, in _asdict_inner
+    f.name: _asdict_inner(getattr(obj, f.name), dict)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/dataclasses.py", line 1382, in _asdict_inner
+    return type(obj)((_asdict_inner(k, dict_factory),
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/dataclasses.py", line 1383, in <genexpr>
+    _asdict_inner(v, dict_factory))
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/dataclasses.py", line 1386, in _asdict_inner
+    return copy.deepcopy(obj)
+           ^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/copy.py", line 162, in deepcopy
+    y = _reconstruct(x, memo, *rv)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/copy.py", line 259, in _reconstruct
+    state = deepcopy(state, memo)
+            ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/copy.py", line 136, in deepcopy
+    y = copier(x, memo)
+        ^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/copy.py", line 221, in _deepcopy_dict
+    y[deepcopy(key, memo)] = deepcopy(value, memo)
+                             ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/copy.py", line 136, in deepcopy
+    y = copier(x, memo)
+        ^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/copy.py", line 196, in _deepcopy_list
+    append(deepcopy(a, memo))
+           ^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/copy.py", line 143, in deepcopy
+    y = copier(memo)
+        ^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/_tensor.py", line 172, in __deepcopy__
+    new_storage = self._typed_storage()._deepcopy(memo)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/storage.py", line 1134, in _deepcopy
+    return self._new_wrapped_storage(copy.deepcopy(self._untyped_storage, memo))
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/copy.py", line 143, in deepcopy
+    y = copier(memo)
+        ^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/storage.py", line 239, in __deepcopy__
+    new_storage = self.clone()
+                  ^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/storage.py", line 253, in clone
+    return type(self)(self.nbytes(), device=self.device).copy_(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 748.00 MiB. GPU 0 has a total capacity of 44.52 GiB of which 652.25 MiB is free. Including non-PyTorch memory, this process has 43.88 GiB memory in use. Of the allocated memory 42.91 GiB is allocated by PyTorch, with 81.88 MiB allocated in private pools (e.g., CUDA Graphs), and 63.61 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Call stack:
+  File "<string>", line 1, in <module>
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/multiprocessing/spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/multiprocessing/spawn.py", line 135, in _main
+    return self._bootstrap(parent_sentinel)
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 493, in run_engine_core
+    engine_core.run_busy_loop()
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 520, in run_busy_loop
+    self._process_engine_step()
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 545, in _process_engine_step
+    outputs = self.step_fn()
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 226, in step
+    model_output = self.execute_model(scheduler_output)
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 210, in execute_model
+    dump_engine_exception(self.vllm_config, scheduler_output,
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/logging_utils/dump_input.py", line 62, in dump_engine_exception
+    _dump_engine_exception(config, scheduler_output, scheduler_stats)
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/logging_utils/dump_input.py", line 70, in _dump_engine_exception
+    logger.error(
+Unable to print the message and arguments - possible formatting error.
+Use the traceback above to help find the error.
+ERROR 07-22 20:26:32 [dump_input.py:78] Dumping scheduler output for model execution:
+ERROR 07-22 20:26:32 [dump_input.py:79] SchedulerOutput(scheduled_new_reqs=[NewRequestData(req_id=cmpl-69e6b046bea04907ac6746f07402f80c-8829,prompt_token_ids_len=944,mm_inputs=[],mm_hashes=[],mm_positions=[],sampling_params=SamplingParams(n=1, presence_penalty=0.0, frequency_penalty=0.0, repetition_penalty=1.0, temperature=0.0, top_p=1.0, top_k=0, min_p=0.0, seed=None, stop=[], stop_token_ids=[], bad_words=[], include_stop_str_in_output=False, ignore_eos=False, max_tokens=128, min_tokens=0, logprobs=None, prompt_logprobs=None, skip_special_tokens=True, spaces_between_special_tokens=True, truncate_prompt_tokens=None, guided_decoding=None, extra_args=None),block_ids=[[1, 3399, 7799, 683, 6174, 4628, 875, 7262, 6508, 2182, 9682, 2512, 9091, 11452, 11451, 11450, 11449, 7330, 472, 4710, 667, 5520, 3236, 118, 3889, 3882, 8351, 193, 601, 5719, 6446, 4075, 4202, 10690, 3315, 2914, 1274, 4098, 6135, 9761, 3306, 9026, 3918, 1854, 2769, 7619, 6359, 2912, 6548, 2820, 7007, 2913, 10355, 654, 3571, 1052, 6129, 6128, 5300]],num_computed_tokens=16,lora_request=None), NewRequestData(req_id=cmpl-69e6b046bea04907ac6746f07402f80c-8830,prompt_token_ids_len=1697,mm_inputs=[],mm_hashes=[],mm_positions=[],sampling_params=SamplingParams(n=1, presence_penalty=0.0, frequency_penalty=0.0, repetition_penalty=1.0, temperature=0.0, top_p=1.0, top_k=0, min_p=0.0, seed=None, stop=[], stop_token_ids=[], bad_words=[], include_stop_str_in_output=False, ignore_eos=False, max_tokens=128, min_tokens=0, logprobs=None, prompt_logprobs=None, skip_special_tokens=True, spaces_between_special_tokens=True, truncate_prompt_tokens=None, guided_decoding=None, extra_args=None),block_ids=[[1, 2485, 5051, 4723, 6967, 8131, 5577, 1499, 5517, 8793, 8384, 4203, 8538, 7204, 2449, 10225, 10264, 6213, 6399, 11857, 3461, 8417, 5014, 1675, 802, 10168, 2688, 2155, 4899, 7342, 10888, 11464, 2926, 10206, 4900, 7170, 3937, 3478, 446, 447, 7864, 1896, 9925, 7407, 7304, 7305, 7306, 11566, 8703, 5911, 5912, 5713, 5525, 8961, 221, 419, 7149, 5131, 8265, 10230, 2640, 5010, 5011, 7823, 7827]],num_computed_tokens=16,lora_request=None)], scheduled_cached_reqs=[CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8540', resumed_from_preemption=false, new_token_ids=[2403], new_block_ids=[[]], num_computed_tokens=1107), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8541', resumed_from_preemption=false, new_token_ids=[690], new_block_ids=[[]], num_computed_tokens=1831), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8542', resumed_from_preemption=false, new_token_ids=[2134], new_block_ids=[[]], num_computed_tokens=1903), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8550', resumed_from_preemption=false, new_token_ids=[80013], new_block_ids=[[]], num_computed_tokens=781), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8557', resumed_from_preemption=false, new_token_ids=[315], new_block_ids=[[]], num_computed_tokens=850), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8558', resumed_from_preemption=false, new_token_ids=[1234], new_block_ids=[[]], num_computed_tokens=881), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8559', resumed_from_preemption=false, new_token_ids=[1070], new_block_ids=[[]], num_computed_tokens=1001), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8561', resumed_from_preemption=false, new_token_ids=[2405], new_block_ids=[[]], num_computed_tokens=373), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8577', resumed_from_preemption=false, new_token_ids=[13], new_block_ids=[[]], num_computed_tokens=564), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8584', resumed_from_preemption=false, new_token_ids=[369], new_block_ids=[[]], num_computed_tokens=481), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8591', resumed_from_preemption=false, new_token_ids=[13], new_block_ids=[[]], num_computed_tokens=687), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8602', resumed_from_preemption=false, new_token_ids=[574], new_block_ids=[[]], num_computed_tokens=513), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8608', resumed_from_preemption=false, new_token_ids=[2663], new_block_ids=[[]], num_computed_tokens=744), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8615', resumed_from_preemption=false, new_token_ids=[6689], new_block_ids=[[]], num_computed_tokens=743), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8619', resumed_from_preemption=false, new_token_ids=[11], new_block_ids=[[]], num_computed_tokens=1113), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8620', resumed_from_preemption=false, new_token_ids=[3345], new_block_ids=[[]], num_computed_tokens=941), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8624', resumed_from_preemption=false, new_token_ids=[1124], new_block_ids=[[]], num_computed_tokens=1085), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8625', resumed_from_preemption=false, new_token_ids=[1963], new_block_ids=[[]], num_computed_tokens=1066), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8628', resumed_from_preemption=false, new_token_ids=[574], new_block_ids=[[]], num_computed_tokens=1468), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8629', resumed_from_preemption=false, new_token_ids=[3400], new_block_ids=[[]], num_computed_tokens=1045), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8630', resumed_from_preemption=false, new_token_ids=[35179], new_block_ids=[[]], num_computed_tokens=325), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8636', resumed_from_preemption=false, new_token_ids=[387], new_block_ids=[[]], num_computed_tokens=1432), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8638', resumed_from_preemption=false, new_token_ids=[27461], new_block_ids=[[]], num_computed_tokens=765), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8642', resumed_from_preemption=false, new_token_ids=[311], new_block_ids=[[]], num_computed_tokens=2241), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8643', resumed_from_preemption=false, new_token_ids=[11186], new_block_ids=[[]], num_computed_tokens=1182), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8647', resumed_from_preemption=false, new_token_ids=[4771], new_block_ids=[[]], num_computed_tokens=401), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8648', resumed_from_preemption=false, new_token_ids=[369], new_block_ids=[[]], num_computed_tokens=663), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8654', resumed_from_preemption=false, new_token_ids=[2482], new_block_ids=[[]], num_computed_tokens=1062), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8664', resumed_from_preemption=false, new_token_ids=[21075], new_block_ids=[[]], num_computed_tokens=638), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8671', resumed_from_preemption=false, new_token_ids=[690], new_block_ids=[[]], num_computed_tokens=1335), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8678', resumed_from_preemption=false, new_token_ids=[2046], new_block_ids=[[]], num_computed_tokens=286), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8682', resumed_from_preemption=false, new_token_ids=[279], new_block_ids=[[]], num_computed_tokens=2471), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8683', resumed_from_preemption=false, new_token_ids=[9846], new_block_ids=[[]], num_computed_tokens=342), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8685', resumed_from_preemption=false, new_token_ids=[1051], new_block_ids=[[]], num_computed_tokens=938), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8689', resumed_from_preemption=false, new_token_ids=[220], new_block_ids=[[]], num_computed_tokens=475), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8691', resumed_from_preemption=false, new_token_ids=[11], new_block_ids=[[]], num_computed_tokens=644), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8692', resumed_from_preemption=false, new_token_ids=[304], new_block_ids=[[]], num_computed_tokens=2013), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8693', resumed_from_preemption=false, new_token_ids=[27723], new_block_ids=[[]], num_computed_tokens=444), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8696', resumed_from_preemption=false, new_token_ids=[1691], new_block_ids=[[]], num_computed_tokens=557), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8701', resumed_from_preemption=false, new_token_ids=[3966], new_block_ids=[[]], num_computed_tokens=361), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8709', resumed_from_preemption=false, new_token_ids=[9728], new_block_ids=[[]], num_computed_tokens=490), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8712', resumed_from_preemption=false, new_token_ids=[13240], new_block_ids=[[]], num_computed_tokens=586), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8717', resumed_from_preemption=false, new_token_ids=[22], new_block_ids=[[]], num_computed_tokens=371), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8718', resumed_from_preemption=false, new_token_ids=[311], new_block_ids=[[]], num_computed_tokens=2083), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8721', resumed_from_preemption=false, new_token_ids=[813], new_block_ids=[[]], num_computed_tokens=408), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8723', resumed_from_preemption=false, new_token_ids=[2999], new_block_ids=[[]], num_computed_tokens=957), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8727', resumed_from_preemption=false, new_token_ids=[311], new_block_ids=[[]], num_computed_tokens=853), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8731', resumed_from_preemption=false, new_token_ids=[40250], new_block_ids=[[]], num_computed_tokens=590), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8733', resumed_from_preemption=false, new_token_ids=[12716], new_block_ids=[[]], num_computed_tokens=573), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8737', resumed_from_preemption=false, new_token_ids=[505], new_block_ids=[[]], num_computed_tokens=482), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8739', resumed_from_preemption=false, new_token_ids=[4461], new_block_ids=[[]], num_computed_tokens=433), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8741', resumed_from_preemption=false, new_token_ids=[38413], new_block_ids=[[2534]], num_computed_tokens=848), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8749', resumed_from_preemption=false, new_token_ids=[311], new_block_ids=[[3510]], num_computed_tokens=1376), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8753', resumed_from_preemption=false, new_token_ids=[8954], new_block_ids=[[]], num_computed_tokens=940), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8754', resumed_from_preemption=false, new_token_ids=[13598], new_block_ids=[[5565]], num_computed_tokens=1552), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8757', resumed_from_preemption=false, new_token_ids=[473], new_block_ids=[[]], num_computed_tokens=397), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8758', resumed_from_preemption=false, new_token_ids=[3390], new_block_ids=[[]], num_computed_tokens=633), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8761', resumed_from_preemption=false, new_token_ids=[753], new_block_ids=[[]], num_computed_tokens=1206), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8762', resumed_from_preemption=false, new_token_ids=[311], new_block_ids=[[]], num_computed_tokens=605), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8763', resumed_from_preemption=false, new_token_ids=[6418], new_block_ids=[[]], num_computed_tokens=869), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8772', resumed_from_preemption=false, new_token_ids=[6418], new_block_ids=[[]], num_computed_tokens=278), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8779', resumed_from_preemption=false, new_token_ids=[12667], new_block_ids=[[]], num_computed_tokens=1660), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8781', resumed_from_preemption=false, new_token_ids=[1060], new_block_ids=[[]], num_computed_tokens=699), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8790', resumed_from_preemption=false, new_token_ids=[311], new_block_ids=[[]], num_computed_tokens=837), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8791', resumed_from_preemption=false, new_token_ids=[3416], new_block_ids=[[]], num_computed_tokens=699), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8793', resumed_from_preemption=false, new_token_ids=[2599], new_block_ids=[[]], num_computed_tokens=1273), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8797', resumed_from_preemption=false, new_token_ids=[79728], new_block_ids=[[]], num_computed_tokens=376), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8802', resumed_from_preemption=false, new_token_ids=[1202], new_block_ids=[[]], num_computed_tokens=404), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8805', resumed_from_preemption=false, new_token_ids=[8096], new_block_ids=[[]], num_computed_tokens=219), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8808', resumed_from_preemption=false, new_token_ids=[11], new_block_ids=[[]], num_computed_tokens=836), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8809', resumed_from_preemption=false, new_token_ids=[33102], new_block_ids=[[]], num_computed_tokens=794), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8816', resumed_from_preemption=false, new_token_ids=[5535], new_block_ids=[[]], num_computed_tokens=191), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8821', resumed_from_preemption=false, new_token_ids=[889], new_block_ids=[[]], num_computed_tokens=607), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8823', resumed_from_preemption=false, new_token_ids=[4356], new_block_ids=[[]], num_computed_tokens=347), CachedRequestData(req_id='cmpl-69e6b046bea04907ac6746f07402f80c-8828', resumed_from_preemption=false, new_token_ids=[1405, 84230, 690, 1427, 311, 12391, 2030, 4193, 10529, 78, 5076, 555, 6522, 25048, 311, 264, 471, 311, 11230, 5627, 382, 19791, 25], new_block_ids=[[2427, 3398]], num_computed_tokens=922)], num_scheduled_tokens={cmpl-69e6b046bea04907ac6746f07402f80c-8541: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8647: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8717: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8561: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8723: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8754: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8758: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8727: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8772: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8709: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8602: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8540: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8763: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8790: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8558: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8638: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8823: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8830: 1023, cmpl-69e6b046bea04907ac6746f07402f80c-8625: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8721: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8808: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8630: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8685: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8620: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8557: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8701: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8757: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8542: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8797: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8643: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8619: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8781: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8624: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8712: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8809: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8678: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8642: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8629: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8828: 23, cmpl-69e6b046bea04907ac6746f07402f80c-8683: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8741: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8816: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8718: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8608: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8731: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8559: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8691: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8654: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8779: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8584: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8762: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8682: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8753: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8550: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8636: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8664: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8805: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8689: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8591: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8737: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8749: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8791: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8793: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8693: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8577: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8615: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8733: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8761: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8648: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8696: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8821: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8739: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8692: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8671: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8802: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8628: 1, cmpl-69e6b046bea04907ac6746f07402f80c-8829: 928}, total_num_scheduled_tokens=2048, scheduled_spec_decode_tokens={}, scheduled_encoder_inputs={}, num_common_prefix_blocks=[1], finished_req_ids=['cmpl-69e6b046bea04907ac6746f07402f80c-8826', 'cmpl-69e6b046bea04907ac6746f07402f80c-8827'], free_encoder_input_ids=[], structured_output_request_ids={}, grammar_bitmask=null, kv_connector_metadata=null)
+ERROR 07-22 20:26:32 [dump_input.py:81] SchedulerStats(num_running_reqs=77, num_waiting_reqs=4537, gpu_cache_usage=0.34261582204382, prefix_cache_stats=PrefixCacheStats(reset=False, requests=2, queries=2641, hits=32), spec_decoding_stats=None)
+[rank0]:[W722 20:26:33.577956007 ProcessGroupNCCL.cpp:1476] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.

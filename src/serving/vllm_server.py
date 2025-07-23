@@ -11,9 +11,10 @@ def build_vllm_command(model_name, port, candidate_flags):
         "vllm",
         "serve",
         model_name,
-        "--max-model-len", "11000",
+        "--max-model-len", "8192",
         "--port", str(port),
-        "--disable-log-requests"
+        "--disable-log-requests",
+        "--tensor-parallel-size", "1"
     ]
     
     # Check if we need to add --enable-chunked-prefill based on --max-num-partial-prefills

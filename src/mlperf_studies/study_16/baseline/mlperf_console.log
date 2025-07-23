@@ -1,0 +1,1883 @@
+INFO 07-22 20:41:41 [__init__.py:243] Automatically detected platform cuda.
+/root/rehan/mlperf-inference-5.1-redhat/language/llama3.1-8b/SUT_VLLM_SingleReplica.py:11: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+  import pkg_resources
+================================================================================
+COMMAND LINE AND EXECUTABLE INFORMATION
+================================================================================
+Executable: /root/rehan/.venv/bin/python3
+Command line: SUT_VLLM_SingleReplica.py --model_name meta-llama/Llama-3.1-8B --batch_size 32 --max_model_len 8192 --num_gpus 1 --output-log-dir /root/rehan/src/mlperf_studies/study_16/baseline --dataset_path /root/rehan/datasets/cnn_eval.json
+================================================================================
+Current date and time: 2025-07-22 20:41:46
+================================================================================
+Installed Python packages:
+  aiohappyeyeballs               2.6.1
+  aiohttp                        3.12.7
+  aiosignal                      1.3.2
+  airportsdata                   20250523
+  alembic                        1.16.1
+  annotated-types                0.7.0
+  anyio                          4.9.0
+  astor                          0.8.1
+  attrs                          25.3.0
+  autocommand                    2.2.2
+  backports.tarfile              1.2.0
+  blake3                         1.0.5
+  botorch                        0.9.5
+  bottle                         0.13.3
+  cachetools                     6.0.0
+  certifi                        2025.4.26
+  charset-normalizer             3.4.2
+  choreographer                  1.0.9
+  click                          8.1.8
+  cloudpickle                    3.1.1
+  colorama                       0.4.6
+  colorlog                       6.9.0
+  compressed-tensors             0.9.4
+  contourpy                      1.3.2
+  cupy-cuda12x                   13.4.1
+  cycler                         0.12.1
+  datasets                       3.6.0
+  Deprecated                     1.2.18
+  depyf                          0.18.0
+  dill                           0.3.8
+  diskcache                      5.6.3
+  distro                         1.9.0
+  dnspython                      2.7.0
+  einops                         0.8.1
+  email-validator                2.2.0
+  fastapi                        0.115.12
+  fastapi-cli                    0.0.7
+  fastrlock                      0.8.3
+  filelock                       3.18.0
+  fonttools                      4.58.4
+  frozenlist                     1.6.0
+  fsspec                         2025.3.0
+  ftfy                           6.3.1
+  gguf                           0.17.0
+  giturlparse                    0.12.0
+  googleapis-common-protos       1.70.0
+  gpytorch                       1.11
+  greenlet                       3.2.2
+  grpcio                         1.72.1
+  guidellm                       0.1.0.dev0
+  h11                            0.16.0
+  h2                             4.2.0
+  hf-xet                         1.1.2
+  hpack                          4.1.0
+  httpcore                       1.0.9
+  httptools                      0.6.4
+  httpx                          0.28.1
+  huggingface-hub                0.32.4
+  hyperframe                     6.1.0
+  idna                           3.10
+  importlib-metadata             8.6.1
+  inflect                        7.3.1
+  interegular                    0.3.3
+  jaraco.collections             5.1.0
+  jaraco.context                 5.3.0
+  jaraco.functools               4.0.1
+  jaraco.text                    3.12.1
+  jaxtyping                      0.3.2
+  jinja2                         3.1.6
+  jiter                          0.10.0
+  joblib                         1.5.1
+  jsonschema                     4.24.0
+  jsonschema-specifications      2025.4.1
+  kaleido                        1.0.0
+  kiwisolver                     1.4.8
+  lark                           1.2.2
+  linear-operator                0.5.1
+  llguidance                     0.7.26
+  llvmlite                       0.44.0
+  lm-format-enforcer             0.10.11
+  logistro                       1.1.0
+  loguru                         0.7.3
+  mako                           1.3.10
+  markdown-it-py                 3.0.0
+  MarkupSafe                     3.0.2
+  matplotlib                     3.10.3
+  mdurl                          0.1.2
+  mistral-common                 1.5.6
+  mlc-scripts                    1.0.2
+  mlcflow                        1.0.18
+  mlcommons-loadgen              5.0.25
+  more-itertools                 10.3.0
+  mpmath                         1.3.0
+  msgpack                        1.1.0
+  msgspec                        0.19.0
+  multidict                      6.4.4
+  multipledispatch               1.0.0
+  multiprocess                   0.70.16
+  mypy-extensions                1.1.0
+  narwhals                       1.44.0
+  nest-asyncio                   1.6.0
+  networkx                       3.5
+  ninja                          1.11.1.4
+  numba                          0.61.2
+  numpy                          2.2.6
+  nvidia-cublas-cu12             12.6.4.1
+  nvidia-cuda-cupti-cu12         12.6.80
+  nvidia-cuda-nvrtc-cu12         12.6.77
+  nvidia-cuda-runtime-cu12       12.6.77
+  nvidia-cudnn-cu12              9.5.1.17
+  nvidia-cufft-cu12              11.3.0.4
+  nvidia-cufile-cu12             1.11.1.6
+  nvidia-curand-cu12             10.3.7.77
+  nvidia-cusolver-cu12           11.7.1.2
+  nvidia-cusparse-cu12           12.5.4.2
+  nvidia-cusparselt-cu12         0.6.3
+  nvidia-nccl-cu12               2.26.2
+  nvidia-nvjitlink-cu12          12.6.85
+  nvidia-nvtx-cu12               12.6.77
+  openai                         1.83.0
+  opencv-python-headless         4.11.0.86
+  opentelemetry-api              1.33.1
+  opentelemetry-exporter-otlp    1.33.1
+  opentelemetry-exporter-otlp-proto-common 1.33.1
+  opentelemetry-exporter-otlp-proto-grpc 1.33.1
+  opentelemetry-exporter-otlp-proto-http 1.33.1
+  opentelemetry-proto            1.33.1
+  opentelemetry-sdk              1.33.1
+  opentelemetry-semantic-conventions 0.54b1
+  opentelemetry-semantic-conventions-ai 0.4.9
+  opt-einsum                     3.4.0
+  optuna                         4.4.0
+  optuna-dashboard               0.18.0
+  optuna-integration             4.4.0
+  orjson                         3.10.18
+  outlines                       0.1.11
+  outlines-core                  0.1.26
+  packaging                      25.0
+  panda                          0.3.1
+  pandas                         2.3.0
+  partial-json-parser            0.2.1.1.post5
+  pillow                         11.2.1
+  pip                            25.1.1
+  platformdirs                   4.2.2
+  plotly                         6.1.2
+  prometheus-client              0.22.1
+  prometheus-fastapi-instrumentator 7.1.0
+  propcache                      0.3.1
+  protobuf                       5.29.5
+  psutil                         7.0.0
+  py-cpuinfo                     9.0.0
+  pyarrow                        20.0.0
+  pybind11                       3.0.0
+  pycountry                      24.6.1
+  pydantic                       2.11.7
+  pydantic-core                  2.33.2
+  pydantic-settings              2.9.1
+  pygments                       2.19.1
+  pyparsing                      3.2.3
+  pyre-extensions                0.0.32
+  pyro-api                       0.1.2
+  pyro-ppl                       1.9.1
+  python-dateutil                2.9.0.post0
+  python-dotenv                  1.1.0
+  python-json-logger             3.3.0
+  python-multipart               0.0.20
+  pytz                           2025.2
+  PyYAML                         6.0.2
+  pyzmq                          26.4.0
+  ray                            2.46.0
+  referencing                    0.36.2
+  regex                          2024.11.6
+  requests                       2.32.3
+  rich                           14.0.0
+  rich-toolkit                   0.14.7
+  rpds-py                        0.25.1
+  safetensors                    0.5.3
+  scikit-learn                   1.7.0
+  scipy                          1.15.3
+  seaborn                        0.13.2
+  sentencepiece                  0.2.0
+  setproctitle                   1.2.2
+  setuptools                     79.0.1
+  shellingham                    1.5.4
+  simplejson                     3.20.1
+  six                            1.17.0
+  sniffio                        1.3.1INFO:root:--------------------------------------------------
+INFO:root:Using local vLLM model
+INFO:Llama-8B-Dataset:Loading dataset...
+INFO:Llama-8B-Dataset:Finished loading dataset.
+INFO:root:Dataset Max          = 2540
+INFO:root:Dataset Min          = 79
+INFO:root:Dataset TotalSamples = 13368
+INFO:root:Loading model 'meta-llama/Llama-3.1-8B' on single GPU...
+
+  sqlalchemy                     2.0.41
+  starlette                      0.46.2
+  sympy                          1.14.0
+  threadpoolctl                  3.6.0
+  tiktoken                       0.9.0
+  tokenizers                     0.21.1
+  tomli                          2.0.1
+  torch                          2.7.0
+  torchaudio                     2.7.0
+  torchvision                    0.22.0
+  tqdm                           4.67.1
+  transformers                   4.52.4
+  triton                         3.3.0
+  typeguard                      2.13.3
+  typer                          0.16.0
+  typing-extensions              4.14.0
+  typing-inspect                 0.9.0
+  typing-inspection              0.4.1
+  tzdata                         2025.2
+  urllib3                        2.4.0
+  uvicorn                        0.34.3
+  uvloop                         0.21.0
+  vllm                           0.9.0.1
+  wadler-lindig                  0.1.7
+  watchfiles                     1.0.5
+  wcwidth                        0.2.13
+  websockets                     15.0.1
+  wheel                          0.45.1
+  wrapt                          1.17.2
+  xformers                       0.0.30
+  xgrammar                       0.1.19
+  xxhash                         3.5.0
+  yarl                           1.20.0
+  zipp                           3.22.0
+================================================================================
+
+Set TORCH_CUDA_ARCH_LIST to 8.9
+INFO 07-22 20:41:49 [__init__.py:31] Available plugins for group vllm.general_plugins:
+INFO 07-22 20:41:49 [__init__.py:33] - lora_filesystem_resolver -> vllm.plugins.lora_resolvers.filesystem_resolver:register_filesystem_resolver
+INFO 07-22 20:41:49 [__init__.py:36] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 07-22 20:41:59 [config.py:793] This model supports multiple tasks: {'generate', 'reward', 'classify', 'embed', 'score'}. Defaulting to 'generate'.
+INFO 07-22 20:41:59 [config.py:2118] Chunked prefill is enabled with max_num_batched_tokens=8192.
+WARNING 07-22 20:42:02 [utils.py:2531] We must use the `spawn` multiprocessing start method. Overriding VLLM_WORKER_MULTIPROC_METHOD to 'spawn'. See https://docs.vllm.ai/en/latest/usage/troubleshooting.html#python-multiprocessing for more information. Reason: CUDA is initialized
+INFO 07-22 20:42:06 [__init__.py:243] Automatically detected platform cuda.
+INFO 07-22 20:42:08 [core.py:438] Waiting for init message from front-end.
+INFO 07-22 20:42:08 [__init__.py:31] Available plugins for group vllm.general_plugins:
+INFO 07-22 20:42:08 [__init__.py:33] - lora_filesystem_resolver -> vllm.plugins.lora_resolvers.filesystem_resolver:register_filesystem_resolver
+INFO 07-22 20:42:08 [__init__.py:36] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 07-22 20:42:08 [core.py:65] Initializing a V1 LLM engine (v0.9.0.1) with config: model='meta-llama/Llama-3.1-8B', speculative_config=None, tokenizer='meta-llama/Llama-3.1-8B', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, override_neuron_config={}, tokenizer_revision=None, trust_remote_code=True, dtype=torch.bfloat16, max_seq_len=8192, download_dir=None, load_format=LoadFormat.AUTO, tensor_parallel_size=1, pipeline_parallel_size=1, disable_custom_all_reduce=False, quantization=None, enforce_eager=False, kv_cache_dtype=auto,  device_config=cuda, decoding_config=DecodingConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_backend=''), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None), seed=0, served_model_name=meta-llama/Llama-3.1-8B, num_scheduler_steps=1, multi_step_stream_outputs=True, enable_prefix_caching=True, chunked_prefill_enabled=True, use_async_output_proc=True, pooler_config=None, compilation_config={"level": 3, "custom_ops": ["none"], "splitting_ops": ["vllm.unified_attention", "vllm.unified_attention_with_output"], "compile_sizes": [], "inductor_compile_config": {"enable_auto_functionalized_v2": false}, "use_cudagraph": true, "cudagraph_num_of_warmups": 1, "cudagraph_capture_sizes": [512, 504, 496, 488, 480, 472, 464, 456, 448, 440, 432, 424, 416, 408, 400, 392, 384, 376, 368, 360, 352, 344, 336, 328, 320, 312, 304, 296, 288, 280, 272, 264, 256, 248, 240, 232, 224, 216, 208, 200, 192, 184, 176, 168, 160, 152, 144, 136, 128, 120, 112, 104, 96, 88, 80, 72, 64, 56, 48, 40, 32, 24, 16, 8, 4, 2, 1], "max_capture_size": 512}
+WARNING 07-22 20:42:08 [utils.py:2671] Methods determine_num_available_blocks,device_config,get_cache_block_size_bytes,initialize_cache not implemented in <vllm.v1.worker.gpu_worker.Worker object at 0x7ff115ad8050>
+INFO 07-22 20:42:14 [parallel_state.py:1064] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, TP rank 0, EP rank 0
+WARNING 07-22 20:42:14 [topk_topp_sampler.py:58] FlashInfer is not available. Falling back to the PyTorch-native implementation of top-p & top-k sampling. For the best performance, please install FlashInfer.
+INFO 07-22 20:42:14 [gpu_model_runner.py:1531] Starting to load model meta-llama/Llama-3.1-8B...
+INFO 07-22 20:42:14 [cuda.py:217] Using Flash Attention backend on V1 engine.
+INFO 07-22 20:42:14 [backends.py:35] Using InductorAdaptor
+INFO 07-22 20:42:15 [weight_utils.py:291] Using model weights format ['*.safetensors']
+INFO 07-22 20:42:16 [weight_utils.py:307] Time spent downloading weights for meta-llama/Llama-3.1-8B: 0.564793 seconds
+Loading safetensors checkpoint shards:   0% Completed | 0/4 [00:00<?, ?it/s]
+Loading safetensors checkpoint shards:  25% Completed | 1/4 [00:00<00:00,  6.66it/s]
+Loading safetensors checkpoint shards:  50% Completed | 2/4 [00:00<00:00,  2.14it/s]
+Loading safetensors checkpoint shards:  75% Completed | 3/4 [00:01<00:00,  1.71it/s]
+Loading safetensors checkpoint shards: 100% Completed | 4/4 [00:02<00:00,  1.56it/s]
+Loading safetensors checkpoint shards: 100% Completed | 4/4 [00:02<00:00,  1.74it/s]
+
+INFO 07-22 20:42:19 [default_loader.py:280] Loading weights took 2.35 seconds
+INFO 07-22 20:42:19 [gpu_model_runner.py:1549] Model loading took 14.9889 GiB and 5.190052 seconds
+INFO 07-22 20:42:25 [backends.py:459] Using cache directory: /root/.cache/vllm/torch_compile_cache/5eb6de1f46/rank_0_0 for vLLM's torch.compile
+INFO 07-22 20:42:25 [backends.py:469] Dynamo bytecode transform time: 6.10 s
+INFO 07-22 20:42:27 [backends.py:158] Cache the graph of shape None for later use
+INFO 07-22 20:42:49 [backends.py:170] Compiling a graph for general shape takes 24.10 s
+INFO 07-22 20:43:02 [monitor.py:33] torch.compile takes 30.20 s in total
+INFO 07-22 20:43:03 [kv_cache_utils.py:637] GPU KV cache size: 181,536 tokens
+INFO 07-22 20:43:03 [kv_cache_utils.py:640] Maximum concurrency for 8,192 tokens per request: 22.16x
+INFO 07-22 20:43:25 [gpu_model_runner.py:1933] Graph capturing finished in 22 secs, took 0.52 GiB
+INFO 07-22 20:43:25 [core.py:167] init engine (profile, create kv cache, warmup model) took 66.31 seconds
+INFO:root:Model loaded successfully.
+INFO:root:MLPerf Loadgen: Starting test with 13368 samples in Offline mode...
+INFO:root:Model: meta-llama/Llama-3.1-8B, Test Mode: performance
+INFO:root:SUT issue_query: Received 13368 queries from Loadgen. Batch size: 32. Number of batches: 418.
+--------------START CONFIG---------------------------
+
+model='meta-llama/Llama-3.1-8B', speculative_config=None, tokenizer='meta-llama/Llama-3.1-8B', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, override_neuron_config={}, tokenizer_revision=None, trust_remote_code=True, dtype=torch.bfloat16, max_seq_len=8192, download_dir=None, load_format=LoadFormat.AUTO, tensor_parallel_size=1, pipeline_parallel_size=1, disable_custom_all_reduce=False, quantization=None, enforce_eager=False, kv_cache_dtype=auto,  device_config=cuda, decoding_config=DecodingConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_backend=''), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None), seed=0, served_model_name=meta-llama/Llama-3.1-8B, num_scheduler_steps=1, multi_step_stream_outputs=True, enable_prefix_caching=True, chunked_prefill_enabled=True, use_async_output_proc=True, pooler_config=None, compilation_config={"level": 3, "custom_ops": ["none"], "splitting_ops": ["vllm.unified_attention", "vllm.unified_attention_with_output"], "compile_sizes": [], "inductor_compile_config": {"enable_auto_functionalized_v2": false}, "use_cudagraph": true, "cudagraph_num_of_warmups": 1, "cudagraph_capture_sizes": [512, 504, 496, 488, 480, 472, 464, 456, 448, 440, 432, 424, 416, 408, 400, 392, 384, 376, 368, 360, 352, 344, 336, 328, 320, 312, 304, 296, 288, 280, 272, 264, 256, 248, 240, 232, 224, 216, 208, 200, 192, 184, 176, 168, 160, 152, 144, 136, 128, 120, 112, 104, 96, 88, 80, 72, 64, 56, 48, 40, 32, 24, 16, 8, 4, 2, 1], "max_capture_size": 512}
+ModelConfig(model='meta-llama/Llama-3.1-8B', task='generate', tokenizer='meta-llama/Llama-3.1-8B', tokenizer_mode='auto', trust_remote_code=True, dtype=torch.bfloat16, seed=0, hf_config_path=None, allowed_local_media_path='', revision=None, code_revision=None, rope_scaling={}, rope_theta=None, tokenizer_revision=None, max_model_len=8192, spec_target_max_model_len=None, quantization=None, enforce_eager=False, max_seq_len_to_capture=8192, max_logprobs=20, disable_sliding_window=False, disable_cascade_attn=False, skip_tokenizer_init=False, enable_prompt_embeds=False, served_model_name='meta-llama/Llama-3.1-8B', limit_mm_per_prompt={}, use_async_output_proc=True, config_format=<ConfigFormat.AUTO: 'auto'>, hf_token=None, hf_overrides=None, mm_processor_kwargs=None, disable_mm_preprocessor_cache=False, override_neuron_config={}, pooler_config=None, override_pooler_config=None, logits_processor_pattern=None, generation_config='auto', override_generation_config={}, enable_sleep_mode=False, model_impl='auto')
+CacheConfig(block_size=16, gpu_memory_utilization=0.9, swap_space=4, cache_dtype='auto', is_attention_free=False, num_gpu_blocks_override=None, sliding_window=None, enable_prefix_caching=True, prefix_caching_hash_algo='builtin', cpu_offload_gb=0, calculate_kv_scales=False, num_gpu_blocks=11346, num_cpu_blocks=None)
+--------------END   CONFIG---------------------------
+
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 5794.49it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:03<01:44,  3.37s/it, est. speed input: 372.68 toks/s, output: 9.19 toks/s]Processed prompts:   6%|▋         | 2/32 [00:04<01:05,  2.17s/it, est. speed input: 340.54 toks/s, output: 22.11 toks/s]Processed prompts:   9%|▉         | 3/32 [00:06<00:55,  1.90s/it, est. speed input: 316.34 toks/s, output: 36.88 toks/s]Processed prompts:  84%|████████▍ | 27/32 [00:06<00:00,  8.42it/s, est. speed input: 4057.89 toks/s, output: 515.88 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  5.00it/s, est. speed input: 4944.15 toks/s, output: 615.79 toks/s]
+INFO:root:Query ID: 478060224, Query Index: 4002, Output Tokens: 128
+INFO:root:Query ID: 478060256, Query Index: 10292, Output Tokens: 128
+INFO:root:Query ID: 478060288, Query Index: 12834, Output Tokens: 128
+INFO:root:Query ID: 478060320, Query Index: 10118, Output Tokens: 128
+INFO:root:Query ID: 478060352, Query Index: 10623, Output Tokens: 128
+INFO:root:Query ID: 478060384, Query Index: 423, Output Tokens: 128
+INFO:root:Query ID: 478060416, Query Index: 10588, Output Tokens: 128
+INFO:root:Query ID: 478060448, Query Index: 12917, Output Tokens: 128
+INFO:root:Query ID: 478060480, Query Index: 7973, Output Tokens: 128
+INFO:root:Query ID: 478060512, Query Index: 11566, Output Tokens: 128
+INFO:root:Query ID: 478060544, Query Index: 10452, Output Tokens: 128
+INFO:root:Query ID: 478060576, Query Index: 8092, Output Tokens: 128
+INFO:root:Query ID: 478060608, Query Index: 11178, Output Tokens: 128
+INFO:root:Query ID: 478060640, Query Index: 595, Output Tokens: 128
+INFO:root:Query ID: 478060672, Query Index: 3504, Output Tokens: 128
+INFO:root:Query ID: 478060704, Query Index: 6047, Output Tokens: 128
+INFO:root:Query ID: 478060736, Query Index: 101, Output Tokens: 128
+INFO:root:Query ID: 478060768, Query Index: 2381, Output Tokens: 128
+INFO:root:Query ID: 478060800, Query Index: 11680, Output Tokens: 128
+INFO:root:Query ID: 478060832, Query Index: 5536, Output Tokens: 128
+INFO:root:Query ID: 478060864, Query Index: 6340, Output Tokens: 128
+INFO:root:Query ID: 478060896, Query Index: 8970, Output Tokens: 128
+INFO:root:Query ID: 478060928, Query Index: 5666, Output Tokens: 31
+INFO:root:Query ID: 478060960, Query Index: 8663, Output Tokens: 128
+INFO:root:Query ID: 478060992, Query Index: 1672, Output Tokens: 128
+INFO:root:Query ID: 478061024, Query Index: 3297, Output Tokens: 128
+INFO:root:Query ID: 478061056, Query Index: 6250, Output Tokens: 128
+INFO:root:Query ID: 478061088, Query Index: 2362, Output Tokens: 128
+INFO:root:Query ID: 478061120, Query Index: 8109, Output Tokens: 128
+INFO:root:Query ID: 478061152, Query Index: 3186, Output Tokens: 128
+INFO:root:Query ID: 478061184, Query Index: 743, Output Tokens: 128
+INFO:root:Query ID: 478061216, Query Index: 12123, Output Tokens: 73
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 6314.05it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:03<01:42,  3.32s/it, est. speed input: 445.30 toks/s, output: 9.95 toks/s]Processed prompts:   6%|▋         | 2/32 [00:04<01:02,  2.09s/it, est. speed input: 699.35 toks/s, output: 22.62 toks/s]Processed prompts:  12%|█▎        | 4/32 [00:06<00:36,  1.30s/it, est. speed input: 917.51 toks/s, output: 48.31 toks/s]Processed prompts:  69%|██████▉   | 22/32 [00:06<00:01,  6.70it/s, est. speed input: 3729.82 toks/s, output: 411.63 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  5.04it/s, est. speed input: 5023.05 toks/s, output: 611.60 toks/s]
+INFO:root:Query ID: 478061248, Query Index: 10330, Output Tokens: 128
+INFO:root:Query ID: 478061280, Query Index: 10177, Output Tokens: 33
+INFO:root:Query ID: 478061312, Query Index: 9407, Output Tokens: 128
+INFO:root:Query ID: 478061344, Query Index: 10758, Output Tokens: 128
+INFO:root:Query ID: 478061376, Query Index: 5096, Output Tokens: 128
+INFO:root:Query ID: 478061408, Query Index: 8865, Output Tokens: 128
+INFO:root:Query ID: 478061440, Query Index: 11838, Output Tokens: 128
+INFO:root:Query ID: 478061472, Query Index: 8889, Output Tokens: 128
+INFO:root:Query ID: 478061504, Query Index: 11043, Output Tokens: 128
+INFO:root:Query ID: 478061536, Query Index: 7894, Output Tokens: 128
+INFO:root:Query ID: 478061568, Query Index: 2200, Output Tokens: 128
+INFO:root:Query ID: 478061600, Query Index: 11264, Output Tokens: 128
+INFO:root:Query ID: 478061632, Query Index: 12480, Output Tokens: 128
+INFO:root:Query ID: 478061664, Query Index: 6451, Output Tokens: 128
+INFO:root:Query ID: 478061696, Query Index: 2872, Output Tokens: 128
+INFO:root:Query ID: 478061728, Query Index: 7929, Output Tokens: 128
+INFO:root:Query ID: 478061760, Query Index: 11842, Output Tokens: 128
+INFO:root:Query ID: 478061792, Query Index: 10189, Output Tokens: 128
+INFO:root:Query ID: 478061824, Query Index: 10266, Output Tokens: 70
+INFO:root:Query ID: 478061856, Query Index: 7265, Output Tokens: 128
+INFO:root:Query ID: 478061888, Query Index: 2708, Output Tokens: 128
+INFO:root:Query ID: 478061920, Query Index: 9004, Output Tokens: 128
+INFO:root:Query ID: 478061952, Query Index: 12348, Output Tokens: 128
+INFO:root:Query ID: 478061984, Query Index: 4457, Output Tokens: 128
+INFO:root:Query ID: 478062016, Query Index: 4105, Output Tokens: 73
+INFO:root:Query ID: 478062048, Query Index: 8625, Output Tokens: 128
+INFO:root:Query ID: 478062080, Query Index: 11907, Output Tokens: 124
+INFO:root:Query ID: 478062112, Query Index: 10525, Output Tokens: 128
+INFO:root:Query ID: 478062144, Query Index: 328, Output Tokens: 128
+INFO:root:Query ID: 478062176, Query Index: 10585, Output Tokens: 128
+INFO:root:Query ID: 478062208, Query Index: 9695, Output Tokens: 128
+INFO:root:Query ID: 478062240, Query Index: 9047, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 6596.44it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:04<02:28,  4.79s/it, est. speed input: 97.78 toks/s, output: 21.10 toks/s]Processed prompts:   6%|▋         | 2/32 [00:05<01:04,  2.15s/it, est. speed input: 184.19 toks/s, output: 41.48 toks/s]Processed prompts:   9%|▉         | 3/32 [00:05<00:39,  1.37s/it, est. speed input: 234.18 toks/s, output: 61.21 toks/s]Processed prompts: 100%|██████████| 32/32 [00:05<00:00,  5.69it/s, est. speed input: 4212.88 toks/s, output: 720.59 toks/s]
+INFO:root:Query ID: 478062272, Query Index: 4659, Output Tokens: 128
+INFO:root:Query ID: 478062304, Query Index: 9634, Output Tokens: 128
+INFO:root:Query ID: 478062336, Query Index: 9817, Output Tokens: 128
+INFO:root:Query ID: 478062368, Query Index: 13295, Output Tokens: 128
+INFO:root:Query ID: 478062400, Query Index: 10843, Output Tokens: 128
+INFO:root:Query ID: 478062432, Query Index: 3813, Output Tokens: 128
+INFO:root:Query ID: 478062464, Query Index: 7546, Output Tokens: 128
+INFO:root:Query ID: 478062496, Query Index: 10864, Output Tokens: 128
+INFO:root:Query ID: 478062528, Query Index: 10527, Output Tokens: 128
+INFO:root:Query ID: 478062560, Query Index: 13281, Output Tokens: 128
+INFO:root:Query ID: 478062592, Query Index: 12203, Output Tokens: 128
+INFO:root:Query ID: 478062624, Query Index: 6421, Output Tokens: 128
+INFO:root:Query ID: 478062656, Query Index: 7032, Output Tokens: 101
+INFO:root:Query ID: 478062688, Query Index: 10357, Output Tokens: 128
+INFO:root:Query ID: 478062720, Query Index: 3998, Output Tokens: 128
+INFO:root:Query ID: 478062752, Query Index: 10962, Output Tokens: 128
+INFO:root:Query ID: 478062784, Query Index: 3752, Output Tokens: 128
+INFO:root:Query ID: 478062816, Query Index: 8557, Output Tokens: 128
+INFO:root:Query ID: 478062848, Query Index: 11382, Output Tokens: 128
+INFO:root:Query ID: 478062880, Query Index: 9955, Output Tokens: 128
+INFO:root:Query ID: 478062912, Query Index: 4601, Output Tokens: 128
+INFO:root:Query ID: 478062944, Query Index: 10482, Output Tokens: 128
+INFO:root:Query ID: 478062976, Query Index: 7347, Output Tokens: 128
+INFO:root:Query ID: 478063008, Query Index: 3291, Output Tokens: 128
+INFO:root:Query ID: 478063040, Query Index: 6511, Output Tokens: 128
+INFO:root:Query ID: 478063072, Query Index: 11855, Output Tokens: 128
+INFO:root:Query ID: 478063104, Query Index: 6162, Output Tokens: 128
+INFO:root:Query ID: 478063136, Query Index: 9033, Output Tokens: 110
+INFO:root:Query ID: 478063168, Query Index: 5105, Output Tokens: 128
+INFO:root:Query ID: 478063200, Query Index: 8874, Output Tokens: 128
+INFO:root:Query ID: 478063232, Query Index: 5164, Output Tokens: 128
+INFO:root:Query ID: 478063264, Query Index: 10428, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 6434.52it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:03<01:59,  3.85s/it, est. speed input: 63.72 toks/s, output: 16.64 toks/s]Processed prompts:   9%|▉         | 3/32 [00:04<00:32,  1.11s/it, est. speed input: 298.32 toks/s, output: 49.20 toks/s]Processed prompts:  12%|█▎        | 4/32 [00:05<00:34,  1.22s/it, est. speed input: 419.54 toks/s, output: 58.24 toks/s]Processed prompts:  16%|█▌        | 5/32 [00:05<00:23,  1.16it/s, est. speed input: 579.37 toks/s, output: 79.12 toks/s]Processed prompts: 100%|██████████| 32/32 [00:05<00:00,  5.52it/s, est. speed input: 4424.13 toks/s, output: 674.16 toks/s]
+INFO:root:Query ID: 478063296, Query Index: 401, Output Tokens: 128
+INFO:root:Query ID: 478063328, Query Index: 1724, Output Tokens: 128
+INFO:root:Query ID: 478063360, Query Index: 2039, Output Tokens: 128
+INFO:root:Query ID: 478063392, Query Index: 7910, Output Tokens: 128
+INFO:root:Query ID: 478063424, Query Index: 1047, Output Tokens: 128
+INFO:root:Query ID: 478063456, Query Index: 1919, Output Tokens: 128
+INFO:root:Query ID: 478063488, Query Index: 5160, Output Tokens: 128
+INFO:root:Query ID: 478063520, Query Index: 6647, Output Tokens: 128
+INFO:root:Query ID: 478063552, Query Index: 9525, Output Tokens: 128
+INFO:root:Query ID: 478063584, Query Index: 5806, Output Tokens: 128
+INFO:root:Query ID: 478063616, Query Index: 9454, Output Tokens: 128
+INFO:root:Query ID: 478063648, Query Index: 11801, Output Tokens: 75
+INFO:root:Query ID: 478063680, Query Index: 10647, Output Tokens: 128
+INFO:root:Query ID: 478063712, Query Index: 10992, Output Tokens: 128
+INFO:root:Query ID: 478063744, Query Index: 2574, Output Tokens: 64
+INFO:root:Query ID: 478063776, Query Index: 10325, Output Tokens: 128
+INFO:root:Query ID: 478063808, Query Index: 6007, Output Tokens: 128
+INFO:root:Query ID: 478063840, Query Index: 8780, Output Tokens: 128
+INFO:root:Query ID: 478063872, Query Index: 238, Output Tokens: 128
+INFO:root:Query ID: 478063904, Query Index: 11190, Output Tokens: 128
+INFO:root:Query ID: 478063936, Query Index: 6831, Output Tokens: 128
+INFO:root:Query ID: 478063968, Query Index: 4759, Output Tokens: 128
+INFO:root:Query ID: 478064000, Query Index: 12564, Output Tokens: 128
+INFO:root:Query ID: 478064032, Query Index: 10804, Output Tokens: 128
+INFO:root:Query ID: 478064064, Query Index: 8615, Output Tokens: 128
+INFO:root:Query ID: 478064096, Query Index: 13117, Output Tokens: 128
+INFO:root:Query ID: 478064128, Query Index: 5220, Output Tokens: 128
+INFO:root:Query ID: 478064160, Query Index: 3978, Output Tokens: 128
+INFO:root:Query ID: 478064192, Query Index: 1107, Output Tokens: 120
+INFO:root:Query ID: 478064224, Query Index: 11117, Output Tokens: 65
+INFO:root:Query ID: 478064256, Query Index: 6821, Output Tokens: 128
+INFO:root:Query ID: 478064288, Query Index: 10359, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 6493.36it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:05<03:00,  5.84s/it, est. speed input: 200.08 toks/s, output: 21.93 toks/s]Processed prompts: 100%|██████████| 32/32 [00:05<00:00,  5.40it/s, est. speed input: 4429.13 toks/s, output: 691.45 toks/s]
+INFO:root:Query ID: 478064320, Query Index: 98, Output Tokens: 128
+INFO:root:Query ID: 478064352, Query Index: 1751, Output Tokens: 128
+INFO:root:Query ID: 478064384, Query Index: 12723, Output Tokens: 128
+INFO:root:Query ID: 478064416, Query Index: 3735, Output Tokens: 128
+INFO:root:Query ID: 478064448, Query Index: 8751, Output Tokens: 128
+INFO:root:Query ID: 478064480, Query Index: 3165, Output Tokens: 128
+INFO:root:Query ID: 478064512, Query Index: 2566, Output Tokens: 128
+INFO:root:Query ID: 478064544, Query Index: 7514, Output Tokens: 128
+INFO:root:Query ID: 478064576, Query Index: 427, Output Tokens: 128
+INFO:root:Query ID: 478064608, Query Index: 11793, Output Tokens: 128
+INFO:root:Query ID: 478064640, Query Index: 12913, Output Tokens: 128
+INFO:root:Query ID: 478064672, Query Index: 2568, Output Tokens: 128
+INFO:root:Query ID: 478064704, Query Index: 12495, Output Tokens: 128
+INFO:root:Query ID: 478064736, Query Index: 13336, Output Tokens: 128
+INFO:root:Query ID: 478064768, Query Index: 7031, Output Tokens: 128
+INFO:root:Query ID: 478064800, Query Index: 12005, Output Tokens: 128
+INFO:root:Query ID: 478064832, Query Index: 6515, Output Tokens: 128
+INFO:root:Query ID: 478064864, Query Index: 3847, Output Tokens: 128
+INFO:root:Query ID: 478064896, Query Index: 8972, Output Tokens: 128
+INFO:root:Query ID: 478064928, Query Index: 11765, Output Tokens: 128
+INFO:root:Query ID: 478064960, Query Index: 12394, Output Tokens: 128
+INFO:root:Query ID: 478064992, Query Index: 4908, Output Tokens: 128
+INFO:root:Query ID: 478065024, Query Index: 6516, Output Tokens: 128
+INFO:root:Query ID: 478065056, Query Index: 13069, Output Tokens: 128
+INFO:root:Query ID: 478065088, Query Index: 4836, Output Tokens: 128
+INFO:root:Query ID: 478065120, Query Index: 4109, Output Tokens: 128
+INFO:root:Query ID: 478065152, Query Index: 17, Output Tokens: 128
+INFO:root:Query ID: 478065184, Query Index: 11120, Output Tokens: 128
+INFO:root:Query ID: 478065216, Query Index: 3836, Output Tokens: 128
+INFO:root:Query ID: 478065248, Query Index: 7655, Output Tokens: 128
+INFO:root:Query ID: 478065280, Query Index: 11035, Output Tokens: 128
+INFO:root:Query ID: 478065312, Query Index: 391, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 6491.79it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:03<02:01,  3.93s/it, est. speed input: 117.95 toks/s, output: 16.02 toks/s]Processed prompts:   6%|▋         | 2/32 [00:04<00:57,  1.93s/it, est. speed input: 298.43 toks/s, output: 31.66 toks/s]Processed prompts:   9%|▉         | 3/32 [00:04<00:35,  1.23s/it, est. speed input: 428.34 toks/s, output: 48.26 toks/s]Processed prompts:  12%|█▎        | 4/32 [00:05<00:25,  1.08it/s, est. speed input: 429.85 toks/s, output: 64.10 toks/s]Processed prompts:  16%|█▌        | 5/32 [00:05<00:19,  1.41it/s, est. speed input: 457.83 toks/s, output: 81.42 toks/s]Processed prompts:  19%|█▉        | 6/32 [00:05<00:14,  1.81it/s, est. speed input: 527.35 toks/s, output: 99.82 toks/s]Processed prompts:  97%|█████████▋| 31/32 [00:05<00:00, 21.76it/s, est. speed input: 4470.44 toks/s, output: 632.31 toks/s]Processed prompts: 100%|██████████| 32/32 [00:05<00:00,  5.34it/s, est. speed input: 4605.94 toks/s, output: 653.67 toks/s]
+INFO:root:Query ID: 478065344, Query Index: 4848, Output Tokens: 128
+INFO:root:Query ID: 478065376, Query Index: 11082, Output Tokens: 128
+INFO:root:Query ID: 478065408, Query Index: 5610, Output Tokens: 128
+INFO:root:Query ID: 478065440, Query Index: 3440, Output Tokens: 128
+INFO:root:Query ID: 478065472, Query Index: 3101, Output Tokens: 128
+INFO:root:Query ID: 478065504, Query Index: 4860, Output Tokens: 128
+INFO:root:Query ID: 478065536, Query Index: 11153, Output Tokens: 128
+INFO:root:Query ID: 478065568, Query Index: 868, Output Tokens: 93
+INFO:root:Query ID: 478065600, Query Index: 756, Output Tokens: 119
+INFO:root:Query ID: 478065632, Query Index: 7129, Output Tokens: 63
+INFO:root:Query ID: 478065664, Query Index: 6071, Output Tokens: 128
+INFO:root:Query ID: 478065696, Query Index: 1309, Output Tokens: 128
+INFO:root:Query ID: 478065728, Query Index: 8588, Output Tokens: 128
+INFO:root:Query ID: 478065760, Query Index: 9427, Output Tokens: 128
+INFO:root:Query ID: 478065792, Query Index: 5168, Output Tokens: 128
+INFO:root:Query ID: 478065824, Query Index: 4653, Output Tokens: 128
+INFO:root:Query ID: 478065856, Query Index: 11244, Output Tokens: 128
+INFO:root:Query ID: 478065888, Query Index: 7106, Output Tokens: 128
+INFO:root:Query ID: 478065920, Query Index: 3834, Output Tokens: 128
+INFO:root:Query ID: 478065952, Query Index: 188, Output Tokens: 128
+INFO:root:Query ID: 478065984, Query Index: 3772, Output Tokens: 128
+INFO:root:Query ID: 478066016, Query Index: 3969, Output Tokens: 128
+INFO:root:Query ID: 478066048, Query Index: 9172, Output Tokens: 128
+INFO:root:Query ID: 478066080, Query Index: 3578, Output Tokens: 128
+INFO:root:Query ID: 478066112, Query Index: 1485, Output Tokens: 128
+INFO:root:Query ID: 478066144, Query Index: 9647, Output Tokens: 128
+INFO:root:Query ID: 478066176, Query Index: 11607, Output Tokens: 128
+INFO:root:Query ID: 478066208, Query Index: 10309, Output Tokens: 128
+INFO:root:Query ID: 478066240, Query Index: 3387, Output Tokens: 78
+INFO:root:Query ID: 478066272, Query Index: 20, Output Tokens: 106
+INFO:root:Query ID: 478066304, Query Index: 1869, Output Tokens: 128
+INFO:root:Query ID: 478066336, Query Index: 8568, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 6415.76it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:04<02:27,  4.77s/it, est. speed input: 104.75 toks/s, output: 19.07 toks/s]Processed prompts:   6%|▋         | 2/32 [00:04<01:01,  2.04s/it, est. speed input: 221.88 toks/s, output: 38.61 toks/s]Processed prompts:   9%|▉         | 3/32 [00:05<00:36,  1.27s/it, est. speed input: 344.03 toks/s, output: 56.48 toks/s]Processed prompts:  12%|█▎        | 4/32 [00:05<00:27,  1.01it/s, est. speed input: 456.31 toks/s, output: 73.24 toks/s]Processed prompts: 100%|██████████| 32/32 [00:05<00:00,  5.43it/s, est. speed input: 4406.95 toks/s, output: 680.90 toks/s]
+INFO:root:Query ID: 478066368, Query Index: 13202, Output Tokens: 98
+INFO:root:Query ID: 478066400, Query Index: 8270, Output Tokens: 128
+INFO:root:Query ID: 478066432, Query Index: 1876, Output Tokens: 128
+INFO:root:Query ID: 478066464, Query Index: 8084, Output Tokens: 128
+INFO:root:Query ID: 478066496, Query Index: 177, Output Tokens: 128
+INFO:root:Query ID: 478066528, Query Index: 1979, Output Tokens: 128
+INFO:root:Query ID: 478066560, Query Index: 6871, Output Tokens: 128
+INFO:root:Query ID: 478066592, Query Index: 9212, Output Tokens: 128
+INFO:root:Query ID: 478066624, Query Index: 97, Output Tokens: 128
+INFO:root:Query ID: 478066656, Query Index: 3696, Output Tokens: 128
+INFO:root:Query ID: 478066688, Query Index: 5517, Output Tokens: 128
+INFO:root:Query ID: 478066720, Query Index: 3444, Output Tokens: 128
+INFO:root:Query ID: 478066752, Query Index: 6322, Output Tokens: 128
+INFO:root:Query ID: 478066784, Query Index: 11129, Output Tokens: 108
+INFO:root:Query ID: 478066816, Query Index: 7601, Output Tokens: 128
+INFO:root:Query ID: 478066848, Query Index: 5296, Output Tokens: 128
+INFO:root:Query ID: 478066880, Query Index: 88, Output Tokens: 128
+INFO:root:Query ID: 478066912, Query Index: 10137, Output Tokens: 128
+INFO:root:Query ID: 478066944, Query Index: 11396, Output Tokens: 128
+INFO:root:Query ID: 478066976, Query Index: 13012, Output Tokens: 128
+INFO:root:Query ID: 478067008, Query Index: 2341, Output Tokens: 128
+INFO:root:Query ID: 478067040, Query Index: 13148, Output Tokens: 128
+INFO:root:Query ID: 478067072, Query Index: 4267, Output Tokens: 128
+INFO:root:Query ID: 478067104, Query Index: 86, Output Tokens: 128
+INFO:root:Query ID: 478067136, Query Index: 8937, Output Tokens: 128
+INFO:root:Query ID: 478067168, Query Index: 3315, Output Tokens: 128
+INFO:root:Query ID: 478067200, Query Index: 9617, Output Tokens: 91
+INFO:root:Query ID: 478067232, Query Index: 9718, Output Tokens: 128
+INFO:root:Query ID: 478067264, Query Index: 5223, Output Tokens: 128
+INFO:root:Query ID: 478067296, Query Index: 7908, Output Tokens: 128
+INFO:root:Query ID: 478067328, Query Index: 10854, Output Tokens: 128
+INFO:root:Query ID: 478067360, Query Index: 12755, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 6528.42it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:02<01:28,  2.84s/it, est. speed input: 158.27 toks/s, output: 11.25 toks/s]Processed prompts:   6%|▋         | 2/32 [00:05<01:25,  2.85s/it, est. speed input: 264.57 toks/s, output: 28.09 toks/s]Processed prompts: 100%|██████████| 32/32 [00:05<00:00,  5.54it/s, est. speed input: 4385.25 toks/s, output: 691.93 toks/s]
+INFO:root:Query ID: 478067392, Query Index: 4062, Output Tokens: 128
+INFO:root:Query ID: 478067424, Query Index: 1657, Output Tokens: 128
+INFO:root:Query ID: 478067456, Query Index: 4764, Output Tokens: 32
+INFO:root:Query ID: 478067488, Query Index: 842, Output Tokens: 128
+INFO:root:Query ID: 478067520, Query Index: 4102, Output Tokens: 128
+INFO:root:Query ID: 478067552, Query Index: 10536, Output Tokens: 128
+INFO:root:Query ID: 478067584, Query Index: 5512, Output Tokens: 128
+INFO:root:Query ID: 478067616, Query Index: 2690, Output Tokens: 128
+INFO:root:Query ID: 478067648, Query Index: 7624, Output Tokens: 128
+INFO:root:Query ID: 478067680, Query Index: 8080, Output Tokens: 128
+INFO:root:Query ID: 478067712, Query Index: 3109, Output Tokens: 128
+INFO:root:Query ID: 478067744, Query Index: 124, Output Tokens: 128
+INFO:root:Query ID: 478067776, Query Index: 1363, Output Tokens: 128
+INFO:root:Query ID: 478067808, Query Index: 780, Output Tokens: 128
+INFO:root:Query ID: 478067840, Query Index: 5418, Output Tokens: 128
+INFO:root:Query ID: 478067872, Query Index: 3637, Output Tokens: 128
+INFO:root:Query ID: 478067904, Query Index: 1670, Output Tokens: 128
+INFO:root:Query ID: 478067936, Query Index: 3598, Output Tokens: 128
+INFO:root:Query ID: 478067968, Query Index: 12911, Output Tokens: 128
+INFO:root:Query ID: 478068000, Query Index: 6090, Output Tokens: 128
+INFO:root:Query ID: 478068032, Query Index: 1438, Output Tokens: 128
+INFO:root:Query ID: 478068064, Query Index: 7793, Output Tokens: 128
+INFO:root:Query ID: 478068096, Query Index: 9159, Output Tokens: 128
+INFO:root:Query ID: 478068128, Query Index: 2129, Output Tokens: 128
+INFO:root:Query ID: 478068160, Query Index: 4531, Output Tokens: 128
+INFO:root:Query ID: 478068192, Query Index: 1025, Output Tokens: 128
+INFO:root:Query ID: 478068224, Query Index: 3918, Output Tokens: 128
+INFO:root:Query ID: 478068256, Query Index: 7545, Output Tokens: 128
+INFO:root:Query ID: 478068288, Query Index: 3615, Output Tokens: 128
+INFO:root:Query ID: 478068320, Query Index: 10555, Output Tokens: 128
+INFO:root:Query ID: 478068352, Query Index: 11819, Output Tokens: 128
+INFO:root:Query ID: 478068384, Query Index: 8039, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 6775.94it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:04<02:31,  4.89s/it, est. speed input: 75.32 toks/s, output: 19.04 toks/s]Processed prompts:   6%|▋         | 2/32 [00:05<01:18,  2.63s/it, est. speed input: 250.63 toks/s, output: 37.27 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  5.32it/s, est. speed input: 4540.62 toks/s, output: 675.26 toks/s]
+INFO:root:Query ID: 478068416, Query Index: 7487, Output Tokens: 128
+INFO:root:Query ID: 478068448, Query Index: 8287, Output Tokens: 128
+INFO:root:Query ID: 478068480, Query Index: 11869, Output Tokens: 128
+INFO:root:Query ID: 478068512, Query Index: 2887, Output Tokens: 128
+INFO:root:Query ID: 478068544, Query Index: 3782, Output Tokens: 128
+INFO:root:Query ID: 478068576, Query Index: 196, Output Tokens: 128
+INFO:root:Query ID: 478068608, Query Index: 79, Output Tokens: 128
+INFO:root:Query ID: 478068640, Query Index: 10347, Output Tokens: 128
+INFO:root:Query ID: 478068672, Query Index: 3306, Output Tokens: 128
+INFO:root:Query ID: 478068704, Query Index: 3943, Output Tokens: 93
+INFO:root:Query ID: 478068736, Query Index: 11687, Output Tokens: 128
+INFO:root:Query ID: 478068768, Query Index: 10245, Output Tokens: 128
+INFO:root:Query ID: 478068800, Query Index: 1722, Output Tokens: 128
+INFO:root:Query ID: 478068832, Query Index: 4425, Output Tokens: 128
+INFO:root:Query ID: 478068864, Query Index: 4188, Output Tokens: 128
+INFO:root:Query ID: 478068896, Query Index: 9451, Output Tokens: 128
+INFO:root:Query ID: 478068928, Query Index: 4181, Output Tokens: 128
+INFO:root:Query ID: 478068960, Query Index: 7375, Output Tokens: 128
+INFO:root:Query ID: 478068992, Query Index: 8017, Output Tokens: 128
+INFO:root:Query ID: 478069024, Query Index: 11678, Output Tokens: 128
+INFO:root:Query ID: 478069056, Query Index: 3763, Output Tokens: 128
+INFO:root:Query ID: 478069088, Query Index: 2595, Output Tokens: 128
+INFO:root:Query ID: 478069120, Query Index: 12784, Output Tokens: 128
+INFO:root:Query ID: 478069152, Query Index: 6417, Output Tokens: 128
+INFO:root:Query ID: 478069184, Query Index: 1286, Output Tokens: 128
+INFO:root:Query ID: 478069216, Query Index: 11800, Output Tokens: 128
+INFO:root:Query ID: 478069248, Query Index: 4037, Output Tokens: 128
+INFO:root:Query ID: 478069280, Query Index: 8121, Output Tokens: 128
+INFO:root:Query ID: 478069312, Query Index: 4236, Output Tokens: 128
+INFO:root:Query ID: 478069344, Query Index: 9590, Output Tokens: 128
+INFO:root:Query ID: 478069376, Query Index: 546, Output Tokens: 128
+INFO:root:Query ID: 478069408, Query Index: 9888, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 7622.98it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:04<02:13,  4.30s/it, est. speed input: 46.79 toks/s, output: 14.90 toks/s]Processed prompts:   6%|▋         | 2/32 [00:05<01:06,  2.23s/it, est. speed input: 106.52 toks/s, output: 30.52 toks/s]Processed prompts:   9%|▉         | 3/32 [00:05<00:47,  1.63s/it, est. speed input: 322.91 toks/s, output: 45.77 toks/s]Processed prompts:  12%|█▎        | 4/32 [00:06<00:29,  1.07s/it, est. speed input: 389.76 toks/s, output: 64.80 toks/s]Processed prompts:  94%|█████████▍| 30/32 [00:06<00:00, 13.83it/s, est. speed input: 4352.69 toks/s, output: 590.68 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  5.07it/s, est. speed input: 4816.28 toks/s, output: 631.21 toks/s]
+INFO:root:Query ID: 478069440, Query Index: 4928, Output Tokens: 128
+INFO:root:Query ID: 478069472, Query Index: 706, Output Tokens: 128
+INFO:root:Query ID: 478069504, Query Index: 8015, Output Tokens: 128
+INFO:root:Query ID: 478069536, Query Index: 1706, Output Tokens: 128
+INFO:root:Query ID: 478069568, Query Index: 11786, Output Tokens: 128
+INFO:root:Query ID: 478069600, Query Index: 2560, Output Tokens: 128
+INFO:root:Query ID: 478069632, Query Index: 6684, Output Tokens: 128
+INFO:root:Query ID: 478069664, Query Index: 5250, Output Tokens: 128
+INFO:root:Query ID: 478069696, Query Index: 5956, Output Tokens: 128
+INFO:root:Query ID: 478069728, Query Index: 8378, Output Tokens: 128
+INFO:root:Query ID: 478069760, Query Index: 2403, Output Tokens: 91
+INFO:root:Query ID: 478069792, Query Index: 9008, Output Tokens: 128
+INFO:root:Query ID: 478069824, Query Index: 11286, Output Tokens: 128
+INFO:root:Query ID: 478069856, Query Index: 11336, Output Tokens: 128
+INFO:root:Query ID: 478069888, Query Index: 8276, Output Tokens: 128
+INFO:root:Query ID: 478069920, Query Index: 10366, Output Tokens: 128
+INFO:root:Query ID: 478069952, Query Index: 5722, Output Tokens: 128
+INFO:root:Query ID: 478069984, Query Index: 5642, Output Tokens: 119
+INFO:root:Query ID: 478070016, Query Index: 6682, Output Tokens: 128
+INFO:root:Query ID: 478070048, Query Index: 12315, Output Tokens: 128
+INFO:root:Query ID: 478070080, Query Index: 9711, Output Tokens: 128
+INFO:root:Query ID: 478070112, Query Index: 6878, Output Tokens: 64
+INFO:root:Query ID: 478070144, Query Index: 6910, Output Tokens: 128
+INFO:root:Query ID: 478070176, Query Index: 8069, Output Tokens: 128
+INFO:root:Query ID: 478070208, Query Index: 6584, Output Tokens: 128
+INFO:root:Query ID: 478070240, Query Index: 8332, Output Tokens: 128
+INFO:root:Query ID: 478070272, Query Index: 9728, Output Tokens: 128
+INFO:root:Query ID: 478070304, Query Index: 6155, Output Tokens: 128
+INFO:root:Query ID: 478070336, Query Index: 8411, Output Tokens: 128
+INFO:root:Query ID: 478070368, Query Index: 3285, Output Tokens: 128
+INFO:root:Query ID: 478070400, Query Index: 3381, Output Tokens: 128
+INFO:root:Query ID: 478070432, Query Index: 11945, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8341.69it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:03<01:43,  3.35s/it, est. speed input: 174.54 toks/s, output: 14.32 toks/s]Processed prompts:   6%|▋         | 2/32 [00:03<00:43,  1.45s/it, est. speed input: 366.70 toks/s, output: 28.81 toks/s]Processed prompts:   9%|▉         | 3/32 [00:05<00:43,  1.51s/it, est. speed input: 316.11 toks/s, output: 40.50 toks/s]Processed prompts:  12%|█▎        | 4/32 [00:05<00:32,  1.17s/it, est. speed input: 386.41 toks/s, output: 58.49 toks/s]Processed prompts: 100%|██████████| 32/32 [00:05<00:00,  5.54it/s, est. speed input: 4374.24 toks/s, output: 677.92 toks/s]
+INFO:root:Query ID: 478070464, Query Index: 8990, Output Tokens: 128
+INFO:root:Query ID: 478070496, Query Index: 4716, Output Tokens: 128
+INFO:root:Query ID: 478070528, Query Index: 7922, Output Tokens: 128
+INFO:root:Query ID: 478070560, Query Index: 11417, Output Tokens: 128
+INFO:root:Query ID: 478070592, Query Index: 6107, Output Tokens: 128
+INFO:root:Query ID: 478070624, Query Index: 1497, Output Tokens: 128
+INFO:root:Query ID: 478070656, Query Index: 12185, Output Tokens: 128
+INFO:root:Query ID: 478070688, Query Index: 7064, Output Tokens: 128
+INFO:root:Query ID: 478070720, Query Index: 13129, Output Tokens: 128
+INFO:root:Query ID: 478070752, Query Index: 6238, Output Tokens: 128
+INFO:root:Query ID: 478070784, Query Index: 5854, Output Tokens: 128
+INFO:root:Query ID: 478070816, Query Index: 3077, Output Tokens: 128
+INFO:root:Query ID: 478070848, Query Index: 5269, Output Tokens: 128
+INFO:root:Query ID: 478070880, Query Index: 7101, Output Tokens: 52
+INFO:root:Query ID: 478070912, Query Index: 1562, Output Tokens: 128
+INFO:root:Query ID: 478070944, Query Index: 5325, Output Tokens: 128
+INFO:root:Query ID: 478070976, Query Index: 9077, Output Tokens: 105
+INFO:root:Query ID: 478071008, Query Index: 10438, Output Tokens: 48
+INFO:root:Query ID: 478071040, Query Index: 1279, Output Tokens: 128
+INFO:root:Query ID: 478071072, Query Index: 3546, Output Tokens: 128
+INFO:root:Query ID: 478071104, Query Index: 4035, Output Tokens: 128
+INFO:root:Query ID: 478071136, Query Index: 5662, Output Tokens: 128
+INFO:root:Query ID: 478071168, Query Index: 692, Output Tokens: 128
+INFO:root:Query ID: 478071200, Query Index: 5900, Output Tokens: 128
+INFO:root:Query ID: 478071232, Query Index: 1864, Output Tokens: 128
+INFO:root:Query ID: 478071264, Query Index: 11844, Output Tokens: 128
+INFO:root:Query ID: 478071296, Query Index: 5566, Output Tokens: 128
+INFO:root:Query ID: 478071328, Query Index: 12039, Output Tokens: 128
+INFO:root:Query ID: 478071360, Query Index: 4753, Output Tokens: 128
+INFO:root:Query ID: 478071392, Query Index: 1735, Output Tokens: 128
+INFO:root:Query ID: 478071424, Query Index: 9571, Output Tokens: 128
+INFO:root:Query ID: 478071456, Query Index: 9260, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 7765.88it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:02<01:10,  2.26s/it, est. speed input: 757.56 toks/s, output: 0.88 toks/s]Processed prompts:   6%|▋         | 2/32 [00:04<01:10,  2.34s/it, est. speed input: 469.90 toks/s, output: 18.02 toks/s]Processed prompts:   9%|▉         | 3/32 [00:06<00:54,  1.89s/it, est. speed input: 509.88 toks/s, output: 35.28 toks/s]Processed prompts:  97%|█████████▋| 31/32 [00:06<00:00,  9.83it/s, est. speed input: 4569.99 toks/s, output: 620.51 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  5.23it/s, est. speed input: 4649.51 toks/s, output: 641.42 toks/s]
+INFO:root:Query ID: 478071488, Query Index: 173, Output Tokens: 128
+INFO:root:Query ID: 478071520, Query Index: 6576, Output Tokens: 128
+INFO:root:Query ID: 478071552, Query Index: 7047, Output Tokens: 128
+INFO:root:Query ID: 478071584, Query Index: 4651, Output Tokens: 128
+INFO:root:Query ID: 478071616, Query Index: 181, Output Tokens: 128
+INFO:root:Query ID: 478071648, Query Index: 11295, Output Tokens: 128
+INFO:root:Query ID: 478071680, Query Index: 8095, Output Tokens: 128
+INFO:root:Query ID: 478071712, Query Index: 12775, Output Tokens: 128
+INFO:root:Query ID: 478071744, Query Index: 4972, Output Tokens: 128
+INFO:root:Query ID: 478071776, Query Index: 3445, Output Tokens: 128
+INFO:root:Query ID: 478071808, Query Index: 673, Output Tokens: 128
+INFO:root:Query ID: 478071840, Query Index: 1611, Output Tokens: 128
+INFO:root:Query ID: 478071872, Query Index: 7893, Output Tokens: 128
+INFO:root:Query ID: 478071904, Query Index: 8576, Output Tokens: 128
+INFO:root:Query ID: 478071936, Query Index: 271, Output Tokens: 128
+INFO:root:Query ID: 478071968, Query Index: 4211, Output Tokens: 128
+INFO:root:Query ID: 478072000, Query Index: 12681, Output Tokens: 128
+INFO:root:Query ID: 478072032, Query Index: 10672, Output Tokens: 128
+INFO:root:Query ID: 478072064, Query Index: 3459, Output Tokens: 128
+INFO:root:Query ID: 478072096, Query Index: 7806, Output Tokens: 82
+INFO:root:Query ID: 478072128, Query Index: 6733, Output Tokens: 128
+INFO:root:Query ID: 478072160, Query Index: 10782, Output Tokens: 2
+INFO:root:Query ID: 478072192, Query Index: 4540, Output Tokens: 128
+INFO:root:Query ID: 478072224, Query Index: 11567, Output Tokens: 128
+INFO:root:Query ID: 478072256, Query Index: 12866, Output Tokens: 128
+INFO:root:Query ID: 478072288, Query Index: 10508, Output Tokens: 128
+INFO:root:Query ID: 478072320, Query Index: 13313, Output Tokens: 128
+INFO:root:Query ID: 478072352, Query Index: 11633, Output Tokens: 128
+INFO:root:Query ID: 478072384, Query Index: 12914, Output Tokens: 128
+INFO:root:Query ID: 478072416, Query Index: 12228, Output Tokens: 128
+INFO:root:Query ID: 478072448, Query Index: 6599, Output Tokens: 128
+INFO:root:Query ID: 478072480, Query Index: 2232, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 7977.28it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:04<02:13,  4.31s/it, est. speed input: 95.83 toks/s, output: 15.31 toks/s]Processed prompts:   6%|▋         | 2/32 [00:05<01:10,  2.36s/it, est. speed input: 163.95 toks/s, output: 30.72 toks/s]Processed prompts:   9%|▉         | 3/32 [00:06<00:48,  1.67s/it, est. speed input: 277.30 toks/s, output: 47.33 toks/s]Processed prompts:  94%|█████████▍| 30/32 [00:06<00:00, 10.70it/s, est. speed input: 4568.40 toks/s, output: 598.55 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  5.11it/s, est. speed input: 4737.31 toks/s, output: 639.43 toks/s]
+INFO:root:Query ID: 478072512, Query Index: 10572, Output Tokens: 128
+INFO:root:Query ID: 478072544, Query Index: 13019, Output Tokens: 128
+INFO:root:Query ID: 478072576, Query Index: 4630, Output Tokens: 128
+INFO:root:Query ID: 478072608, Query Index: 12195, Output Tokens: 128
+INFO:root:Query ID: 478072640, Query Index: 10086, Output Tokens: 128
+INFO:root:Query ID: 478072672, Query Index: 6148, Output Tokens: 128
+INFO:root:Query ID: 478072704, Query Index: 4967, Output Tokens: 128
+INFO:root:Query ID: 478072736, Query Index: 12201, Output Tokens: 128
+INFO:root:Query ID: 478072768, Query Index: 1161, Output Tokens: 128
+INFO:root:Query ID: 478072800, Query Index: 8346, Output Tokens: 128
+INFO:root:Query ID: 478072832, Query Index: 7934, Output Tokens: 128
+INFO:root:Query ID: 478072864, Query Index: 10320, Output Tokens: 128
+INFO:root:Query ID: 478072896, Query Index: 12731, Output Tokens: 128
+INFO:root:Query ID: 478072928, Query Index: 1682, Output Tokens: 128
+INFO:root:Query ID: 478072960, Query Index: 1307, Output Tokens: 128
+INFO:root:Query ID: 478072992, Query Index: 1187, Output Tokens: 128
+INFO:root:Query ID: 478073024, Query Index: 6115, Output Tokens: 128
+INFO:root:Query ID: 478073056, Query Index: 9376, Output Tokens: 128
+INFO:root:Query ID: 478073088, Query Index: 6896, Output Tokens: 128
+INFO:root:Query ID: 478073120, Query Index: 6491, Output Tokens: 128
+INFO:root:Query ID: 478073152, Query Index: 2004, Output Tokens: 128
+INFO:root:Query ID: 478073184, Query Index: 5535, Output Tokens: 128
+INFO:root:Query ID: 478073216, Query Index: 12038, Output Tokens: 128
+INFO:root:Query ID: 478073248, Query Index: 13339, Output Tokens: 128
+INFO:root:Query ID: 478073280, Query Index: 12890, Output Tokens: 128
+INFO:root:Query ID: 478073312, Query Index: 7196, Output Tokens: 128
+INFO:root:Query ID: 478073344, Query Index: 1804, Output Tokens: 128
+INFO:root:Query ID: 478073376, Query Index: 10287, Output Tokens: 66
+INFO:root:Query ID: 478073408, Query Index: 9492, Output Tokens: 128
+INFO:root:Query ID: 478073440, Query Index: 6258, Output Tokens: 128
+INFO:root:Query ID: 478073472, Query Index: 11488, Output Tokens: 128
+INFO:root:Query ID: 478073504, Query Index: 1946, Output Tokens: 97
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8004.40it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:03<01:38,  3.18s/it, est. speed input: 149.90 toks/s, output: 9.11 toks/s]Processed prompts:   6%|▋         | 2/32 [00:05<01:28,  2.95s/it, est. speed input: 344.23 toks/s, output: 25.16 toks/s]Processed prompts:   9%|▉         | 3/32 [00:06<00:48,  1.69s/it, est. speed input: 561.43 toks/s, output: 45.23 toks/s]Processed prompts:  91%|█████████ | 29/32 [00:06<00:00, 10.22it/s, est. speed input: 4394.06 toks/s, output: 576.26 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  5.11it/s, est. speed input: 4732.60 toks/s, output: 637.62 toks/s]
+INFO:root:Query ID: 478073536, Query Index: 2120, Output Tokens: 128
+INFO:root:Query ID: 478073568, Query Index: 5861, Output Tokens: 128
+INFO:root:Query ID: 478073600, Query Index: 3431, Output Tokens: 128
+INFO:root:Query ID: 478073632, Query Index: 396, Output Tokens: 128
+INFO:root:Query ID: 478073664, Query Index: 6851, Output Tokens: 128
+INFO:root:Query ID: 478073696, Query Index: 9116, Output Tokens: 128
+INFO:root:Query ID: 478073728, Query Index: 11617, Output Tokens: 128
+INFO:root:Query ID: 478073760, Query Index: 1964, Output Tokens: 128
+INFO:root:Query ID: 478073792, Query Index: 4925, Output Tokens: 128
+INFO:root:Query ID: 478073824, Query Index: 12420, Output Tokens: 121
+INFO:root:Query ID: 478073856, Query Index: 11715, Output Tokens: 128
+INFO:root:Query ID: 478073888, Query Index: 12908, Output Tokens: 128
+INFO:root:Query ID: 478073920, Query Index: 3009, Output Tokens: 128
+INFO:root:Query ID: 478073952, Query Index: 1328, Output Tokens: 128
+INFO:root:Query ID: 478073984, Query Index: 8097, Output Tokens: 128
+INFO:root:Query ID: 478074016, Query Index: 12472, Output Tokens: 128
+INFO:root:Query ID: 478074048, Query Index: 11714, Output Tokens: 128
+INFO:root:Query ID: 478074080, Query Index: 10494, Output Tokens: 128
+INFO:root:Query ID: 478074112, Query Index: 533, Output Tokens: 128
+INFO:root:Query ID: 478074144, Query Index: 1610, Output Tokens: 128
+INFO:root:Query ID: 478074176, Query Index: 834, Output Tokens: 128
+INFO:root:Query ID: 478074208, Query Index: 11681, Output Tokens: 128
+INFO:root:Query ID: 478074240, Query Index: 9348, Output Tokens: 128
+INFO:root:Query ID: 478074272, Query Index: 8694, Output Tokens: 128
+INFO:root:Query ID: 478074304, Query Index: 603, Output Tokens: 128
+INFO:root:Query ID: 478074336, Query Index: 10607, Output Tokens: 128
+INFO:root:Query ID: 478074368, Query Index: 4840, Output Tokens: 29
+INFO:root:Query ID: 478074400, Query Index: 10648, Output Tokens: 128
+INFO:root:Query ID: 478074432, Query Index: 522, Output Tokens: 128
+INFO:root:Query ID: 478074464, Query Index: 8102, Output Tokens: 128
+INFO:root:Query ID: 478074496, Query Index: 2849, Output Tokens: 128
+INFO:root:Query ID: 478074528, Query Index: 5977, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 7625.14it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:05<03:04,  5.96s/it, est. speed input: 255.34 toks/s, output: 21.49 toks/s]Processed prompts:  97%|█████████▋| 31/32 [00:06<00:00,  7.17it/s, est. speed input: 4464.12 toks/s, output: 653.72 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  5.27it/s, est. speed input: 4569.37 toks/s, output: 674.81 toks/s]
+INFO:root:Query ID: 478074560, Query Index: 12483, Output Tokens: 128
+INFO:root:Query ID: 478074592, Query Index: 4532, Output Tokens: 128
+INFO:root:Query ID: 478074624, Query Index: 2068, Output Tokens: 128
+INFO:root:Query ID: 478074656, Query Index: 1456, Output Tokens: 128
+INFO:root:Query ID: 478074688, Query Index: 4411, Output Tokens: 128
+INFO:root:Query ID: 478074720, Query Index: 11884, Output Tokens: 128
+INFO:root:Query ID: 478074752, Query Index: 6201, Output Tokens: 128
+INFO:root:Query ID: 478074784, Query Index: 5169, Output Tokens: 128
+INFO:root:Query ID: 478074816, Query Index: 12050, Output Tokens: 128
+INFO:root:Query ID: 478074848, Query Index: 222, Output Tokens: 128
+INFO:root:Query ID: 478074880, Query Index: 10548, Output Tokens: 128
+INFO:root:Query ID: 478074912, Query Index: 9787, Output Tokens: 128
+INFO:root:Query ID: 478074944, Query Index: 9468, Output Tokens: 128
+INFO:root:Query ID: 478074976, Query Index: 3586, Output Tokens: 128
+INFO:root:Query ID: 478075008, Query Index: 11893, Output Tokens: 128
+INFO:root:Query ID: 478075040, Query Index: 5495, Output Tokens: 128
+INFO:root:Query ID: 478075072, Query Index: 10895, Output Tokens: 128
+INFO:root:Query ID: 478075104, Query Index: 8409, Output Tokens: 128
+INFO:root:Query ID: 478075136, Query Index: 8292, Output Tokens: 128
+INFO:root:Query ID: 478075168, Query Index: 13009, Output Tokens: 128
+INFO:root:Query ID: 478075200, Query Index: 8943, Output Tokens: 128
+INFO:root:Query ID: 478075232, Query Index: 4117, Output Tokens: 128
+INFO:root:Query ID: 478075264, Query Index: 604, Output Tokens: 128
+INFO:root:Query ID: 478075296, Query Index: 1155, Output Tokens: 128
+INFO:root:Query ID: 478075328, Query Index: 13023, Output Tokens: 128
+INFO:root:Query ID: 478075360, Query Index: 10238, Output Tokens: 128
+INFO:root:Query ID: 478075392, Query Index: 12308, Output Tokens: 128
+INFO:root:Query ID: 478075424, Query Index: 6795, Output Tokens: 128
+INFO:root:Query ID: 478075456, Query Index: 7916, Output Tokens: 126
+INFO:root:Query ID: 478075488, Query Index: 2845, Output Tokens: 128
+INFO:root:Query ID: 478075520, Query Index: 4451, Output Tokens: 128
+INFO:root:Query ID: 478075552, Query Index: 3344, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8441.37it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:03<01:47,  3.48s/it, est. speed input: 128.29 toks/s, output: 16.97 toks/s]Processed prompts:   6%|▋         | 2/32 [00:03<00:46,  1.55s/it, est. speed input: 223.64 toks/s, output: 33.65 toks/s]Processed prompts:   9%|▉         | 3/32 [00:04<00:31,  1.09s/it, est. speed input: 497.77 toks/s, output: 49.30 toks/s]Processed prompts:  12%|█▎        | 4/32 [00:04<00:20,  1.35it/s, est. speed input: 856.84 toks/s, output: 67.11 toks/s]Processed prompts:  16%|█▌        | 5/32 [00:05<00:23,  1.17it/s, est. speed input: 816.26 toks/s, output: 77.56 toks/s]Processed prompts: 100%|██████████| 32/32 [00:05<00:00,  5.75it/s, est. speed input: 4215.97 toks/s, output: 697.84 toks/s]
+INFO:root:Query ID: 478075584, Query Index: 9462, Output Tokens: 128
+INFO:root:Query ID: 478075616, Query Index: 5089, Output Tokens: 128
+INFO:root:Query ID: 478075648, Query Index: 4071, Output Tokens: 128
+INFO:root:Query ID: 478075680, Query Index: 3331, Output Tokens: 128
+INFO:root:Query ID: 478075712, Query Index: 7525, Output Tokens: 128
+INFO:root:Query ID: 478075744, Query Index: 4799, Output Tokens: 84
+INFO:root:Query ID: 478075776, Query Index: 7857, Output Tokens: 128
+INFO:root:Query ID: 478075808, Query Index: 10289, Output Tokens: 59
+INFO:root:Query ID: 478075840, Query Index: 1823, Output Tokens: 128
+INFO:root:Query ID: 478075872, Query Index: 7078, Output Tokens: 128
+INFO:root:Query ID: 478075904, Query Index: 6665, Output Tokens: 128
+INFO:root:Query ID: 478075936, Query Index: 5278, Output Tokens: 128
+INFO:root:Query ID: 478075968, Query Index: 12272, Output Tokens: 128
+INFO:root:Query ID: 478076000, Query Index: 3962, Output Tokens: 128
+INFO:root:Query ID: 478076032, Query Index: 696, Output Tokens: 128
+INFO:root:Query ID: 478076064, Query Index: 12842, Output Tokens: 65
+INFO:root:Query ID: 478076096, Query Index: 10317, Output Tokens: 128
+INFO:root:Query ID: 478076128, Query Index: 7842, Output Tokens: 128
+INFO:root:Query ID: 478076160, Query Index: 8064, Output Tokens: 128
+INFO:root:Query ID: 478076192, Query Index: 11126, Output Tokens: 128
+INFO:root:Query ID: 478076224, Query Index: 4500, Output Tokens: 128
+INFO:root:Query ID: 478076256, Query Index: 3970, Output Tokens: 128
+INFO:root:Query ID: 478076288, Query Index: 736, Output Tokens: 128
+INFO:root:Query ID: 478076320, Query Index: 380, Output Tokens: 128
+INFO:root:Query ID: 478076352, Query Index: 8935, Output Tokens: 128
+INFO:root:Query ID: 478076384, Query Index: 3816, Output Tokens: 128
+INFO:root:Query ID: 478076416, Query Index: 5297, Output Tokens: 128
+INFO:root:Query ID: 478076448, Query Index: 10521, Output Tokens: 89
+INFO:root:Query ID: 478076480, Query Index: 2375, Output Tokens: 128
+INFO:root:Query ID: 478076512, Query Index: 4620, Output Tokens: 128
+INFO:root:Query ID: 478076544, Query Index: 1835, Output Tokens: 128
+INFO:root:Query ID: 478076576, Query Index: 10750, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 7993.91it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:03<01:50,  3.58s/it, est. speed input: 133.82 toks/s, output: 16.20 toks/s]Processed prompts:   6%|▋         | 2/32 [00:05<01:20,  2.70s/it, est. speed input: 432.24 toks/s, output: 32.86 toks/s]Processed prompts: 100%|██████████| 32/32 [00:05<00:00,  5.57it/s, est. speed input: 4332.87 toks/s, output: 700.76 toks/s]
+INFO:root:Query ID: 478076608, Query Index: 1070, Output Tokens: 128
+INFO:root:Query ID: 478076640, Query Index: 3634, Output Tokens: 128
+INFO:root:Query ID: 478076672, Query Index: 6161, Output Tokens: 128
+INFO:root:Query ID: 478076704, Query Index: 7037, Output Tokens: 128
+INFO:root:Query ID: 478076736, Query Index: 11277, Output Tokens: 128
+INFO:root:Query ID: 478076768, Query Index: 10568, Output Tokens: 128
+INFO:root:Query ID: 478076800, Query Index: 3791, Output Tokens: 128
+INFO:root:Query ID: 478076832, Query Index: 8703, Output Tokens: 128
+INFO:root:Query ID: 478076864, Query Index: 10282, Output Tokens: 128
+INFO:root:Query ID: 478076896, Query Index: 3953, Output Tokens: 58
+INFO:root:Query ID: 478076928, Query Index: 2955, Output Tokens: 128
+INFO:root:Query ID: 478076960, Query Index: 3784, Output Tokens: 128
+INFO:root:Query ID: 478076992, Query Index: 4292, Output Tokens: 128
+INFO:root:Query ID: 478077024, Query Index: 2948, Output Tokens: 128
+INFO:root:Query ID: 478077056, Query Index: 3869, Output Tokens: 128
+INFO:root:Query ID: 478077088, Query Index: 7160, Output Tokens: 128
+INFO:root:Query ID: 478077120, Query Index: 10751, Output Tokens: 128
+INFO:root:Query ID: 478077152, Query Index: 11060, Output Tokens: 128
+INFO:root:Query ID: 478077184, Query Index: 8892, Output Tokens: 128
+INFO:root:Query ID: 478077216, Query Index: 11769, Output Tokens: 128
+INFO:root:Query ID: 478077248, Query Index: 2399, Output Tokens: 128
+INFO:root:Query ID: 478077280, Query Index: 9357, Output Tokens: 128
+INFO:root:Query ID: 478077312, Query Index: 6724, Output Tokens: 128
+INFO:root:Query ID: 478077344, Query Index: 8335, Output Tokens: 128
+INFO:root:Query ID: 478077376, Query Index: 5736, Output Tokens: 128
+INFO:root:Query ID: 478077408, Query Index: 5326, Output Tokens: 128
+INFO:root:Query ID: 478077440, Query Index: 8249, Output Tokens: 128
+INFO:root:Query ID: 478077472, Query Index: 5795, Output Tokens: 128
+INFO:root:Query ID: 478077504, Query Index: 13236, Output Tokens: 128
+INFO:root:Query ID: 478077536, Query Index: 11638, Output Tokens: 128
+INFO:root:Query ID: 478077568, Query Index: 10243, Output Tokens: 128
+INFO:root:Query ID: 478077600, Query Index: 5109, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8011.56it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:06<03:13,  6.26s/it, est. speed input: 93.68 toks/s, output: 20.46 toks/s]Processed prompts:  84%|████████▍ | 27/32 [00:06<00:00,  5.94it/s, est. speed input: 4182.20 toks/s, output: 542.70 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  5.02it/s, est. speed input: 4846.79 toks/s, output: 643.18 toks/s]
+INFO:root:Query ID: 478077632, Query Index: 4633, Output Tokens: 128
+INFO:root:Query ID: 478077664, Query Index: 11565, Output Tokens: 128
+INFO:root:Query ID: 478077696, Query Index: 11584, Output Tokens: 128
+INFO:root:Query ID: 478077728, Query Index: 2809, Output Tokens: 128
+INFO:root:Query ID: 478077760, Query Index: 5192, Output Tokens: 128
+INFO:root:Query ID: 478077792, Query Index: 6314, Output Tokens: 128
+INFO:root:Query ID: 478077824, Query Index: 10900, Output Tokens: 128
+INFO:root:Query ID: 478077856, Query Index: 11320, Output Tokens: 128
+INFO:root:Query ID: 478077888, Query Index: 7128, Output Tokens: 128
+INFO:root:Query ID: 478077920, Query Index: 6997, Output Tokens: 128
+INFO:root:Query ID: 478077952, Query Index: 6228, Output Tokens: 128
+INFO:root:Query ID: 478077984, Query Index: 7626, Output Tokens: 128
+INFO:root:Query ID: 478078016, Query Index: 545, Output Tokens: 128
+INFO:root:Query ID: 478078048, Query Index: 1838, Output Tokens: 128
+INFO:root:Query ID: 478078080, Query Index: 1861, Output Tokens: 128
+INFO:root:Query ID: 478078112, Query Index: 5436, Output Tokens: 128
+INFO:root:Query ID: 478078144, Query Index: 9459, Output Tokens: 128
+INFO:root:Query ID: 478078176, Query Index: 3891, Output Tokens: 128
+INFO:root:Query ID: 478078208, Query Index: 11487, Output Tokens: 128
+INFO:root:Query ID: 478078240, Query Index: 10153, Output Tokens: 128
+INFO:root:Query ID: 478078272, Query Index: 315, Output Tokens: 128
+INFO:root:Query ID: 478078304, Query Index: 6070, Output Tokens: 128
+INFO:root:Query ID: 478078336, Query Index: 4817, Output Tokens: 128
+INFO:root:Query ID: 478078368, Query Index: 8891, Output Tokens: 128
+INFO:root:Query ID: 478078400, Query Index: 12516, Output Tokens: 128
+INFO:root:Query ID: 478078432, Query Index: 10173, Output Tokens: 128
+INFO:root:Query ID: 478078464, Query Index: 7417, Output Tokens: 128
+INFO:root:Query ID: 478078496, Query Index: 10207, Output Tokens: 128
+INFO:root:Query ID: 478078528, Query Index: 4667, Output Tokens: 128
+INFO:root:Query ID: 478078560, Query Index: 12944, Output Tokens: 128
+INFO:root:Query ID: 478078592, Query Index: 9708, Output Tokens: 128
+INFO:root:Query ID: 478078624, Query Index: 10276, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8293.24it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:04<02:11,  4.23s/it, est. speed input: 288.42 toks/s, output: 19.61 toks/s]Processed prompts:   6%|▋         | 2/32 [00:05<01:14,  2.47s/it, est. speed input: 323.92 toks/s, output: 37.68 toks/s]Processed prompts:   9%|▉         | 3/32 [00:05<00:40,  1.40s/it, est. speed input: 385.66 toks/s, output: 59.77 toks/s]Processed prompts: 100%|██████████| 32/32 [00:05<00:00,  5.64it/s, est. speed input: 4273.68 toks/s, output: 713.37 toks/s]
+INFO:root:Query ID: 478078656, Query Index: 2827, Output Tokens: 128
+INFO:root:Query ID: 478078688, Query Index: 12658, Output Tokens: 128
+INFO:root:Query ID: 478078720, Query Index: 10771, Output Tokens: 83
+INFO:root:Query ID: 478078752, Query Index: 6170, Output Tokens: 128
+INFO:root:Query ID: 478078784, Query Index: 3609, Output Tokens: 128
+INFO:root:Query ID: 478078816, Query Index: 10286, Output Tokens: 128
+INFO:root:Query ID: 478078848, Query Index: 12852, Output Tokens: 128
+INFO:root:Query ID: 478078880, Query Index: 11246, Output Tokens: 128
+INFO:root:Query ID: 478078912, Query Index: 5377, Output Tokens: 128
+INFO:root:Query ID: 478078944, Query Index: 10823, Output Tokens: 128
+INFO:root:Query ID: 478078976, Query Index: 6174, Output Tokens: 123
+INFO:root:Query ID: 478079008, Query Index: 1039, Output Tokens: 128
+INFO:root:Query ID: 478079040, Query Index: 5056, Output Tokens: 128
+INFO:root:Query ID: 478079072, Query Index: 3468, Output Tokens: 128
+INFO:root:Query ID: 478079104, Query Index: 2824, Output Tokens: 128
+INFO:root:Query ID: 478079136, Query Index: 5264, Output Tokens: 128
+INFO:root:Query ID: 478079168, Query Index: 2307, Output Tokens: 128
+INFO:root:Query ID: 478079200, Query Index: 5432, Output Tokens: 128
+INFO:root:Query ID: 478079232, Query Index: 1959, Output Tokens: 128
+INFO:root:Query ID: 478079264, Query Index: 1478, Output Tokens: 128
+INFO:root:Query ID: 478079296, Query Index: 7832, Output Tokens: 128
+INFO:root:Query ID: 478079328, Query Index: 2470, Output Tokens: 128
+INFO:root:Query ID: 478079360, Query Index: 2204, Output Tokens: 128
+INFO:root:Query ID: 478079392, Query Index: 6292, Output Tokens: 128
+INFO:root:Query ID: 478079424, Query Index: 682, Output Tokens: 128
+INFO:root:Query ID: 478079456, Query Index: 9965, Output Tokens: 128
+INFO:root:Query ID: 478079488, Query Index: 8519, Output Tokens: 128
+INFO:root:Query ID: 478079520, Query Index: 4039, Output Tokens: 128
+INFO:root:Query ID: 478079552, Query Index: 1627, Output Tokens: 128
+INFO:root:Query ID: 478079584, Query Index: 10796, Output Tokens: 128
+INFO:root:Query ID: 478079616, Query Index: 9568, Output Tokens: 128
+INFO:root:Query ID: 478079648, Query Index: 12527, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8115.23it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:06<03:08,  6.07s/it, est. speed input: 156.10 toks/s, output: 21.08 toks/s]Processed prompts:  97%|█████████▋| 31/32 [00:06<00:00,  7.04it/s, est. speed input: 4473.70 toks/s, output: 641.78 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  5.18it/s, est. speed input: 4614.15 toks/s, output: 662.47 toks/s]
+INFO:root:Query ID: 478079680, Query Index: 9471, Output Tokens: 128
+INFO:root:Query ID: 478079712, Query Index: 6904, Output Tokens: 128
+INFO:root:Query ID: 478079744, Query Index: 9612, Output Tokens: 128
+INFO:root:Query ID: 478079776, Query Index: 12750, Output Tokens: 128
+INFO:root:Query ID: 478079808, Query Index: 5914, Output Tokens: 128
+INFO:root:Query ID: 478079840, Query Index: 2371, Output Tokens: 128
+INFO:root:Query ID: 478079872, Query Index: 13364, Output Tokens: 128
+INFO:root:Query ID: 478079904, Query Index: 799, Output Tokens: 128
+INFO:root:Query ID: 478079936, Query Index: 2092, Output Tokens: 128
+INFO:root:Query ID: 478079968, Query Index: 1744, Output Tokens: 128
+INFO:root:Query ID: 478080000, Query Index: 4269, Output Tokens: 128
+INFO:root:Query ID: 478080032, Query Index: 9477, Output Tokens: 128
+INFO:root:Query ID: 478080064, Query Index: 11828, Output Tokens: 128
+INFO:root:Query ID: 478080096, Query Index: 2241, Output Tokens: 128
+INFO:root:Query ID: 478080128, Query Index: 5396, Output Tokens: 128
+INFO:root:Query ID: 478080160, Query Index: 1431, Output Tokens: 128
+INFO:root:Query ID: 478080192, Query Index: 11837, Output Tokens: 128
+INFO:root:Query ID: 478080224, Query Index: 7290, Output Tokens: 128
+INFO:root:Query ID: 478080256, Query Index: 3391, Output Tokens: 128
+INFO:root:Query ID: 478080288, Query Index: 6056, Output Tokens: 128
+INFO:root:Query ID: 478080320, Query Index: 3111, Output Tokens: 128
+INFO:root:Query ID: 478080352, Query Index: 8735, Output Tokens: 128
+INFO:root:Query ID: 478080384, Query Index: 2607, Output Tokens: 128
+INFO:root:Query ID: 478080416, Query Index: 8902, Output Tokens: 128
+INFO:root:Query ID: 478080448, Query Index: 11176, Output Tokens: 128
+INFO:root:Query ID: 478080480, Query Index: 11709, Output Tokens: 128
+INFO:root:Query ID: 478080512, Query Index: 7715, Output Tokens: 128
+INFO:root:Query ID: 478080544, Query Index: 9583, Output Tokens: 128
+INFO:root:Query ID: 478080576, Query Index: 7834, Output Tokens: 128
+INFO:root:Query ID: 478080608, Query Index: 960, Output Tokens: 128
+INFO:root:Query ID: 478080640, Query Index: 13055, Output Tokens: 128
+INFO:root:Query ID: 478080672, Query Index: 3870, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 7889.13it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:04<02:32,  4.93s/it, est. speed input: 210.82 toks/s, output: 17.03 toks/s]Processed prompts:   6%|▋         | 2/32 [00:05<01:08,  2.29s/it, est. speed input: 436.03 toks/s, output: 33.90 toks/s]Processed prompts:   9%|▉         | 3/32 [00:05<00:39,  1.36s/it, est. speed input: 592.18 toks/s, output: 51.45 toks/s]Processed prompts:  12%|█▎        | 4/32 [00:06<00:30,  1.08s/it, est. speed input: 596.74 toks/s, output: 66.57 toks/s]Processed prompts:  91%|█████████ | 29/32 [00:06<00:00, 13.25it/s, est. speed input: 4274.13 toks/s, output: 567.30 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  5.02it/s, est. speed input: 4838.20 toks/s, output: 627.52 toks/s]
+INFO:root:Query ID: 478080704, Query Index: 11401, Output Tokens: 107
+INFO:root:Query ID: 478080736, Query Index: 8474, Output Tokens: 128
+INFO:root:Query ID: 478080768, Query Index: 12941, Output Tokens: 128
+INFO:root:Query ID: 478080800, Query Index: 1285, Output Tokens: 128
+INFO:root:Query ID: 478080832, Query Index: 5576, Output Tokens: 128
+INFO:root:Query ID: 478080864, Query Index: 3616, Output Tokens: 98
+INFO:root:Query ID: 478080896, Query Index: 9121, Output Tokens: 128
+INFO:root:Query ID: 478080928, Query Index: 7103, Output Tokens: 128
+INFO:root:Query ID: 478080960, Query Index: 12368, Output Tokens: 128
+INFO:root:Query ID: 478080992, Query Index: 12393, Output Tokens: 84
+INFO:root:Query ID: 478081024, Query Index: 12920, Output Tokens: 128
+INFO:root:Query ID: 478081056, Query Index: 2724, Output Tokens: 128
+INFO:root:Query ID: 478081088, Query Index: 4134, Output Tokens: 128
+INFO:root:Query ID: 478081120, Query Index: 8329, Output Tokens: 128
+INFO:root:Query ID: 478081152, Query Index: 12548, Output Tokens: 128
+INFO:root:Query ID: 478081184, Query Index: 3145, Output Tokens: 128
+INFO:root:Query ID: 478081216, Query Index: 11923, Output Tokens: 128
+INFO:root:Query ID: 478081248, Query Index: 9485, Output Tokens: 128
+INFO:root:Query ID: 478081280, Query Index: 5943, Output Tokens: 128
+INFO:root:Query ID: 478081312, Query Index: 399, Output Tokens: 128
+INFO:root:Query ID: 478081344, Query Index: 13092, Output Tokens: 128
+INFO:root:Query ID: 478081376, Query Index: 1713, Output Tokens: 128
+INFO:root:Query ID: 478081408, Query Index: 9609, Output Tokens: 128
+INFO:root:Query ID: 478081440, Query Index: 2402, Output Tokens: 128
+INFO:root:Query ID: 478081472, Query Index: 4796, Output Tokens: 128
+INFO:root:Query ID: 478081504, Query Index: 8400, Output Tokens: 128
+INFO:root:Query ID: 478081536, Query Index: 1136, Output Tokens: 128
+INFO:root:Query ID: 478081568, Query Index: 12167, Output Tokens: 128
+INFO:root:Query ID: 478081600, Query Index: 1521, Output Tokens: 128
+INFO:root:Query ID: 478081632, Query Index: 2854, Output Tokens: 128
+INFO:root:Query ID: 478081664, Query Index: 9655, Output Tokens: 128
+INFO:root:Query ID: 478081696, Query Index: 5382, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8183.01it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:04<02:10,  4.21s/it, est. speed input: 164.62 toks/s, output: 18.05 toks/s]Processed prompts:   6%|▋         | 2/32 [00:05<01:15,  2.50s/it, est. speed input: 152.19 toks/s, output: 35.37 toks/s]Processed prompts:   9%|▉         | 3/32 [00:05<00:41,  1.44s/it, est. speed input: 314.11 toks/s, output: 56.71 toks/s]Processed prompts: 100%|██████████| 32/32 [00:05<00:00,  5.54it/s, est. speed input: 4263.80 toks/s, output: 698.03 toks/s]
+INFO:root:Query ID: 478081728, Query Index: 8938, Output Tokens: 128
+INFO:root:Query ID: 478081760, Query Index: 12140, Output Tokens: 128
+INFO:root:Query ID: 478081792, Query Index: 9981, Output Tokens: 128
+INFO:root:Query ID: 478081824, Query Index: 688, Output Tokens: 128
+INFO:root:Query ID: 478081856, Query Index: 5744, Output Tokens: 128
+INFO:root:Query ID: 478081888, Query Index: 5092, Output Tokens: 128
+INFO:root:Query ID: 478081920, Query Index: 203, Output Tokens: 128
+INFO:root:Query ID: 478081952, Query Index: 5222, Output Tokens: 128
+INFO:root:Query ID: 478081984, Query Index: 6650, Output Tokens: 128
+INFO:root:Query ID: 478082016, Query Index: 9549, Output Tokens: 128
+INFO:root:Query ID: 478082048, Query Index: 1139, Output Tokens: 128
+INFO:root:Query ID: 478082080, Query Index: 4141, Output Tokens: 128
+INFO:root:Query ID: 478082112, Query Index: 5966, Output Tokens: 128
+INFO:root:Query ID: 478082144, Query Index: 6618, Output Tokens: 128
+INFO:root:Query ID: 478082176, Query Index: 7979, Output Tokens: 128
+INFO:root:Query ID: 478082208, Query Index: 3835, Output Tokens: 128
+INFO:root:Query ID: 478082240, Query Index: 5348, Output Tokens: 128
+INFO:root:Query ID: 478082272, Query Index: 5198, Output Tokens: 128
+INFO:root:Query ID: 478082304, Query Index: 127, Output Tokens: 128
+INFO:root:Query ID: 478082336, Query Index: 10653, Output Tokens: 128
+INFO:root:Query ID: 478082368, Query Index: 10449, Output Tokens: 128
+INFO:root:Query ID: 478082400, Query Index: 11887, Output Tokens: 128
+INFO:root:Query ID: 478082432, Query Index: 41, Output Tokens: 128
+INFO:root:Query ID: 478082464, Query Index: 3703, Output Tokens: 128
+INFO:root:Query ID: 478082496, Query Index: 2289, Output Tokens: 128
+INFO:root:Query ID: 478082528, Query Index: 6583, Output Tokens: 128
+INFO:root:Query ID: 478082560, Query Index: 9542, Output Tokens: 76
+INFO:root:Query ID: 478082592, Query Index: 8130, Output Tokens: 128
+INFO:root:Query ID: 478082624, Query Index: 5009, Output Tokens: 128
+INFO:root:Query ID: 478082656, Query Index: 4047, Output Tokens: 119
+INFO:root:Query ID: 478082688, Query Index: 7919, Output Tokens: 128
+INFO:root:Query ID: 478082720, Query Index: 6023, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8289.65it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:04<02:22,  4.60s/it, est. speed input: 134.96 toks/s, output: 16.73 toks/s]Processed prompts:   6%|▋         | 2/32 [00:05<01:07,  2.24s/it, est. speed input: 290.69 toks/s, output: 33.52 toks/s]Processed prompts:   9%|▉         | 3/32 [00:05<00:41,  1.42s/it, est. speed input: 472.75 toks/s, output: 50.49 toks/s]Processed prompts:  12%|█▎        | 4/32 [00:06<00:29,  1.04s/it, est. speed input: 619.44 toks/s, output: 67.69 toks/s]Processed prompts:  94%|█████████▍| 30/32 [00:06<00:00, 14.23it/s, est. speed input: 4464.57 toks/s, output: 603.65 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  5.16it/s, est. speed input: 4639.62 toks/s, output: 644.96 toks/s]
+INFO:root:Query ID: 478082752, Query Index: 9023, Output Tokens: 128
+INFO:root:Query ID: 478082784, Query Index: 2589, Output Tokens: 128
+INFO:root:Query ID: 478082816, Query Index: 4351, Output Tokens: 128
+INFO:root:Query ID: 478082848, Query Index: 6929, Output Tokens: 128
+INFO:root:Query ID: 478082880, Query Index: 2672, Output Tokens: 128
+INFO:root:Query ID: 478082912, Query Index: 4918, Output Tokens: 128
+INFO:root:Query ID: 478082944, Query Index: 10535, Output Tokens: 128
+INFO:root:Query ID: 478082976, Query Index: 7116, Output Tokens: 128
+INFO:root:Query ID: 478083008, Query Index: 7195, Output Tokens: 128
+INFO:root:Query ID: 478083040, Query Index: 9015, Output Tokens: 128
+INFO:root:Query ID: 478083072, Query Index: 3804, Output Tokens: 128
+INFO:root:Query ID: 478083104, Query Index: 3693, Output Tokens: 128
+INFO:root:Query ID: 478083136, Query Index: 5415, Output Tokens: 128
+INFO:root:Query ID: 478083168, Query Index: 850, Output Tokens: 97
+INFO:root:Query ID: 478083200, Query Index: 3619, Output Tokens: 128
+INFO:root:Query ID: 478083232, Query Index: 12937, Output Tokens: 128
+INFO:root:Query ID: 478083264, Query Index: 10896, Output Tokens: 128
+INFO:root:Query ID: 478083296, Query Index: 7920, Output Tokens: 128
+INFO:root:Query ID: 478083328, Query Index: 11467, Output Tokens: 128
+INFO:root:Query ID: 478083360, Query Index: 590, Output Tokens: 128
+INFO:root:Query ID: 478083392, Query Index: 6252, Output Tokens: 128
+INFO:root:Query ID: 478083424, Query Index: 12405, Output Tokens: 128
+INFO:root:Query ID: 478083456, Query Index: 1295, Output Tokens: 77
+INFO:root:Query ID: 478083488, Query Index: 413, Output Tokens: 110
+INFO:root:Query ID: 478083520, Query Index: 10315, Output Tokens: 128
+INFO:root:Query ID: 478083552, Query Index: 1737, Output Tokens: 128
+INFO:root:Query ID: 478083584, Query Index: 1399, Output Tokens: 128
+INFO:root:Query ID: 478083616, Query Index: 5809, Output Tokens: 128
+INFO:root:Query ID: 478083648, Query Index: 5039, Output Tokens: 128
+INFO:root:Query ID: 478083680, Query Index: 11434, Output Tokens: 128
+INFO:root:Query ID: 478083712, Query Index: 11974, Output Tokens: 128
+INFO:root:Query ID: 478083744, Query Index: 3959, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8229.67it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:05<02:56,  5.69s/it, est. speed input: 83.71 toks/s, output: 22.51 toks/s]Processed prompts: 100%|██████████| 32/32 [00:05<00:00,  5.54it/s, est. speed input: 4263.86 toks/s, output: 709.69 toks/s]
+INFO:root:Query ID: 478083776, Query Index: 8514, Output Tokens: 128
+INFO:root:Query ID: 478083808, Query Index: 10635, Output Tokens: 128
+INFO:root:Query ID: 478083840, Query Index: 1559, Output Tokens: 128
+INFO:root:Query ID: 478083872, Query Index: 4340, Output Tokens: 128
+INFO:root:Query ID: 478083904, Query Index: 9843, Output Tokens: 128
+INFO:root:Query ID: 478083936, Query Index: 9028, Output Tokens: 128
+INFO:root:Query ID: 478083968, Query Index: 4169, Output Tokens: 128
+INFO:root:Query ID: 478084000, Query Index: 2761, Output Tokens: 128
+INFO:root:Query ID: 478084032, Query Index: 2539, Output Tokens: 128
+INFO:root:Query ID: 478084064, Query Index: 7312, Output Tokens: 128
+INFO:root:Query ID: 478084096, Query Index: 3411, Output Tokens: 128
+INFO:root:Query ID: 478084128, Query Index: 10116, Output Tokens: 128
+INFO:root:Query ID: 478084160, Query Index: 7553, Output Tokens: 128
+INFO:root:Query ID: 478084192, Query Index: 710, Output Tokens: 128
+INFO:root:Query ID: 478084224, Query Index: 3250, Output Tokens: 128
+INFO:root:Query ID: 478084256, Query Index: 4503, Output Tokens: 128
+INFO:root:Query ID: 478084288, Query Index: 12202, Output Tokens: 128
+INFO:root:Query ID: 478084320, Query Index: 5179, Output Tokens: 128
+INFO:root:Query ID: 478084352, Query Index: 8201, Output Tokens: 128
+INFO:root:Query ID: 478084384, Query Index: 1496, Output Tokens: 128
+INFO:root:Query ID: 478084416, Query Index: 12161, Output Tokens: 128
+INFO:root:Query ID: 478084448, Query Index: 6874, Output Tokens: 128
+INFO:root:Query ID: 478084480, Query Index: 1622, Output Tokens: 128
+INFO:root:Query ID: 478084512, Query Index: 7758, Output Tokens: 128
+INFO:root:Query ID: 478084544, Query Index: 10358, Output Tokens: 128
+INFO:root:Query ID: 478084576, Query Index: 8992, Output Tokens: 128
+INFO:root:Query ID: 478084608, Query Index: 6533, Output Tokens: 128
+INFO:root:Query ID: 478084640, Query Index: 1897, Output Tokens: 128
+INFO:root:Query ID: 478084672, Query Index: 11603, Output Tokens: 128
+INFO:root:Query ID: 478084704, Query Index: 10941, Output Tokens: 128
+INFO:root:Query ID: 478084736, Query Index: 4063, Output Tokens: 128
+INFO:root:Query ID: 478084768, Query Index: 7972, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8447.21it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:04<02:25,  4.68s/it, est. speed input: 145.24 toks/s, output: 20.29 toks/s]Processed prompts:   9%|▉         | 3/32 [00:05<00:39,  1.35s/it, est. speed input: 331.32 toks/s, output: 58.69 toks/s]Processed prompts:  12%|█▎        | 4/32 [00:05<00:27,  1.00it/s, est. speed input: 420.69 toks/s, output: 77.03 toks/s]Processed prompts:  16%|█▌        | 5/32 [00:05<00:20,  1.32it/s, est. speed input: 510.72 toks/s, output: 96.05 toks/s]Processed prompts: 100%|██████████| 32/32 [00:05<00:00,  5.59it/s, est. speed input: 4267.52 toks/s, output: 698.12 toks/s]
+INFO:root:Query ID: 478084800, Query Index: 9758, Output Tokens: 128
+INFO:root:Query ID: 478084832, Query Index: 2580, Output Tokens: 128
+INFO:root:Query ID: 478084864, Query Index: 2650, Output Tokens: 128
+INFO:root:Query ID: 478084896, Query Index: 13131, Output Tokens: 95
+INFO:root:Query ID: 478084928, Query Index: 3289, Output Tokens: 128
+INFO:root:Query ID: 478084960, Query Index: 9864, Output Tokens: 128
+INFO:root:Query ID: 478084992, Query Index: 6811, Output Tokens: 128
+INFO:root:Query ID: 478085024, Query Index: 1968, Output Tokens: 128
+INFO:root:Query ID: 478085056, Query Index: 2757, Output Tokens: 128
+INFO:root:Query ID: 478085088, Query Index: 6765, Output Tokens: 128
+INFO:root:Query ID: 478085120, Query Index: 6454, Output Tokens: 128
+INFO:root:Query ID: 478085152, Query Index: 4501, Output Tokens: 107
+INFO:root:Query ID: 478085184, Query Index: 9975, Output Tokens: 118
+INFO:root:Query ID: 478085216, Query Index: 10952, Output Tokens: 128
+INFO:root:Query ID: 478085248, Query Index: 9369, Output Tokens: 128
+INFO:root:Query ID: 478085280, Query Index: 12855, Output Tokens: 128
+INFO:root:Query ID: 478085312, Query Index: 2438, Output Tokens: 128
+INFO:root:Query ID: 478085344, Query Index: 7339, Output Tokens: 128
+INFO:root:Query ID: 478085376, Query Index: 6877, Output Tokens: 128
+INFO:root:Query ID: 478085408, Query Index: 2249, Output Tokens: 128
+INFO:root:Query ID: 478085440, Query Index: 4363, Output Tokens: 128
+INFO:root:Query ID: 478085472, Query Index: 7660, Output Tokens: 128
+INFO:root:Query ID: 478085504, Query Index: 10720, Output Tokens: 127
+INFO:root:Query ID: 478085536, Query Index: 7952, Output Tokens: 128
+INFO:root:Query ID: 478085568, Query Index: 9882, Output Tokens: 128
+INFO:root:Query ID: 478085600, Query Index: 7163, Output Tokens: 128
+INFO:root:Query ID: 478085632, Query Index: 6606, Output Tokens: 128
+INFO:root:Query ID: 478085664, Query Index: 6182, Output Tokens: 128
+INFO:root:Query ID: 478085696, Query Index: 4824, Output Tokens: 94
+INFO:root:Query ID: 478085728, Query Index: 9862, Output Tokens: 128
+INFO:root:Query ID: 478085760, Query Index: 9433, Output Tokens: 128
+INFO:root:Query ID: 478085792, Query Index: 8405, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8361.95it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:03<01:57,  3.79s/it, est. speed input: 173.87 toks/s, output: 18.47 toks/s]Processed prompts:   6%|▋         | 2/32 [00:04<01:04,  2.15s/it, est. speed input: 191.82 toks/s, output: 36.07 toks/s]Processed prompts:   9%|▉         | 3/32 [00:05<00:37,  1.29s/it, est. speed input: 339.13 toks/s, output: 56.49 toks/s]Processed prompts:  12%|█▎        | 4/32 [00:05<00:26,  1.06it/s, est. speed input: 400.22 toks/s, output: 75.59 toks/s]Processed prompts: 100%|██████████| 32/32 [00:05<00:00,  5.75it/s, est. speed input: 4160.80 toks/s, output: 718.97 toks/s]
+INFO:root:Query ID: 478085824, Query Index: 1734, Output Tokens: 128
+INFO:root:Query ID: 478085856, Query Index: 2868, Output Tokens: 128
+INFO:root:Query ID: 478085888, Query Index: 1242, Output Tokens: 128
+INFO:root:Query ID: 478085920, Query Index: 11927, Output Tokens: 128
+INFO:root:Query ID: 478085952, Query Index: 8150, Output Tokens: 113
+INFO:root:Query ID: 478085984, Query Index: 1620, Output Tokens: 70
+INFO:root:Query ID: 478086016, Query Index: 12265, Output Tokens: 128
+INFO:root:Query ID: 478086048, Query Index: 11217, Output Tokens: 128
+INFO:root:Query ID: 478086080, Query Index: 3640, Output Tokens: 128
+INFO:root:Query ID: 478086112, Query Index: 5416, Output Tokens: 128
+INFO:root:Query ID: 478086144, Query Index: 7765, Output Tokens: 128
+INFO:root:Query ID: 478086176, Query Index: 13304, Output Tokens: 128
+INFO:root:Query ID: 478086208, Query Index: 1268, Output Tokens: 128
+INFO:root:Query ID: 478086240, Query Index: 2211, Output Tokens: 128
+INFO:root:Query ID: 478086272, Query Index: 11965, Output Tokens: 103
+INFO:root:Query ID: 478086304, Query Index: 13263, Output Tokens: 128
+INFO:root:Query ID: 478086336, Query Index: 9371, Output Tokens: 128
+INFO:root:Query ID: 478086368, Query Index: 1893, Output Tokens: 128
+INFO:root:Query ID: 478086400, Query Index: 11103, Output Tokens: 128
+INFO:root:Query ID: 478086432, Query Index: 3465, Output Tokens: 128
+INFO:root:Query ID: 478086464, Query Index: 12457, Output Tokens: 128
+INFO:root:Query ID: 478086496, Query Index: 6041, Output Tokens: 128
+INFO:root:Query ID: 478086528, Query Index: 11809, Output Tokens: 128
+INFO:root:Query ID: 478086560, Query Index: 4264, Output Tokens: 128
+INFO:root:Query ID: 478086592, Query Index: 524, Output Tokens: 128
+INFO:root:Query ID: 478086624, Query Index: 2632, Output Tokens: 128
+INFO:root:Query ID: 478086656, Query Index: 12138, Output Tokens: 128
+INFO:root:Query ID: 478086688, Query Index: 1373, Output Tokens: 128
+INFO:root:Query ID: 478086720, Query Index: 10048, Output Tokens: 128
+INFO:root:Query ID: 478086752, Query Index: 9923, Output Tokens: 128
+INFO:root:Query ID: 478086784, Query Index: 6437, Output Tokens: 128
+INFO:root:Query ID: 478086816, Query Index: 12102, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8132.93it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:05<02:59,  5.79s/it, est. speed input: 55.59 toks/s, output: 22.10 toks/s]Processed prompts:  97%|█████████▋| 31/32 [00:05<00:00,  7.37it/s, est. speed input: 4360.53 toks/s, output: 672.28 toks/s]Processed prompts: 100%|██████████| 32/32 [00:05<00:00,  5.42it/s, est. speed input: 4394.66 toks/s, output: 693.96 toks/s]
+INFO:root:Query ID: 478086848, Query Index: 581, Output Tokens: 128
+INFO:root:Query ID: 478086880, Query Index: 5355, Output Tokens: 128
+INFO:root:Query ID: 478086912, Query Index: 10064, Output Tokens: 128
+INFO:root:Query ID: 478086944, Query Index: 12581, Output Tokens: 128
+INFO:root:Query ID: 478086976, Query Index: 4960, Output Tokens: 128
+INFO:root:Query ID: 478087008, Query Index: 6635, Output Tokens: 128
+INFO:root:Query ID: 478087040, Query Index: 2921, Output Tokens: 128
+INFO:root:Query ID: 478087072, Query Index: 4892, Output Tokens: 128
+INFO:root:Query ID: 478087104, Query Index: 4949, Output Tokens: 128
+INFO:root:Query ID: 478087136, Query Index: 163, Output Tokens: 128
+INFO:root:Query ID: 478087168, Query Index: 3928, Output Tokens: 128
+INFO:root:Query ID: 478087200, Query Index: 9703, Output Tokens: 128
+INFO:root:Query ID: 478087232, Query Index: 10728, Output Tokens: 128
+INFO:root:Query ID: 478087264, Query Index: 3052, Output Tokens: 128
+INFO:root:Query ID: 478087296, Query Index: 1792, Output Tokens: 128
+INFO:root:Query ID: 478087328, Query Index: 810, Output Tokens: 128
+INFO:root:Query ID: 478087360, Query Index: 6586, Output Tokens: 128
+INFO:root:Query ID: 478087392, Query Index: 6856, Output Tokens: 128
+INFO:root:Query ID: 478087424, Query Index: 6013, Output Tokens: 128
+INFO:root:Query ID: 478087456, Query Index: 3713, Output Tokens: 128
+INFO:root:Query ID: 478087488, Query Index: 12373, Output Tokens: 128
+INFO:root:Query ID: 478087520, Query Index: 12045, Output Tokens: 128
+INFO:root:Query ID: 478087552, Query Index: 11200, Output Tokens: 128
+INFO:root:Query ID: 478087584, Query Index: 1298, Output Tokens: 128
+INFO:root:Query ID: 478087616, Query Index: 1236, Output Tokens: 128
+INFO:root:Query ID: 478087648, Query Index: 10374, Output Tokens: 128
+INFO:root:Query ID: 478087680, Query Index: 4220, Output Tokens: 128
+INFO:root:Query ID: 478087712, Query Index: 12304, Output Tokens: 128
+INFO:root:Query ID: 478087744, Query Index: 2860, Output Tokens: 128
+INFO:root:Query ID: 478087776, Query Index: 6388, Output Tokens: 128
+INFO:root:Query ID: 478087808, Query Index: 9421, Output Tokens: 128
+INFO:root:Query ID: 478087840, Query Index: 489, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8203.52it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:03<01:54,  3.68s/it, est. speed input: 255.81 toks/s, output: 13.86 toks/s]Processed prompts:   6%|▋         | 2/32 [00:03<00:50,  1.68s/it, est. speed input: 316.44 toks/s, output: 28.08 toks/s]Processed prompts:   9%|▉         | 3/32 [00:04<00:36,  1.25s/it, est. speed input: 711.02 toks/s, output: 41.17 toks/s]Processed prompts:  12%|█▎        | 4/32 [00:05<00:29,  1.05s/it, est. speed input: 762.62 toks/s, output: 55.25 toks/s]Processed prompts:  16%|█▌        | 5/32 [00:05<00:23,  1.15it/s, est. speed input: 892.83 toks/s, output: 71.62 toks/s]Processed prompts:  97%|█████████▋| 31/32 [00:06<00:00, 15.56it/s, est. speed input: 4436.64 toks/s, output: 616.09 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  5.25it/s, est. speed input: 4598.41 toks/s, output: 637.07 toks/s]
+INFO:root:Query ID: 478087872, Query Index: 11388, Output Tokens: 128
+INFO:root:Query ID: 478087904, Query Index: 5578, Output Tokens: 128
+INFO:root:Query ID: 478087936, Query Index: 7831, Output Tokens: 128
+INFO:root:Query ID: 478087968, Query Index: 11059, Output Tokens: 51
+INFO:root:Query ID: 478088000, Query Index: 10633, Output Tokens: 128
+INFO:root:Query ID: 478088032, Query Index: 4380, Output Tokens: 128
+INFO:root:Query ID: 478088064, Query Index: 6352, Output Tokens: 128
+INFO:root:Query ID: 478088096, Query Index: 2184, Output Tokens: 128
+INFO:root:Query ID: 478088128, Query Index: 1195, Output Tokens: 60
+INFO:root:Query ID: 478088160, Query Index: 2527, Output Tokens: 128
+INFO:root:Query ID: 478088192, Query Index: 8063, Output Tokens: 128
+INFO:root:Query ID: 478088224, Query Index: 2290, Output Tokens: 128
+INFO:root:Query ID: 478088256, Query Index: 6075, Output Tokens: 128
+INFO:root:Query ID: 478088288, Query Index: 7595, Output Tokens: 108
+INFO:root:Query ID: 478088320, Query Index: 9838, Output Tokens: 128
+INFO:root:Query ID: 478088352, Query Index: 6814, Output Tokens: 128
+INFO:root:Query ID: 478088384, Query Index: 1210, Output Tokens: 128
+INFO:root:Query ID: 478088416, Query Index: 9417, Output Tokens: 128
+INFO:root:Query ID: 478088448, Query Index: 9643, Output Tokens: 128
+INFO:root:Query ID: 478088480, Query Index: 464, Output Tokens: 128
+INFO:root:Query ID: 478088512, Query Index: 5499, Output Tokens: 128
+INFO:root:Query ID: 478088544, Query Index: 9970, Output Tokens: 128
+INFO:root:Query ID: 478088576, Query Index: 2952, Output Tokens: 128
+INFO:root:Query ID: 478088608, Query Index: 3668, Output Tokens: 128
+INFO:root:Query ID: 478088640, Query Index: 10708, Output Tokens: 128
+INFO:root:Query ID: 478088672, Query Index: 1789, Output Tokens: 128
+INFO:root:Query ID: 478088704, Query Index: 7742, Output Tokens: 128
+INFO:root:Query ID: 478088736, Query Index: 741, Output Tokens: 128
+INFO:root:Query ID: 478088768, Query Index: 5828, Output Tokens: 128
+INFO:root:Query ID: 478088800, Query Index: 6848, Output Tokens: 82
+INFO:root:Query ID: 478088832, Query Index: 2222, Output Tokens: 128
+INFO:root:Query ID: 478088864, Query Index: 4376, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 7897.48it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:04<02:19,  4.50s/it, est. speed input: 73.10 toks/s, output: 15.33 toks/s]Processed prompts:   6%|▋         | 2/32 [00:06<01:27,  2.92s/it, est. speed input: 241.23 toks/s, output: 31.20 toks/s]Processed prompts:  94%|█████████▍| 30/32 [00:06<00:00,  8.14it/s, est. speed input: 4413.32 toks/s, output: 588.37 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  4.98it/s, est. speed input: 4857.35 toks/s, output: 628.20 toks/s]
+INFO:root:Query ID: 478088896, Query Index: 12618, Output Tokens: 128
+INFO:root:Query ID: 478088928, Query Index: 10415, Output Tokens: 128
+INFO:root:Query ID: 478088960, Query Index: 7223, Output Tokens: 128
+INFO:root:Query ID: 478088992, Query Index: 12663, Output Tokens: 128
+INFO:root:Query ID: 478089024, Query Index: 1988, Output Tokens: 69
+INFO:root:Query ID: 478089056, Query Index: 7056, Output Tokens: 128
+INFO:root:Query ID: 478089088, Query Index: 10608, Output Tokens: 128
+INFO:root:Query ID: 478089120, Query Index: 12613, Output Tokens: 128
+INFO:root:Query ID: 478089152, Query Index: 12262, Output Tokens: 128
+INFO:root:Query ID: 478089184, Query Index: 13333, Output Tokens: 128
+INFO:root:Query ID: 478089216, Query Index: 11161, Output Tokens: 128
+INFO:root:Query ID: 478089248, Query Index: 12732, Output Tokens: 128
+INFO:root:Query ID: 478089280, Query Index: 12772, Output Tokens: 128
+INFO:root:Query ID: 478089312, Query Index: 7029, Output Tokens: 128
+INFO:root:Query ID: 478089344, Query Index: 2892, Output Tokens: 128
+INFO:root:Query ID: 478089376, Query Index: 5702, Output Tokens: 128
+INFO:root:Query ID: 478089408, Query Index: 5754, Output Tokens: 128
+INFO:root:Query ID: 478089440, Query Index: 6762, Output Tokens: 128
+INFO:root:Query ID: 478089472, Query Index: 6087, Output Tokens: 128
+INFO:root:Query ID: 478089504, Query Index: 3452, Output Tokens: 128
+INFO:root:Query ID: 478089536, Query Index: 3303, Output Tokens: 128
+INFO:root:Query ID: 478089568, Query Index: 5826, Output Tokens: 128
+INFO:root:Query ID: 478089600, Query Index: 3483, Output Tokens: 128
+INFO:root:Query ID: 478089632, Query Index: 1093, Output Tokens: 128
+INFO:root:Query ID: 478089664, Query Index: 8434, Output Tokens: 128
+INFO:root:Query ID: 478089696, Query Index: 9438, Output Tokens: 128
+INFO:root:Query ID: 478089728, Query Index: 1239, Output Tokens: 128
+INFO:root:Query ID: 478089760, Query Index: 9139, Output Tokens: 128
+INFO:root:Query ID: 478089792, Query Index: 2363, Output Tokens: 128
+INFO:root:Query ID: 478089824, Query Index: 8288, Output Tokens: 128
+INFO:root:Query ID: 478089856, Query Index: 9732, Output Tokens: 128
+INFO:root:Query ID: 478089888, Query Index: 2089, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8261.59it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:05<03:02,  5.90s/it, est. speed input: 236.45 toks/s, output: 21.70 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  7.48it/s, est. speed input: 4444.53 toks/s, output: 681.65 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  5.33it/s, est. speed input: 4444.53 toks/s, output: 681.65 toks/s]
+INFO:root:Query ID: 478089920, Query Index: 7687, Output Tokens: 128
+INFO:root:Query ID: 478089952, Query Index: 6479, Output Tokens: 128
+INFO:root:Query ID: 478089984, Query Index: 9533, Output Tokens: 128
+INFO:root:Query ID: 478090016, Query Index: 5830, Output Tokens: 128
+INFO:root:Query ID: 478090048, Query Index: 1589, Output Tokens: 128
+INFO:root:Query ID: 478090080, Query Index: 7228, Output Tokens: 128
+INFO:root:Query ID: 478090112, Query Index: 5953, Output Tokens: 128
+INFO:root:Query ID: 478090144, Query Index: 11648, Output Tokens: 128
+INFO:root:Query ID: 478090176, Query Index: 2372, Output Tokens: 128
+INFO:root:Query ID: 478090208, Query Index: 2417, Output Tokens: 128
+INFO:root:Query ID: 478090240, Query Index: 2710, Output Tokens: 128
+INFO:root:Query ID: 478090272, Query Index: 7219, Output Tokens: 128
+INFO:root:Query ID: 478090304, Query Index: 7317, Output Tokens: 128
+INFO:root:Query ID: 478090336, Query Index: 958, Output Tokens: 128
+INFO:root:Query ID: 478090368, Query Index: 12599, Output Tokens: 128
+INFO:root:Query ID: 478090400, Query Index: 13217, Output Tokens: 128
+INFO:root:Query ID: 478090432, Query Index: 3904, Output Tokens: 128
+INFO:root:Query ID: 478090464, Query Index: 1376, Output Tokens: 128
+INFO:root:Query ID: 478090496, Query Index: 12197, Output Tokens: 128
+INFO:root:Query ID: 478090528, Query Index: 2722, Output Tokens: 128
+INFO:root:Query ID: 478090560, Query Index: 1499, Output Tokens: 128
+INFO:root:Query ID: 478090592, Query Index: 2330, Output Tokens: 128
+INFO:root:Query ID: 478090624, Query Index: 5015, Output Tokens: 128
+INFO:root:Query ID: 478090656, Query Index: 2113, Output Tokens: 128
+INFO:root:Query ID: 478090688, Query Index: 9430, Output Tokens: 128
+INFO:root:Query ID: 478090720, Query Index: 4951, Output Tokens: 128
+INFO:root:Query ID: 478090752, Query Index: 6952, Output Tokens: 128
+INFO:root:Query ID: 478090784, Query Index: 10903, Output Tokens: 128
+INFO:root:Query ID: 478090816, Query Index: 6122, Output Tokens: 128
+INFO:root:Query ID: 478090848, Query Index: 1522, Output Tokens: 128
+INFO:root:Query ID: 478090880, Query Index: 4654, Output Tokens: 128
+INFO:root:Query ID: 478090912, Query Index: 2510, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8371.86it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:04<02:12,  4.26s/it, est. speed input: 28.38 toks/s, output: 18.06 toks/s]Processed prompts:   6%|▋         | 2/32 [00:04<01:00,  2.02s/it, est. speed input: 93.90 toks/s, output: 35.82 toks/s]Processed prompts:   9%|▉         | 3/32 [00:05<00:36,  1.25s/it, est. speed input: 410.86 toks/s, output: 54.25 toks/s]Processed prompts:  16%|█▌        | 5/32 [00:05<00:19,  1.37it/s, est. speed input: 491.03 toks/s, output: 88.50 toks/s]Processed prompts: 100%|██████████| 32/32 [00:05<00:00,  5.53it/s, est. speed input: 4246.70 toks/s, output: 683.90 toks/s]
+INFO:root:Query ID: 478090944, Query Index: 3293, Output Tokens: 128
+INFO:root:Query ID: 478090976, Query Index: 4143, Output Tokens: 128
+INFO:root:Query ID: 478091008, Query Index: 478, Output Tokens: 128
+INFO:root:Query ID: 478091040, Query Index: 2904, Output Tokens: 128
+INFO:root:Query ID: 478091072, Query Index: 4727, Output Tokens: 105
+INFO:root:Query ID: 478091104, Query Index: 1966, Output Tokens: 128
+INFO:root:Query ID: 478091136, Query Index: 731, Output Tokens: 128
+INFO:root:Query ID: 478091168, Query Index: 4129, Output Tokens: 128
+INFO:root:Query ID: 478091200, Query Index: 5919, Output Tokens: 128
+INFO:root:Query ID: 478091232, Query Index: 1674, Output Tokens: 128
+INFO:root:Query ID: 478091264, Query Index: 11149, Output Tokens: 128
+INFO:root:Query ID: 478091296, Query Index: 6497, Output Tokens: 128
+INFO:root:Query ID: 478091328, Query Index: 12285, Output Tokens: 128
+INFO:root:Query ID: 478091360, Query Index: 10969, Output Tokens: 128
+INFO:root:Query ID: 478091392, Query Index: 2772, Output Tokens: 128
+INFO:root:Query ID: 478091424, Query Index: 2933, Output Tokens: 128
+INFO:root:Query ID: 478091456, Query Index: 6272, Output Tokens: 128
+INFO:root:Query ID: 478091488, Query Index: 10050, Output Tokens: 128
+INFO:root:Query ID: 478091520, Query Index: 2961, Output Tokens: 128
+INFO:root:Query ID: 478091552, Query Index: 7708, Output Tokens: 128
+INFO:root:Query ID: 478091584, Query Index: 1333, Output Tokens: 128
+INFO:root:Query ID: 478091616, Query Index: 1511, Output Tokens: 128
+INFO:root:Query ID: 478091648, Query Index: 1693, Output Tokens: 128
+INFO:root:Query ID: 478091680, Query Index: 905, Output Tokens: 128
+INFO:root:Query ID: 478091712, Query Index: 1786, Output Tokens: 128
+INFO:root:Query ID: 478091744, Query Index: 11978, Output Tokens: 128
+INFO:root:Query ID: 478091776, Query Index: 539, Output Tokens: 128
+INFO:root:Query ID: 478091808, Query Index: 2102, Output Tokens: 92
+INFO:root:Query ID: 478091840, Query Index: 2938, Output Tokens: 103
+INFO:root:Query ID: 478091872, Query Index: 2422, Output Tokens: 128
+INFO:root:Query ID: 478091904, Query Index: 1199, Output Tokens: 128
+INFO:root:Query ID: 478091936, Query Index: 3337, Output Tokens: 77
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 7954.11it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:06<03:12,  6.22s/it, est. speed input: 196.50 toks/s, output: 20.57 toks/s]Processed prompts:  94%|█████████▍| 30/32 [00:06<00:00,  6.65it/s, est. speed input: 4659.04 toks/s, output: 606.14 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  5.05it/s, est. speed input: 4779.87 toks/s, output: 646.53 toks/s]
+INFO:root:Query ID: 478091968, Query Index: 8277, Output Tokens: 128
+INFO:root:Query ID: 478092000, Query Index: 634, Output Tokens: 128
+INFO:root:Query ID: 478092032, Query Index: 1301, Output Tokens: 128
+INFO:root:Query ID: 478092064, Query Index: 3329, Output Tokens: 128
+INFO:root:Query ID: 478092096, Query Index: 10876, Output Tokens: 128
+INFO:root:Query ID: 478092128, Query Index: 7591, Output Tokens: 128
+INFO:root:Query ID: 478092160, Query Index: 12031, Output Tokens: 128
+INFO:root:Query ID: 478092192, Query Index: 8660, Output Tokens: 128
+INFO:root:Query ID: 478092224, Query Index: 6826, Output Tokens: 128
+INFO:root:Query ID: 478092256, Query Index: 13351, Output Tokens: 128
+INFO:root:Query ID: 478092288, Query Index: 5188, Output Tokens: 128
+INFO:root:Query ID: 478092320, Query Index: 1194, Output Tokens: 128
+INFO:root:Query ID: 478092352, Query Index: 9849, Output Tokens: 128
+INFO:root:Query ID: 478092384, Query Index: 1017, Output Tokens: 128
+INFO:root:Query ID: 478092416, Query Index: 8890, Output Tokens: 128
+INFO:root:Query ID: 478092448, Query Index: 9064, Output Tokens: 128
+INFO:root:Query ID: 478092480, Query Index: 11170, Output Tokens: 128
+INFO:root:Query ID: 478092512, Query Index: 11659, Output Tokens: 128
+INFO:root:Query ID: 478092544, Query Index: 12012, Output Tokens: 128
+INFO:root:Query ID: 478092576, Query Index: 3140, Output Tokens: 128
+INFO:root:Query ID: 478092608, Query Index: 1091, Output Tokens: 128
+INFO:root:Query ID: 478092640, Query Index: 9504, Output Tokens: 128
+INFO:root:Query ID: 478092672, Query Index: 3120, Output Tokens: 128
+INFO:root:Query ID: 478092704, Query Index: 4329, Output Tokens: 128
+INFO:root:Query ID: 478092736, Query Index: 9373, Output Tokens: 128
+INFO:root:Query ID: 478092768, Query Index: 10338, Output Tokens: 128
+INFO:root:Query ID: 478092800, Query Index: 10559, Output Tokens: 128
+INFO:root:Query ID: 478092832, Query Index: 10356, Output Tokens: 128
+INFO:root:Query ID: 478092864, Query Index: 6463, Output Tokens: 128
+INFO:root:Query ID: 478092896, Query Index: 4491, Output Tokens: 128
+INFO:root:Query ID: 478092928, Query Index: 2199, Output Tokens: 128
+INFO:root:Query ID: 478092960, Query Index: 5118, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8071.30it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:05<02:47,  5.40s/it, est. speed input: 229.38 toks/s, output: 20.18 toks/s]Processed prompts:   6%|▋         | 2/32 [00:05<01:16,  2.55s/it, est. speed input: 422.95 toks/s, output: 39.79 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  5.30it/s, est. speed input: 4565.78 toks/s, output: 674.91 toks/s]
+INFO:root:Query ID: 478092992, Query Index: 6227, Output Tokens: 128
+INFO:root:Query ID: 478093024, Query Index: 6267, Output Tokens: 128
+INFO:root:Query ID: 478093056, Query Index: 1044, Output Tokens: 128
+INFO:root:Query ID: 478093088, Query Index: 8204, Output Tokens: 128
+INFO:root:Query ID: 478093120, Query Index: 8661, Output Tokens: 109
+INFO:root:Query ID: 478093152, Query Index: 8859, Output Tokens: 128
+INFO:root:Query ID: 478093184, Query Index: 7777, Output Tokens: 128
+INFO:root:Query ID: 478093216, Query Index: 12351, Output Tokens: 128
+INFO:root:Query ID: 478093248, Query Index: 956, Output Tokens: 128
+INFO:root:Query ID: 478093280, Query Index: 10724, Output Tokens: 128
+INFO:root:Query ID: 478093312, Query Index: 1668, Output Tokens: 128
+INFO:root:Query ID: 478093344, Query Index: 7152, Output Tokens: 128
+INFO:root:Query ID: 478093376, Query Index: 9782, Output Tokens: 128
+INFO:root:Query ID: 478093408, Query Index: 6590, Output Tokens: 128
+INFO:root:Query ID: 478093440, Query Index: 10538, Output Tokens: 128
+INFO:root:Query ID: 478093472, Query Index: 7801, Output Tokens: 128
+INFO:root:Query ID: 478093504, Query Index: 11539, Output Tokens: 128
+INFO:root:Query ID: 478093536, Query Index: 8457, Output Tokens: 128
+INFO:root:Query ID: 478093568, Query Index: 3789, Output Tokens: 128
+INFO:root:Query ID: 478093600, Query Index: 3595, Output Tokens: 128
+INFO:root:Query ID: 478093632, Query Index: 10121, Output Tokens: 128
+INFO:root:Query ID: 478093664, Query Index: 11051, Output Tokens: 128
+INFO:root:Query ID: 478093696, Query Index: 378, Output Tokens: 128
+INFO:root:Query ID: 478093728, Query Index: 2349, Output Tokens: 128
+INFO:root:Query ID: 478093760, Query Index: 3750, Output Tokens: 128
+INFO:root:Query ID: 478093792, Query Index: 6131, Output Tokens: 128
+INFO:root:Query ID: 478093824, Query Index: 3095, Output Tokens: 128
+INFO:root:Query ID: 478093856, Query Index: 6722, Output Tokens: 128
+INFO:root:Query ID: 478093888, Query Index: 4893, Output Tokens: 128
+INFO:root:Query ID: 478093920, Query Index: 643, Output Tokens: 128
+INFO:root:Query ID: 478093952, Query Index: 12074, Output Tokens: 128
+INFO:root:Query ID: 478093984, Query Index: 6395, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8093.21it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:04<02:05,  4.04s/it, est. speed input: 89.67 toks/s, output: 15.11 toks/s]Processed prompts:   6%|▋         | 2/32 [00:05<01:21,  2.72s/it, est. speed input: 315.93 toks/s, output: 30.70 toks/s]Processed prompts:   9%|▉         | 3/32 [00:06<00:46,  1.59s/it, est. speed input: 418.66 toks/s, output: 50.52 toks/s]Processed prompts:  88%|████████▊ | 28/32 [00:06<00:00, 10.41it/s, est. speed input: 4185.29 toks/s, output: 566.65 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  5.17it/s, est. speed input: 4678.65 toks/s, output: 649.36 toks/s]
+INFO:root:Query ID: 478094016, Query Index: 7457, Output Tokens: 128
+INFO:root:Query ID: 478094048, Query Index: 8410, Output Tokens: 128
+INFO:root:Query ID: 478094080, Query Index: 5648, Output Tokens: 128
+INFO:root:Query ID: 478094112, Query Index: 12299, Output Tokens: 128
+INFO:root:Query ID: 478094144, Query Index: 7990, Output Tokens: 128
+INFO:root:Query ID: 478094176, Query Index: 3368, Output Tokens: 128
+INFO:root:Query ID: 478094208, Query Index: 12692, Output Tokens: 128
+INFO:root:Query ID: 478094240, Query Index: 8822, Output Tokens: 128
+INFO:root:Query ID: 478094272, Query Index: 4794, Output Tokens: 61
+INFO:root:Query ID: 478094304, Query Index: 4687, Output Tokens: 128
+INFO:root:Query ID: 478094336, Query Index: 9898, Output Tokens: 128
+INFO:root:Query ID: 478094368, Query Index: 4310, Output Tokens: 128
+INFO:root:Query ID: 478094400, Query Index: 11345, Output Tokens: 128
+INFO:root:Query ID: 478094432, Query Index: 1544, Output Tokens: 128
+INFO:root:Query ID: 478094464, Query Index: 5677, Output Tokens: 128
+INFO:root:Query ID: 478094496, Query Index: 5488, Output Tokens: 128
+INFO:root:Query ID: 478094528, Query Index: 8701, Output Tokens: 118
+INFO:root:Query ID: 478094560, Query Index: 695, Output Tokens: 128
+INFO:root:Query ID: 478094592, Query Index: 7641, Output Tokens: 128
+INFO:root:Query ID: 478094624, Query Index: 15, Output Tokens: 128
+INFO:root:Query ID: 478094656, Query Index: 179, Output Tokens: 128
+INFO:root:Query ID: 478094688, Query Index: 8894, Output Tokens: 128
+INFO:root:Query ID: 478094720, Query Index: 12688, Output Tokens: 128
+INFO:root:Query ID: 478094752, Query Index: 12742, Output Tokens: 128
+INFO:root:Query ID: 478094784, Query Index: 7976, Output Tokens: 128
+INFO:root:Query ID: 478094816, Query Index: 1343, Output Tokens: 128
+INFO:root:Query ID: 478094848, Query Index: 5399, Output Tokens: 128
+INFO:root:Query ID: 478094880, Query Index: 8132, Output Tokens: 128
+INFO:root:Query ID: 478094912, Query Index: 6544, Output Tokens: 128
+INFO:root:Query ID: 478094944, Query Index: 3357, Output Tokens: 128
+INFO:root:Query ID: 478094976, Query Index: 2699, Output Tokens: 128
+INFO:root:Query ID: 478095008, Query Index: 3098, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 7954.59it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:04<02:05,  4.06s/it, est. speed input: 307.41 toks/s, output: 12.06 toks/s]Processed prompts:   6%|▋         | 2/32 [00:06<01:32,  3.08s/it, est. speed input: 277.89 toks/s, output: 27.42 toks/s]Processed prompts:  81%|████████▏ | 26/32 [00:06<00:00,  6.66it/s, est. speed input: 4168.36 toks/s, output: 494.56 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  4.87it/s, est. speed input: 4962.36 toks/s, output: 611.45 toks/s]
+INFO:root:Query ID: 478095040, Query Index: 10306, Output Tokens: 128
+INFO:root:Query ID: 478095072, Query Index: 7705, Output Tokens: 128
+INFO:root:Query ID: 478095104, Query Index: 6005, Output Tokens: 128
+INFO:root:Query ID: 478095136, Query Index: 5933, Output Tokens: 128
+INFO:root:Query ID: 478095168, Query Index: 3334, Output Tokens: 128
+INFO:root:Query ID: 478095200, Query Index: 10013, Output Tokens: 128
+INFO:root:Query ID: 478095232, Query Index: 12459, Output Tokens: 128
+INFO:root:Query ID: 478095264, Query Index: 3296, Output Tokens: 128
+INFO:root:Query ID: 478095296, Query Index: 3384, Output Tokens: 128
+INFO:root:Query ID: 478095328, Query Index: 11996, Output Tokens: 128
+INFO:root:Query ID: 478095360, Query Index: 6025, Output Tokens: 128
+INFO:root:Query ID: 478095392, Query Index: 5905, Output Tokens: 128
+INFO:root:Query ID: 478095424, Query Index: 6524, Output Tokens: 128
+INFO:root:Query ID: 478095456, Query Index: 5070, Output Tokens: 128
+INFO:root:Query ID: 478095488, Query Index: 3890, Output Tokens: 128
+INFO:root:Query ID: 478095520, Query Index: 8564, Output Tokens: 128
+INFO:root:Query ID: 478095552, Query Index: 980, Output Tokens: 128
+INFO:root:Query ID: 478095584, Query Index: 11750, Output Tokens: 128
+INFO:root:Query ID: 478095616, Query Index: 10195, Output Tokens: 128
+INFO:root:Query ID: 478095648, Query Index: 5438, Output Tokens: 128
+INFO:root:Query ID: 478095680, Query Index: 10683, Output Tokens: 128
+INFO:root:Query ID: 478095712, Query Index: 3974, Output Tokens: 128
+INFO:root:Query ID: 478095744, Query Index: 10706, Output Tokens: 128
+INFO:root:Query ID: 478095776, Query Index: 6727, Output Tokens: 128
+INFO:root:Query ID: 478095808, Query Index: 7825, Output Tokens: 49
+INFO:root:Query ID: 478095840, Query Index: 7189, Output Tokens: 128
+INFO:root:Query ID: 478095872, Query Index: 11207, Output Tokens: 128
+INFO:root:Query ID: 478095904, Query Index: 9320, Output Tokens: 128
+INFO:root:Query ID: 478095936, Query Index: 6493, Output Tokens: 128
+INFO:root:Query ID: 478095968, Query Index: 5980, Output Tokens: 128
+INFO:root:Query ID: 478096000, Query Index: 7751, Output Tokens: 128
+INFO:root:Query ID: 478096032, Query Index: 12964, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8222.61it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:05<02:45,  5.35s/it, est. speed input: 103.46 toks/s, output: 21.85 toks/s]Processed prompts:   6%|▋         | 2/32 [00:05<01:11,  2.38s/it, est. speed input: 280.99 toks/s, output: 43.30 toks/s]Processed prompts: 100%|██████████| 32/32 [00:05<00:00,  5.57it/s, est. speed input: 4258.46 toks/s, output: 711.22 toks/s]
+INFO:root:Query ID: 478096064, Query Index: 10204, Output Tokens: 128
+INFO:root:Query ID: 478096096, Query Index: 2918, Output Tokens: 128
+INFO:root:Query ID: 478096128, Query Index: 3662, Output Tokens: 117
+INFO:root:Query ID: 478096160, Query Index: 534, Output Tokens: 128
+INFO:root:Query ID: 478096192, Query Index: 12375, Output Tokens: 128
+INFO:root:Query ID: 478096224, Query Index: 9328, Output Tokens: 128
+INFO:root:Query ID: 478096256, Query Index: 11916, Output Tokens: 128
+INFO:root:Query ID: 478096288, Query Index: 11619, Output Tokens: 128
+INFO:root:Query ID: 478096320, Query Index: 972, Output Tokens: 128
+INFO:root:Query ID: 478096352, Query Index: 2564, Output Tokens: 128
+INFO:root:Query ID: 478096384, Query Index: 12044, Output Tokens: 128
+INFO:root:Query ID: 478096416, Query Index: 13112, Output Tokens: 128
+INFO:root:Query ID: 478096448, Query Index: 1776, Output Tokens: 128
+INFO:root:Query ID: 478096480, Query Index: 3169, Output Tokens: 128
+INFO:root:Query ID: 478096512, Query Index: 12522, Output Tokens: 128
+INFO:root:Query ID: 478096544, Query Index: 12818, Output Tokens: 128
+INFO:root:Query ID: 478096576, Query Index: 6563, Output Tokens: 128
+INFO:root:Query ID: 478096608, Query Index: 5992, Output Tokens: 128
+INFO:root:Query ID: 478096640, Query Index: 10434, Output Tokens: 128
+INFO:root:Query ID: 478096672, Query Index: 3809, Output Tokens: 128
+INFO:root:Query ID: 478096704, Query Index: 3105, Output Tokens: 128
+INFO:root:Query ID: 478096736, Query Index: 1857, Output Tokens: 128
+INFO:root:Query ID: 478096768, Query Index: 10988, Output Tokens: 128
+INFO:root:Query ID: 478096800, Query Index: 12141, Output Tokens: 128
+INFO:root:Query ID: 478096832, Query Index: 4819, Output Tokens: 128
+INFO:root:Query ID: 478096864, Query Index: 1983, Output Tokens: 128
+INFO:root:Query ID: 478096896, Query Index: 3926, Output Tokens: 128
+INFO:root:Query ID: 478096928, Query Index: 7475, Output Tokens: 128
+INFO:root:Query ID: 478096960, Query Index: 4368, Output Tokens: 128
+INFO:root:Query ID: 478096992, Query Index: 6063, Output Tokens: 128
+INFO:root:Query ID: 478097024, Query Index: 8372, Output Tokens: 128
+INFO:root:Query ID: 478097056, Query Index: 2374, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8081.02it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:04<02:25,  4.69s/it, est. speed input: 208.61 toks/s, output: 19.41 toks/s]Processed prompts:   9%|▉         | 3/32 [00:05<00:46,  1.60s/it, est. speed input: 342.06 toks/s, output: 54.06 toks/s]Processed prompts:  72%|███████▏  | 23/32 [00:05<00:01,  6.99it/s, est. speed input: 3100.70 toks/s, output: 492.06 toks/s]Processed prompts: 100%|██████████| 32/32 [00:05<00:00,  5.49it/s, est. speed input: 4334.88 toks/s, output: 689.61 toks/s]
+INFO:root:Query ID: 478097088, Query Index: 1191, Output Tokens: 128
+INFO:root:Query ID: 478097120, Query Index: 8282, Output Tokens: 128
+INFO:root:Query ID: 478097152, Query Index: 7086, Output Tokens: 128
+INFO:root:Query ID: 478097184, Query Index: 6801, Output Tokens: 128
+INFO:root:Query ID: 478097216, Query Index: 10840, Output Tokens: 128
+INFO:root:Query ID: 478097248, Query Index: 12376, Output Tokens: 128
+INFO:root:Query ID: 478097280, Query Index: 11497, Output Tokens: 128
+INFO:root:Query ID: 478097312, Query Index: 4989, Output Tokens: 128
+INFO:root:Query ID: 478097344, Query Index: 512, Output Tokens: 128
+INFO:root:Query ID: 478097376, Query Index: 12199, Output Tokens: 128
+INFO:root:Query ID: 478097408, Query Index: 4375, Output Tokens: 128
+INFO:root:Query ID: 478097440, Query Index: 5951, Output Tokens: 128
+INFO:root:Query ID: 478097472, Query Index: 3034, Output Tokens: 128
+INFO:root:Query ID: 478097504, Query Index: 6345, Output Tokens: 125
+INFO:root:Query ID: 478097536, Query Index: 4693, Output Tokens: 128
+INFO:root:Query ID: 478097568, Query Index: 5799, Output Tokens: 93
+INFO:root:Query ID: 478097600, Query Index: 9747, Output Tokens: 128
+INFO:root:Query ID: 478097632, Query Index: 737, Output Tokens: 128
+INFO:root:Query ID: 478097664, Query Index: 8676, Output Tokens: 91
+INFO:root:Query ID: 478097696, Query Index: 2627, Output Tokens: 128
+INFO:root:Query ID: 478097728, Query Index: 11100, Output Tokens: 128
+INFO:root:Query ID: 478097760, Query Index: 2815, Output Tokens: 128
+INFO:root:Query ID: 478097792, Query Index: 6042, Output Tokens: 128
+INFO:root:Query ID: 478097824, Query Index: 9615, Output Tokens: 128
+INFO:root:Query ID: 478097856, Query Index: 1564, Output Tokens: 128
+INFO:root:Query ID: 478097888, Query Index: 13150, Output Tokens: 128
+INFO:root:Query ID: 478097920, Query Index: 661, Output Tokens: 128
+INFO:root:Query ID: 478097952, Query Index: 5805, Output Tokens: 128
+INFO:root:Query ID: 478097984, Query Index: 7369, Output Tokens: 128
+INFO:root:Query ID: 478098016, Query Index: 5733, Output Tokens: 128
+INFO:root:Query ID: 478098048, Query Index: 8485, Output Tokens: 128
+INFO:root:Query ID: 478098080, Query Index: 9488, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8011.56it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:02<01:07,  2.19s/it, est. speed input: 363.21 toks/s, output: 0.91 toks/s]Processed prompts:   6%|▋         | 2/32 [00:04<01:16,  2.54s/it, est. speed input: 401.83 toks/s, output: 18.47 toks/s]Processed prompts:   9%|▉         | 3/32 [00:05<00:51,  1.79s/it, est. speed input: 509.32 toks/s, output: 35.89 toks/s]Processed prompts:  12%|█▎        | 4/32 [00:06<00:32,  1.17s/it, est. speed input: 552.34 toks/s, output: 55.63 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00, 13.65it/s, est. speed input: 4657.04 toks/s, output: 632.56 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  5.16it/s, est. speed input: 4657.04 toks/s, output: 632.56 toks/s]
+INFO:root:Query ID: 478098112, Query Index: 4207, Output Tokens: 128
+INFO:root:Query ID: 478098144, Query Index: 9084, Output Tokens: 128
+INFO:root:Query ID: 478098176, Query Index: 83, Output Tokens: 128
+INFO:root:Query ID: 478098208, Query Index: 6582, Output Tokens: 128
+INFO:root:Query ID: 478098240, Query Index: 6334, Output Tokens: 128
+INFO:root:Query ID: 478098272, Query Index: 10819, Output Tokens: 128
+INFO:root:Query ID: 478098304, Query Index: 10412, Output Tokens: 128
+INFO:root:Query ID: 478098336, Query Index: 4754, Output Tokens: 128
+INFO:root:Query ID: 478098368, Query Index: 12800, Output Tokens: 128
+INFO:root:Query ID: 478098400, Query Index: 1860, Output Tokens: 128
+INFO:root:Query ID: 478098432, Query Index: 12975, Output Tokens: 128
+INFO:root:Query ID: 478098464, Query Index: 13017, Output Tokens: 128
+INFO:root:Query ID: 478098496, Query Index: 1882, Output Tokens: 128
+INFO:root:Query ID: 478098528, Query Index: 5556, Output Tokens: 128
+INFO:root:Query ID: 478098560, Query Index: 9947, Output Tokens: 119
+INFO:root:Query ID: 478098592, Query Index: 8853, Output Tokens: 2
+INFO:root:Query ID: 478098624, Query Index: 8040, Output Tokens: 128
+INFO:root:Query ID: 478098656, Query Index: 4407, Output Tokens: 128
+INFO:root:Query ID: 478098688, Query Index: 4756, Output Tokens: 128
+INFO:root:Query ID: 478098720, Query Index: 6640, Output Tokens: 90
+INFO:root:Query ID: 478098752, Query Index: 8486, Output Tokens: 128
+INFO:root:Query ID: 478098784, Query Index: 6065, Output Tokens: 128
+INFO:root:Query ID: 478098816, Query Index: 8733, Output Tokens: 128
+INFO:root:Query ID: 478098848, Query Index: 1144, Output Tokens: 128
+INFO:root:Query ID: 478098880, Query Index: 12601, Output Tokens: 128
+INFO:root:Query ID: 478098912, Query Index: 1137, Output Tokens: 128
+INFO:root:Query ID: 478098944, Query Index: 7504, Output Tokens: 128
+INFO:root:Query ID: 478098976, Query Index: 7303, Output Tokens: 128
+INFO:root:Query ID: 478099008, Query Index: 2970, Output Tokens: 128
+INFO:root:Query ID: 478099040, Query Index: 1029, Output Tokens: 128
+INFO:root:Query ID: 478099072, Query Index: 8622, Output Tokens: 128
+INFO:root:Query ID: 478099104, Query Index: 12114, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8132.93it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:03<01:55,  3.73s/it, est. speed input: 196.63 toks/s, output: 17.17 toks/s]Processed prompts:   6%|▋         | 2/32 [00:04<00:54,  1.82s/it, est. speed input: 380.04 toks/s, output: 34.22 toks/s]Processed prompts:   9%|▉         | 3/32 [00:04<00:32,  1.14s/it, est. speed input: 465.16 toks/s, output: 51.81 toks/s]Processed prompts:  12%|█▎        | 4/32 [00:04<00:20,  1.34it/s, est. speed input: 642.88 toks/s, output: 70.44 toks/s]Processed prompts:  16%|█▌        | 5/32 [00:05<00:19,  1.38it/s, est. speed input: 633.72 toks/s, output: 83.50 toks/s]Processed prompts:  19%|█▉        | 6/32 [00:05<00:14,  1.79it/s, est. speed input: 663.76 toks/s, output: 102.83 toks/s]Processed prompts: 100%|██████████| 32/32 [00:05<00:00,  5.63it/s, est. speed input: 4229.26 toks/s, output: 686.73 toks/s]
+INFO:root:Query ID: 478099136, Query Index: 1711, Output Tokens: 128
+INFO:root:Query ID: 478099168, Query Index: 3583, Output Tokens: 128
+INFO:root:Query ID: 478099200, Query Index: 3896, Output Tokens: 128
+INFO:root:Query ID: 478099232, Query Index: 9680, Output Tokens: 128
+INFO:root:Query ID: 478099264, Query Index: 11958, Output Tokens: 128
+INFO:root:Query ID: 478099296, Query Index: 3469, Output Tokens: 128
+INFO:root:Query ID: 478099328, Query Index: 10007, Output Tokens: 91
+INFO:root:Query ID: 478099360, Query Index: 9191, Output Tokens: 128
+INFO:root:Query ID: 478099392, Query Index: 3374, Output Tokens: 80
+INFO:root:Query ID: 478099424, Query Index: 13272, Output Tokens: 64
+INFO:root:Query ID: 478099456, Query Index: 12846, Output Tokens: 128
+INFO:root:Query ID: 478099488, Query Index: 12757, Output Tokens: 128
+INFO:root:Query ID: 478099520, Query Index: 7848, Output Tokens: 128
+INFO:root:Query ID: 478099552, Query Index: 7460, Output Tokens: 128
+INFO:root:Query ID: 478099584, Query Index: 8577, Output Tokens: 128
+INFO:root:Query ID: 478099616, Query Index: 3849, Output Tokens: 128
+INFO:root:Query ID: 478099648, Query Index: 2329, Output Tokens: 128
+INFO:root:Query ID: 478099680, Query Index: 10422, Output Tokens: 128
+INFO:root:Query ID: 478099712, Query Index: 2586, Output Tokens: 128
+INFO:root:Query ID: 478099744, Query Index: 3650, Output Tokens: 118
+INFO:root:Query ID: 478099776, Query Index: 4159, Output Tokens: 128
+INFO:root:Query ID: 478099808, Query Index: 7036, Output Tokens: 128
+INFO:root:Query ID: 478099840, Query Index: 11748, Output Tokens: 128
+INFO:root:Query ID: 478099872, Query Index: 2513, Output Tokens: 95
+INFO:root:Query ID: 478099904, Query Index: 12771, Output Tokens: 128
+INFO:root:Query ID: 478099936, Query Index: 2767, Output Tokens: 128
+INFO:root:Query ID: 478099968, Query Index: 9127, Output Tokens: 128
+INFO:root:Query ID: 478100000, Query Index: 7496, Output Tokens: 128
+INFO:root:Query ID: 478100032, Query Index: 712, Output Tokens: 128
+INFO:root:Query ID: 478100064, Query Index: 12921, Output Tokens: 128
+INFO:root:Query ID: 478100096, Query Index: 9032, Output Tokens: 128
+INFO:root:Query ID: 478100128, Query Index: 9974, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8020.66it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:03<01:56,  3.75s/it, est. speed input: 162.04 toks/s, output: 13.59 toks/s]Processed prompts:   6%|▋         | 2/32 [00:06<01:27,  2.91s/it, est. speed input: 150.37 toks/s, output: 29.51 toks/s]Processed prompts:  97%|█████████▋| 31/32 [00:06<00:00,  8.46it/s, est. speed input: 4293.25 toks/s, output: 629.93 toks/s]Processed prompts: 100%|██████████| 32/32 [00:06<00:00,  5.18it/s, est. speed input: 4604.00 toks/s, output: 650.64 toks/s]
+INFO:root:Query ID: 478100160, Query Index: 3913, Output Tokens: 128
+INFO:root:Query ID: 478100192, Query Index: 3724, Output Tokens: 128
+INFO:root:Query ID: 478100224, Query Index: 9151, Output Tokens: 128
+INFO:root:Query ID: 478100256, Query Index: 11504, Output Tokens: 128
+INFO:root:Query ID: 478100288, Query Index: 1393, Output Tokens: 128
+INFO:root:Query ID: 478100320, Query Index: 12575, Output Tokens: 128
+INFO:root:Query ID: 478100352, Query Index: 9945, Output Tokens: 128
+INFO:root:Query ID: 478100384, Query Index: 1381, Output Tokens: 128
+INFO:root:Query ID: 478100416, Query Index: 11730, Output Tokens: 128
+INFO:root:Query ID: 478100448, Query Index: 6901, Output Tokens: 128
+INFO:root:Query ID: 478100480, Query Index: 7409, Output Tokens: 128
+INFO:root:Query ID: 478100512, Query Index: 2254, Output Tokens: 128
+INFO:root:Query ID: 478100544, Query Index: 1260, Output Tokens: 128
+INFO:root:Query ID: 478100576, Query Index: 9390, Output Tokens: 128
+INFO:root:Query ID: 478100608, Query Index: 5344, Output Tokens: 128
+INFO:root:Query ID: 478100640, Query Index: 10994, Output Tokens: 51
+INFO:root:Query ID: 478100672, Query Index: 4797, Output Tokens: 128
+INFO:root:Query ID: 478100704, Query Index: 3510, Output Tokens: 128
+INFO:root:Query ID: 478100736, Query Index: 13094, Output Tokens: 128
+INFO:root:Query ID: 478100768, Query Index: 11983, Output Tokens: 128
+INFO:root:Query ID: 478100800, Query Index: 1184, Output Tokens: 128
+INFO:root:Query ID: 478100832, Query Index: 10221, Output Tokens: 128
+INFO:root:Query ID: 478100864, Query Index: 6850, Output Tokens: 128
+INFO:root:Query ID: 478100896, Query Index: 10669, Output Tokens: 128
+INFO:root:Query ID: 478100928, Query Index: 9627, Output Tokens: 128
+INFO:root:Query ID: 478100960, Query Index: 5431, Output Tokens: 128
+INFO:root:Query ID: 478100992, Query Index: 8665, Output Tokens: 128
+INFO:root:Query ID: 478101024, Query Index: 13165, Output Tokens: 128
+INFO:root:Query ID: 478101056, Query Index: 12148, Output Tokens: 128
+INFO:root:Query ID: 478101088, Query Index: 10814, Output Tokens: 128
+INFO:root:Query ID: 478101120, Query Index: 1448, Output Tokens: 128
+INFO:root:Query ID: 478101152, Query Index: 8123, Output Tokens: 128
+Adding requests:   0%|          | 0/32 [00:00<?, ?it/s]Adding requests: 100%|██████████| 32/32 [00:00<00:00, 8038.92it/s]
+Processed prompts:   0%|          | 0/32 [00:00<?, ?it/s, est. speed input: 0.00 toks/s, output: 0.00 toks/s]Processed prompts:   3%|▎         | 1/32 [00:03<01:55,  3.72s/it, est. speed input: 82.59 toks/s, output: 12.91 toks/s]Traceback (most recent call last):
+  File "/root/rehan/mlperf-inference-5.1-redhat/language/llama3.1-8b/SUT_VLLM_SingleReplica.py", line 810, in <module>
+    lg.StartTestWithLogSettings(SUTToTest, qsl, settings, log_settings)
+  File "/root/rehan/mlperf-inference-5.1-redhat/language/llama3.1-8b/SUT_VLLM_SingleReplica.py", line 205, in issue_query
+    outputs = self.llm.generate(prompts_to_process, self.sampling_params)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/utils.py", line 1218, in inner
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/entrypoints/llm.py", line 481, in generate
+    outputs = self._run_engine(use_tqdm=use_tqdm)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/entrypoints/llm.py", line 1476, in _run_engine
+    step_outputs = self.llm_engine.step()
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 231, in step
+    outputs = self.engine_core.get_output()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 645, in get_output
+    outputs = self.outputs_queue.get()
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/queue.py", line 171, in get
+    self.not_empty.wait()
+ERROR 07-22 20:47:32 [dump_input.py:68] Dumping input data
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/threading.py", line 355, in wait
+    waiter.acquire()
+KeyboardInterrupt
+--- Logging error ---
+Traceback (most recent call last):
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 207, in execute_model
+    return self.model_executor.execute_model(scheduler_output)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/executor/abstract.py", line 86, in execute_model
+    output = self.collective_rpc("execute_model",
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/executor/uniproc_executor.py", line 56, in collective_rpc
+    answer = run_method(self.driver_worker, method, args, kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/utils.py", line 2605, in run_method
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/worker/gpu_worker.py", line 276, in execute_model
+    output = self.model_runner.execute_model(scheduler_output,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/worker/gpu_model_runner.py", line 1196, in execute_model
+    model_output = self.model(
+                   ^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/models/llama.py", line 580, in forward
+    model_output = self.model(input_ids, positions, intermediate_tensors,
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/compilation/decorators.py", line 245, in __call__
+    model_output = self.forward(*args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/model_executor/models/llama.py", line 367, in forward
+    def forward(
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 838, in _fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/fx/graph_module.py", line 830, in call_wrapped
+    return self._wrapped_call(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/fx/graph_module.py", line 393, in __call__
+    return super(self.cls, obj).__call__(*args, **kwargs)  # type: ignore[misc]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<eval_with_key>.66", line 313, in forward
+    submod_31 = self.submod_31(getitem_75, s0, getitem_76, getitem_77, getitem_78);  getitem_75 = getitem_76 = getitem_77 = submod_31 = None
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/fx/graph_module.py", line 830, in call_wrapped
+    return self._wrapped_call(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/fx/graph_module.py", line 393, in __call__
+    return super(self.cls, obj).__call__(*args, **kwargs)  # type: ignore[misc]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1751, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1762, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<eval_with_key>.32", line 5, in forward
+    unified_attention_with_output = torch.ops.vllm.unified_attention_with_output(query_47, key_47, value_15, output_31, 'model.layers.15.self_attn.attn');  query_47 = key_47 = value_15 = output_31 = unified_attention_with_output = None
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/_ops.py", line 1158, in __call__
+    return self._op(*args, **(kwargs or {}))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/attention/layer.py", line 425, in unified_attention_with_output
+    self.impl.forward(self,
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/attention/backends/flash_attn.py", line 622, in forward
+    flash_attn_varlen_func(
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/vllm_flash_attn/flash_attn_interface.py", line 227, in flash_attn_varlen_func
+    out, softmax_lse = torch.ops._vllm_fa2_C.varlen_fwd(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/_ops.py", line 1158, in __call__
+    return self._op(*args, **(kwargs or {}))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 475, in signal_handler
+    raise SystemExit()
+SystemExit
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/logging/__init__.py", line 1160, in emit
+    msg = self.format(record)
+          ^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/logging/__init__.py", line 999, in format
+    return fmt.format(record)
+           ^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/logging_utils/formatter.py", line 13, in format
+    msg = logging.Formatter.format(self, record)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/logging/__init__.py", line 703, in format
+    record.message = record.getMessage()
+                     ^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/logging/__init__.py", line 392, in getMessage
+    msg = msg % self.args
+          ~~~~^~~~~~~~~~~
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/config.py", line 4506, in __str__
+    f"compilation_config={self.compilation_config!r}")
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/config.py", line 3896, in __repr__
+    for k, v in asdict(self).items():
+                ^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/dataclasses.py", line 1329, in asdict
+    return _asdict_inner(obj, dict_factory)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/dataclasses.py", line 1339, in _asdict_inner
+    f.name: _asdict_inner(getattr(obj, f.name), dict)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/dataclasses.py", line 1382, in _asdict_inner
+    return type(obj)((_asdict_inner(k, dict_factory),
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/dataclasses.py", line 1383, in <genexpr>
+    _asdict_inner(v, dict_factory))
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/dataclasses.py", line 1386, in _asdict_inner
+    return copy.deepcopy(obj)
+           ^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/copy.py", line 162, in deepcopy
+    y = _reconstruct(x, memo, *rv)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/copy.py", line 259, in _reconstruct
+    state = deepcopy(state, memo)
+            ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/copy.py", line 136, in deepcopy
+    y = copier(x, memo)
+        ^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/copy.py", line 221, in _deepcopy_dict
+    y[deepcopy(key, memo)] = deepcopy(value, memo)
+                             ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/copy.py", line 136, in deepcopy
+    y = copier(x, memo)
+        ^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/copy.py", line 196, in _deepcopy_list
+    append(deepcopy(a, memo))
+           ^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/copy.py", line 143, in deepcopy
+    y = copier(memo)
+        ^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/_tensor.py", line 172, in __deepcopy__
+    new_storage = self._typed_storage()._deepcopy(memo)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/storage.py", line 1134, in _deepcopy
+    return self._new_wrapped_storage(copy.deepcopy(self._untyped_storage, memo))
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/copy.py", line 143, in deepcopy
+    y = copier(memo)
+        ^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/storage.py", line 239, in __deepcopy__
+    new_storage = self.clone()
+                  ^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/torch/storage.py", line 253, in clone
+    return type(self)(self.nbytes(), device=self.device).copy_(self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 710.00 MiB. GPU 0 has a total capacity of 44.52 GiB of which 670.25 MiB is free. Including non-PyTorch memory, this process has 43.86 GiB memory in use. Of the allocated memory 42.89 GiB is allocated by PyTorch, with 81.88 MiB allocated in private pools (e.g., CUDA Graphs), and 64.74 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Call stack:
+  File "<string>", line 1, in <module>
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/multiprocessing/spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/multiprocessing/spawn.py", line 135, in _main
+    return self._bootstrap(parent_sentinel)
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 493, in run_engine_core
+    engine_core.run_busy_loop()
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 520, in run_busy_loop
+    self._process_engine_step()
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 545, in _process_engine_step
+    outputs = self.step_fn()
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 226, in step
+    model_output = self.execute_model(scheduler_output)
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/v1/engine/core.py", line 210, in execute_model
+    dump_engine_exception(self.vllm_config, scheduler_output,
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/logging_utils/dump_input.py", line 62, in dump_engine_exception
+    _dump_engine_exception(config, scheduler_output, scheduler_stats)
+  File "/root/rehan/.venv/lib/python3.12/site-packages/vllm/logging_utils/dump_input.py", line 70, in _dump_engine_exception
+    logger.error(
+Unable to print the message and arguments - possible formatting error.
+Use the traceback above to help find the error.
+ERROR 07-22 20:47:32 [dump_input.py:78] Dumping scheduler output for model execution:
+ERROR 07-22 20:47:32 [dump_input.py:79] SchedulerOutput(scheduled_new_reqs=[], scheduled_cached_reqs=[CachedRequestData(req_id='1280', resumed_from_preemption=false, new_token_ids=[505], new_block_ids=[[]], num_computed_tokens=1209), CachedRequestData(req_id='1281', resumed_from_preemption=false, new_token_ids=[433], new_block_ids=[[]], num_computed_tokens=1093), CachedRequestData(req_id='1282', resumed_from_preemption=false, new_token_ids=[38553], new_block_ids=[[]], num_computed_tokens=1703), CachedRequestData(req_id='1283', resumed_from_preemption=false, new_token_ids=[26608], new_block_ids=[[]], num_computed_tokens=1663), CachedRequestData(req_id='1284', resumed_from_preemption=false, new_token_ids=[4024], new_block_ids=[[]], num_computed_tokens=1150), CachedRequestData(req_id='1285', resumed_from_preemption=false, new_token_ids=[304], new_block_ids=[[]], num_computed_tokens=1420), CachedRequestData(req_id='1286', resumed_from_preemption=false, new_token_ids=[527], new_block_ids=[[]], num_computed_tokens=1153), CachedRequestData(req_id='1287', resumed_from_preemption=false, new_token_ids=[2360], new_block_ids=[[]], num_computed_tokens=647), CachedRequestData(req_id='1288', resumed_from_preemption=false, new_token_ids=[2751], new_block_ids=[[]], num_computed_tokens=478), CachedRequestData(req_id='1289', resumed_from_preemption=false, new_token_ids=[1523], new_block_ids=[[]], num_computed_tokens=504), CachedRequestData(req_id='1290', resumed_from_preemption=false, new_token_ids=[433], new_block_ids=[[]], num_computed_tokens=1213), CachedRequestData(req_id='1291', resumed_from_preemption=false, new_token_ids=[569], new_block_ids=[[]], num_computed_tokens=1023), CachedRequestData(req_id='1292', resumed_from_preemption=false, new_token_ids=[4101], new_block_ids=[[10556]], num_computed_tokens=768), CachedRequestData(req_id='1293', resumed_from_preemption=false, new_token_ids=[6007], new_block_ids=[[]], num_computed_tokens=850), CachedRequestData(req_id='1294', resumed_from_preemption=false, new_token_ids=[21116], new_block_ids=[[]], num_computed_tokens=1727), CachedRequestData(req_id='1295', resumed_from_preemption=false, new_token_ids=[89514], new_block_ids=[[]], num_computed_tokens=1390), CachedRequestData(req_id='1296', resumed_from_preemption=false, new_token_ids=[279], new_block_ids=[[]], num_computed_tokens=847), CachedRequestData(req_id='1297', resumed_from_preemption=false, new_token_ids=[574], new_block_ids=[[]], num_computed_tokens=1213), CachedRequestData(req_id='1298', resumed_from_preemption=false, new_token_ids=[71729], new_block_ids=[[]], num_computed_tokens=538), CachedRequestData(req_id='1299', resumed_from_preemption=false, new_token_ids=[74597], new_block_ids=[[]], num_computed_tokens=537), CachedRequestData(req_id='1300', resumed_from_preemption=false, new_token_ids=[814], new_block_ids=[[]], num_computed_tokens=873), CachedRequestData(req_id='1301', resumed_from_preemption=false, new_token_ids=[323], new_block_ids=[[]], num_computed_tokens=1023), CachedRequestData(req_id='1302', resumed_from_preemption=false, new_token_ids=[402], new_block_ids=[[]], num_computed_tokens=1221), CachedRequestData(req_id='1303', resumed_from_preemption=false, new_token_ids=[617], new_block_ids=[[]], num_computed_tokens=767), CachedRequestData(req_id='1304', resumed_from_preemption=false, new_token_ids=[1005], new_block_ids=[[]], num_computed_tokens=1080), CachedRequestData(req_id='1306', resumed_from_preemption=false, new_token_ids=[574], new_block_ids=[[]], num_computed_tokens=616), CachedRequestData(req_id='1307', resumed_from_preemption=false, new_token_ids=[2911], new_block_ids=[[]], num_computed_tokens=1183), CachedRequestData(req_id='1308', resumed_from_preemption=false, new_token_ids=[6137], new_block_ids=[[]], num_computed_tokens=965), CachedRequestData(req_id='1309', resumed_from_preemption=false, new_token_ids=[3502], new_block_ids=[[]], num_computed_tokens=594), CachedRequestData(req_id='1310', resumed_from_preemption=false, new_token_ids=[1862], new_block_ids=[[]], num_computed_tokens=905), CachedRequestData(req_id='1311', resumed_from_preemption=false, new_token_ids=[477], new_block_ids=[[]], num_computed_tokens=870)], num_scheduled_tokens={1291: 1, 1301: 1, 1288: 1, 1302: 1, 1308: 1, 1294: 1, 1303: 1, 1304: 1, 1287: 1, 1292: 1, 1283: 1, 1284: 1, 1306: 1, 1280: 1, 1290: 1, 1282: 1, 1298: 1, 1311: 1, 1293: 1, 1289: 1, 1307: 1, 1310: 1, 1299: 1, 1309: 1, 1281: 1, 1295: 1, 1297: 1, 1286: 1, 1285: 1, 1296: 1, 1300: 1}, total_num_scheduled_tokens=31, scheduled_spec_decode_tokens={}, scheduled_encoder_inputs={}, num_common_prefix_blocks=[1], finished_req_ids=[], free_encoder_input_ids=[], structured_output_request_ids={}, grammar_bitmask=null, kv_connector_metadata=null)
+ERROR 07-22 20:47:32 [dump_input.py:81] SchedulerStats(num_running_reqs=31, num_waiting_reqs=0, gpu_cache_usage=0.17054468535166578, prefix_cache_stats=PrefixCacheStats(reset=False, requests=0, queries=0, hits=0), spec_decoding_stats=None)
+[rank0]:[W722 20:47:33.040141613 ProcessGroupNCCL.cpp:1476] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())

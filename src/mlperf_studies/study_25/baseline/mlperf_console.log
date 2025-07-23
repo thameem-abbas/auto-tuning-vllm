@@ -1,0 +1,817 @@
+INFO 07-23 01:04:15 [__init__.py:243] Automatically detected platform cuda.
+/root/rehan/mlperf-inference-5.1-redhat/language/llama3.1-8b/SUT_VLLM_SingleReplica.py:11: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+  import pkg_resources
+================================================================================
+COMMAND LINE AND EXECUTABLE INFORMATION
+================================================================================
+Executable: /root/rehan/.venv/bin/python3
+Command line: SUT_VLLM_SingleReplica.py --model_name meta-llama/Llama-3.1-8B --api-server-url http://0.0.0.0:8000 --batch_size 32 --output-log-dir /root/rehan/src/mlperf_studies/study_25/baseline --dataset_path /root/rehan/datasets/cnn_eval.json
+================================================================================
+Current date and time: 2025-07-23 01:04:17
+================================================================================
+Installed Python packages:
+  aiohappyeyeballs               2.6.1
+  aiohttp                        3.12.7
+  aiosignal                      1.3.2
+  airportsdata                   20250523
+  alembic                        1.16.1
+  annotated-types                0.7.0
+  anyio                          4.9.0
+  astor                          0.8.1
+  attrs                          25.3.0
+  autocommand                    2.2.2
+  backports.tarfile              1.2.0
+  blake3                         1.0.5
+  botorch                        0.9.5
+  bottle                         0.13.3
+  cachetools                     6.0.0
+  certifi                        2025.4.26
+  charset-normalizer             3.4.2
+  choreographer                  1.0.9
+  click                          8.1.8
+  cloudpickle                    3.1.1
+  colorama                       0.4.6
+  colorlog                       6.9.0
+  compressed-tensors             0.9.4
+  contourpy                      1.3.2
+  cupy-cuda12x                   13.4.1
+  cycler                         0.12.1
+  datasets                       3.6.0
+  Deprecated                     1.2.18
+  depyf                          0.18.0
+  dill                           0.3.8
+  diskcache                      5.6.3
+  distro                         1.9.0
+  dnspython                      2.7.0
+  einops                         0.8.1
+  email-validator                2.2.0
+  fastapi                        0.115.12
+  fastapi-cli                    0.0.7
+  fastrlock                      0.8.3
+  filelock                       3.18.0
+  fonttools                      4.58.4
+  frozenlist                     1.6.0
+  fsspec                         2025.3.0
+  ftfy                           6.3.1
+  gguf                           0.17.0
+  giturlparse                    0.12.0
+  googleapis-common-protos       1.70.0
+  gpytorch                       1.11
+  greenlet                       3.2.2
+  grpcio                         1.72.1
+  guidellm                       0.1.0.dev0
+  h11                            0.16.0
+  h2                             4.2.0
+  hf-xet                         1.1.2
+  hpack                          4.1.0
+  httpcore                       1.0.9
+  httptools                      0.6.4
+  httpx                          0.28.1
+  huggingface-hub                0.32.4
+  hyperframe                     6.1.0
+  idna                           3.10
+  importlib-metadata             8.6.1
+  inflect                        7.3.1
+  interegular                    0.3.3
+  jaraco.collections             5.1.0
+  jaraco.context                 5.3.0
+  jaraco.functools               4.0.1
+  jaraco.text                    3.12.1
+  jaxtyping                      0.3.2
+  jinja2                         3.1.6
+  jiter                          0.10.0
+  joblib                         1.5.1
+  jsonschema                     4.24.0
+  jsonschema-specifications      2025.4.1
+  kaleido                        1.0.0
+  kiwisolver                     1.4.8
+  lark                           1.2.2
+  linear-operator                0.5.1
+  llguidance                     0.7.26
+  llvmlite                       0.44.0
+  lm-format-enforcer             0.10.11
+  logistro                       1.1.0
+  loguru                         0.7.3
+  mako                           1.3.10
+  markdown-it-py                 3.0.0
+  MarkupSafe                     3.0.2
+  matplotlib                     3.10.3
+  mdurl                          0.1.2
+  mistral-common                 1.5.6
+  mlc-scripts                    1.0.2
+  mlcflow                        1.0.18
+  mlcommons-loadgen              5.0.25
+  more-itertools                 10.3.0
+  mpmath                         1.3.0
+  msgpack                        1.1.0
+  msgspec                        0.19.0
+  multidict                      6.4.4
+  multipledispatch               1.0.0
+  multiprocess                   0.70.16
+  mypy-extensions                1.1.0
+  narwhals                       1.44.0
+  nest-asyncio                   1.6.0
+  networkx                       3.5
+  ninja                          1.11.1.4
+  numba                          0.61.2
+  numpy                          2.2.6
+  nvidia-cublas-cu12             12.6.4.1
+  nvidia-cuda-cupti-cu12         12.6.80
+  nvidia-cuda-nvrtc-cu12         12.6.77
+  nvidia-cuda-runtime-cu12       12.6.77
+  nvidia-cudnn-cu12              9.5.1.17
+  nvidia-cufft-cu12              11.3.0.4
+  nvidia-cufile-cu12             1.11.1.6
+  nvidia-curand-cu12             10.3.7.77
+  nvidia-cusolver-cu12           11.7.1.2
+  nvidia-cusparse-cu12           12.5.4.2
+  nvidia-cusparselt-cu12         0.6.3
+  nvidia-nccl-cu12               2.26.2
+  nvidia-nvjitlink-cu12          12.6.85
+  nvidia-nvtx-cu12               12.6.77
+  openai                         1.83.0
+  opencv-python-headless         4.11.0.86
+  opentelemetry-api              1.33.1
+  opentelemetry-exporter-otlp    1.33.1
+  opentelemetry-exporter-otlp-proto-common 1.33.1
+  opentelemetry-exporter-otlp-proto-grpc 1.33.1
+  opentelemetry-exporter-otlp-proto-http 1.33.1
+  opentelemetry-proto            1.33.1
+  opentelemetry-sdk              1.33.1
+  opentelemetry-semantic-conventions 0.54b1
+  opentelemetry-semantic-conventions-ai 0.4.9
+  opt-einsum                     3.4.0
+  optuna                         4.4.0
+  optuna-dashboard               0.18.0
+  optuna-integration             4.4.0
+  orjson                         3.10.18
+  outlines                       0.1.11
+  outlines-core                  0.1.26
+  packaging                      25.0
+  panda                          0.3.1
+  pandas                         2.3.0
+  partial-json-parser            0.2.1.1.post5
+  pillow                         11.2.1
+  pip                            25.1.1
+  platformdirs                   4.2.2
+  plotly                         6.1.2
+  prometheus-client              0.22.1
+  prometheus-fastapi-instrumentator 7.1.0
+  propcache                      0.3.1
+  protobuf                       5.29.5
+  psutil                         7.0.0
+  py-cpuinfo                     9.0.0
+  pyarrow                        20.0.0
+  pybind11                       3.0.0
+  pycountry                      24.6.1
+  pydantic                       2.11.7
+  pydantic-core                  2.33.2
+  pydantic-settings              2.9.1
+  pygments                       2.19.1
+  pyparsing                      3.2.3
+  pyre-extensions                0.0.32
+  pyro-api                       0.1.2
+  pyro-ppl                       1.9.1
+  python-dateutil                2.9.0.post0
+  python-dotenv                  1.1.0
+  python-json-logger             3.3.0
+  python-multipart               0.0.20
+  pytz                           2025.2
+  PyYAML                         6.0.2
+  pyzmq                          26.4.0
+  ray                            2.46.0
+  referencing                    0.36.2
+  regex                          2024.11.6
+  requests                       2.32.3
+  rich                           14.0.0
+  rich-toolkit                   0.14.7
+  rpds-py                        0.25.1
+  safetensors                    0.5.3
+  scikit-learn                   1.7.0
+  scipy                          1.15.3
+  seaborn                        0.13.2
+  sentencepiece                  0.2.0
+  setproctitle                   1.2.2
+  setuptools                     79.0.1
+  shellingham                    1.5.4
+  simplejson                     3.20.1
+  six                            1.17.0
+  sniffio                        1.3.1INFO:root:--------------------------------------------------
+INFO:root:Using vLLM API server at: http://0.0.0.0:8000
+INFO:Llama-8B-Dataset:Loading dataset...
+INFO:Llama-8B-Dataset:Finished loading dataset.
+INFO:root:Dataset = 13368
+INFO:root:Dataset Max = 2540
+INFO:root:Dataset Min = 79
+INFO:root:Dataset Len = 13368
+INFO:root:Waiting for vLLM API server at http://0.0.0.0:8000 to be ready (timeout: 600s)...
+INFO:root:vLLM API server at http://0.0.0.0:8000 is ready!
+INFO:root:Tokenizer initialized for detokenization
+INFO:root:MLPerf Loadgen: Starting test with 13368 samples in Offline mode...
+INFO:root:Model: meta-llama/Llama-3.1-8B, Test Mode: performance
+INFO:root:API SUT issue_query: Received 13368 queries from Loadgen. Batch size: 32. Number of batches: 418.
+INFO:root:API Query ID: 477780800, Query Index: 4002, Output Tokens: 0
+INFO:root:API Query ID: 477780832, Query Index: 10292, Output Tokens: 0
+INFO:root:API Query ID: 477780864, Query Index: 12834, Output Tokens: 0
+INFO:root:API Query ID: 477780896, Query Index: 10118, Output Tokens: 0
+INFO:root:API Query ID: 477780928, Query Index: 10623, Output Tokens: 0
+INFO:root:API Query ID: 477780960, Query Index: 423, Output Tokens: 0
+INFO:root:API Query ID: 477780992, Query Index: 10588, Output Tokens: 0
+INFO:root:API Query ID: 477781024, Query Index: 12917, Output Tokens: 0
+INFO:root:API Query ID: 477781056, Query Index: 7973, Output Tokens: 0
+
+  sqlalchemy                     2.0.41
+  starlette                      0.46.2
+  sympy                          1.14.0
+  threadpoolctl                  3.6.0
+  tiktoken                       0.9.0
+  tokenizers                     0.21.1
+  tomli                          2.0.1
+  torch                          2.7.0
+  torchaudio                     2.7.0
+  torchvision                    0.22.0
+  tqdm                           4.67.1
+  transformers                   4.52.4
+  triton                         3.3.0
+  typeguard                      2.13.3
+  typer                          0.16.0
+  typing-extensions              4.14.0
+  typing-inspect                 0.9.0
+  typing-inspection              0.4.1
+  tzdata                         2025.2
+  urllib3                        2.4.0
+  uvicorn                        0.34.3
+  uvloop                         0.21.0
+  vllm                           0.9.0.1
+  wadler-lindig                  0.1.7
+  watchfiles                     1.0.5
+  wcwidth                        0.2.13
+  websockets                     15.0.1
+  wheel                          0.45.1
+  wrapt                          1.17.2
+  xformers                       0.0.30
+  xgrammar                       0.1.19
+  xxhash                         3.5.0
+  yarl                           1.20.0
+  zipp                           3.22.0
+================================================================================
+
+Set TORCH_CUDA_ARCH_LIST to 8.9
+response:  {"id":"cmpl-bd25a505175c4933aa47a54ddf4104c8","object":"text_completion","created":1753232661,"model":"meta-llama/Llama-3.1-8B","choices":[{"index":0,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":1,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":2,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":3,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":4,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":5,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":6,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":7,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":8,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":9,"text":" Five women's lacrosse players at the University of Maryland Baltimore County have been suspended indefinitely after being accused of threatening freshman teammates in text messages. The messages, exchanged using the GroupMe app, included threats to maim and 'kill' their freshmen teammates and 'take down the coaches.' Mackenzie Reese, 19, Alyssa Semones, 21, Amber Kovalick, 19, Meghan Milani, 19, and Brittany Marquess, 20 have been suspended, with no timetable for their return. The suspended University of Maryland Baltimore County students, including Alyssa Semones, right, are accused of threatening freshman","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":10,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":11,"text":" Jennifer Lopez has revealed how the murder of famed Latino singer Selena twenty years ago inspired her to launch her own music career. In an interview with Billboard magazine, she said that finding out about the 23-year-old star's death encouraged her to leave the chorus behind and try out as a solo pop artist in New York. Touching on her career choice, the 45-year-old continued: 'It made me realize... Life is short, and you don't know what's going to happen. Go for your dreams and don't let anyone hold you back.' Selena - nicknamed the 'Mexican Madonna' for her provocative dress sense","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":12,"text":" The Duchess of Cambridge visited an art gallery in Margate, Kent, where she wore the same Dalmatian-print coat she wore while pregnant with Prince George. She also spoke to artists about their work and took part in an art class with a group of budding artists from the primary school.","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":13,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":14,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":15,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":16,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":17,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":18,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":19,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":20,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":21,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":22,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":23,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":24,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":25,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":26,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":27,"text":" Massimo Cellino, the former Leeds United president, will not return to the club until the end of the season. The Football League had disqualified him from running the Championship club until April 10 in January. He decided to step away from the club last month in order to clear his name. However, the Football League have now said that they have'settled the outstanding disciplinary proceedings' against Cellino and the club and he can return from May 3. Leeds United owner Massimo Cellino will be allowed to return to the club at the end of the season. Cellino was disqualified in January after the the non-disclosure of","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":28,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":29,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":30,"text":" \nThe Australian Transport Safety Bureau (ATSB) is confident that the search for Malaysia Airlines Flight MH370 will find the plane, if it is in the areas where they are looking. The search area has been narrowed down to the 7th arc, or \"partial handshake,\" where international investigators believe the plane ran out of fuel. The search is being conducted by ships with equipment capable of searching depths that regularly exceed 4,000 meters (13,123 feet). The search is expected to be completed by May before weather conditions worsen as the southern winter approaches. The current search area is the result of months of analysis and reex","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":31,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null}],"usage":{"prompt_tokens":31659,"total_tokens":32258,"completion_tokens":599,"prompt_tokens_details":null},"kv_transfer_params":null}
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   Five women's lacrosse players at the University of Maryland Baltimore County have been suspended indefinitely after being accused of threatening freshman teammates in text messages. The messages, exchanged using the GroupMe app, included threats to maim and 'kill' their freshmen teammates and 'take down the coaches.' Mackenzie Reese, 19, Alyssa Semones, 21, Amber Kovalick, 19, Meghan Milani, 19, and Brittany Marquess, 20 have been suspended, with no timetable for their return. The suspended University of Maryland Baltimore County students, including Alyssa Semones, right, are accused of threatening freshmanINFO:root:API Query ID: 477781088, Query Index: 11566, Output Tokens: 128
+INFO:root:API Query ID: 477781120, Query Index: 10452, Output Tokens: 0
+INFO:root:API Query ID: 477781152, Query Index: 8092, Output Tokens: 128
+INFO:root:API Query ID: 477781184, Query Index: 11178, Output Tokens: 59
+INFO:root:API Query ID: 477781216, Query Index: 595, Output Tokens: 0
+INFO:root:API Query ID: 477781248, Query Index: 3504, Output Tokens: 0
+INFO:root:API Query ID: 477781280, Query Index: 6047, Output Tokens: 0
+INFO:root:API Query ID: 477781312, Query Index: 101, Output Tokens: 0
+INFO:root:API Query ID: 477781344, Query Index: 2381, Output Tokens: 0
+INFO:root:API Query ID: 477781376, Query Index: 11680, Output Tokens: 0
+INFO:root:API Query ID: 477781408, Query Index: 5536, Output Tokens: 0
+INFO:root:API Query ID: 477781440, Query Index: 6340, Output Tokens: 0
+INFO:root:API Query ID: 477781472, Query Index: 8970, Output Tokens: 0
+INFO:root:API Query ID: 477781504, Query Index: 5666, Output Tokens: 0
+INFO:root:API Query ID: 477781536, Query Index: 8663, Output Tokens: 0
+INFO:root:API Query ID: 477781568, Query Index: 1672, Output Tokens: 0
+INFO:root:API Query ID: 477781600, Query Index: 3297, Output Tokens: 0
+INFO:root:API Query ID: 477781632, Query Index: 6250, Output Tokens: 0
+INFO:root:API Query ID: 477781664, Query Index: 2362, Output Tokens: 128
+INFO:root:API Query ID: 477781696, Query Index: 8109, Output Tokens: 0
+INFO:root:API Query ID: 477781728, Query Index: 3186, Output Tokens: 0
+INFO:root:API Query ID: 477781760, Query Index: 743, Output Tokens: 128
+INFO:root:API Query ID: 477781792, Query Index: 12123, Output Tokens: 0
+
+text_response:  
+text_response:   Jennifer Lopez has revealed how the murder of famed Latino singer Selena twenty years ago inspired her to launch her own music career. In an interview with Billboard magazine, she said that finding out about the 23-year-old star's death encouraged her to leave the chorus behind and try out as a solo pop artist in New York. Touching on her career choice, the 45-year-old continued: 'It made me realize... Life is short, and you don't know what's going to happen. Go for your dreams and don't let anyone hold you back.' Selena - nicknamed the 'Mexican Madonna' for her provocative dress sense
+text_response:   The Duchess of Cambridge visited an art gallery in Margate, Kent, where she wore the same Dalmatian-print coat she wore while pregnant with Prince George. She also spoke to artists about their work and took part in an art class with a group of budding artists from the primary school.
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   Massimo Cellino, the former Leeds United president, will not return to the club until the end of the season. The Football League had disqualified him from running the Championship club until April 10 in January. He decided to step away from the club last month in order to clear his name. However, the Football League have now said that they have'settled the outstanding disciplinary proceedings' against Cellino and the club and he can return from May 3. Leeds United owner Massimo Cellino will be allowed to return to the club at the end of the season. Cellino was disqualified in January after the the non-disclosure of
+text_response:  
+text_response:  
+text_response:   
+The Australian Transport Safety Bureau (ATSB) is confident that the search for Malaysia Airlines Flight MH370 will find the plane, if it is in the areas where they are looking. The search area has been narrowed down to the 7th arc, or "partial handshake," where international investigators believe the plane ran out of fuel. The search is being conducted by ships with equipment capable of searching depths that regularly exceed 4,000 meters (13,123 feet). The search is expected to be completed by May before weather conditions worsen as the southern winter approaches. The current search area is the result of months of analysis and reex
+text_response:  
+response:  {"id":"cmpl-cb3eb5f89650482dbbcfb5fc54b4f9a2","object":"text_completion","created":1753232667,"model":"meta-llama/Llama-3.1-8B","choices":[{"index":0,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":1,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":2,"text":" A man who allegedly stabbed teenage twins leaving one'millimetres from death' is being hunted by police today. The suspect, who is described as  between 20 and 30-years-old, is accused of attacking the 16-year-old brothers with a'very sharp blade' following a party in Dilton Marsh, near Westbury in Wiltshire, last night. One of the boys remains in a serious but stable condition in Southmead Hospital in Bristol after the knife slashed his chest, only narrowly missing his heart. The suspect, who is described as between 20 and 30-years-old, is accused of attacking the","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":3,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":4,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":5,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":6,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":7,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":8,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":9,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":10,"text":" Stephen Curry had 24 points as the Golden State Warriors used a smothering defensive effort in the third quarter to pound the Washington Wizards 107-76 on Monday. The Warriors held the Wizards without a field goal for nearly 11 minutes after halftime, with Washington missing its first 15 shots. Golden State outscored the Wizards 29-8 in the quarter to take a 24-point lead. Curry also had six assists and five rebounds as the NBA-leading Warriors (57-13) moved closer to securing the league's top playoff seed. Golden State has a huge lead over Memphis (50-21) in the Western Conference","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":11,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":12,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":13,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":14,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":15,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":16,"text":" Nazir Afzal, a highly experienced lawyer, resigned from the Crown Prosecution Service despite being cleared of improper conduct. He was accused of sending a text message to a defendant. An internal inquiry exonerated him of any wrongdoing. But he nevertheless handed in his resignation as more senior colleagues insisted his departure is due to an 'on-going drive for efficiency'. The resignation is a direct blow to Director of Public Prosecutions Alison Saunders who has faced criticism for pursuing campaign agendas instead of serving the general public. Mr Afzal proved himself to be an outspoken advocate of bringing to justice those accused of the most heinous and sometimes sensitive offences","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":17,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":18,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":19,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":20,"text":" England captain Chris Robshaw is 'devastated' after his side ended up being RBS 6 Nations runners-up  at the weekend. The Harlequins openside was understandably disappointed not to get his hands on the trophy after an extraordinary final day as the Red Rose fell six points short of the required total, despite beating France 55-35 at Twickenham on Saturday evening. Instead it was Ireland who retained the title, with their 40-10 triumph over Scotland enough to overhaul a tough target set by Wales with their 61-20 win over Italy on what is already being touted as the greatest day in the","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":21,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":22,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":23,"text":" \nManchester United will fight till the very end to ensure they qualify for the Champions League. The Red Devils prepare for a make or break four game run-in. Di Maria sat out the win over Tottenham after being sent off for tugging referee Michael Oliver's shirt in United's FA Cup defeat to Arsenal. The £59.7million midfielder knows the next four fixtures - against Liverpool, Aston Villa, Manchester City and Chelsea will ultimately make or break United's season. Di Maria insists Manchester United will fight till the very end to ensure they qualify for the Champions league as the Red Devils prepare for a make or break four game run-in. Di","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":24,"text":" Connor Wickham is a talented footballer who has struggled to make an impact at Sunderland. He has been criticized for his extravagant spending and lack of self-awareness, but he has also been hampered by the instability at the club. Sunderland need to provide their players with the right guidance and environment to succeed, and Wickham deserves a chance to prove himself.","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":25,"text":"  The author of the Poldark series was furious with the BBC's portrayal of Demelza, the main character in the series, as a promiscuous woman. He wanted the show to be stopped, but he eventually came to embrace the show. The new version of the series, which is set to air tonight, stars Aidan Turner as Ross Poldark and Eleanor Tomlinson as Demelza. The author's daughter, Rosamund Barteau, runs a Poldark-themed guesthouse in Idaho. The bedrooms are named after the main characters in the series. The new version of the series is","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":26,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":27,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":28,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":29,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":30,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":31,"text":"  Li Tan, 23, from China, decided to stick sanitary pads to her boyfriend's car because she thought he was having an affair. She bought 30 sanitary towels and stuck them on his rental car as stunned passers-by watched on. Li then posted pictures of the Toyota online with the caption: 'That's right, I did it!!' She was soon swamped with messages of support from online viewers. De was somewhat bewildered when he returned home and tried to explain why he had been out all night. He showed her the reservation he had made online for a fancy restaurant and told her that all her friends were","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null}],"usage":{"prompt_tokens":31898,"total_tokens":32891,"completion_tokens":993,"prompt_tokens_details":null},"kv_transfer_params":null}INFO:root:API Query ID: 477781824, Query Index: 10330, Output Tokens: 0
+INFO:root:API Query ID: 477781856, Query Index: 10177, Output Tokens: 0
+INFO:root:API Query ID: 477781888, Query Index: 9407, Output Tokens: 128
+INFO:root:API Query ID: 477781920, Query Index: 10758, Output Tokens: 0
+INFO:root:API Query ID: 477781952, Query Index: 5096, Output Tokens: 0
+INFO:root:API Query ID: 477781984, Query Index: 8865, Output Tokens: 0
+INFO:root:API Query ID: 477782016, Query Index: 11838, Output Tokens: 0
+INFO:root:API Query ID: 477782048, Query Index: 8889, Output Tokens: 0
+INFO:root:API Query ID: 477782080, Query Index: 11043, Output Tokens: 0
+INFO:root:API Query ID: 477782112, Query Index: 7894, Output Tokens: 0
+INFO:root:API Query ID: 477782144, Query Index: 2200, Output Tokens: 128
+INFO:root:API Query ID: 477782176, Query Index: 11264, Output Tokens: 0
+INFO:root:API Query ID: 477782208, Query Index: 12480, Output Tokens: 0
+INFO:root:API Query ID: 477782240, Query Index: 6451, Output Tokens: 0
+INFO:root:API Query ID: 477782272, Query Index: 2872, Output Tokens: 0
+INFO:root:API Query ID: 477782304, Query Index: 7929, Output Tokens: 0
+INFO:root:API Query ID: 477782336, Query Index: 11842, Output Tokens: 128
+INFO:root:API Query ID: 477782368, Query Index: 10189, Output Tokens: 0
+INFO:root:API Query ID: 477782400, Query Index: 10266, Output Tokens: 0
+INFO:root:API Query ID: 477782432, Query Index: 7265, Output Tokens: 0
+INFO:root:API Query ID: 477782464, Query Index: 2708, Output Tokens: 128
+INFO:root:API Query ID: 477782496, Query Index: 9004, Output Tokens: 0
+INFO:root:API Query ID: 477782528, Query Index: 12348, Output Tokens: 0
+INFO:root:API Query ID: 477782560, Query Index: 4457, Output Tokens: 128
+INFO:root:API Query ID: 477782592, Query Index: 4105, Output Tokens: 72
+INFO:root:API Query ID: 477782624, Query Index: 8625, Output Tokens: 128
+INFO:root:API Query ID: 477782656, Query Index: 11907, Output Tokens: 0
+INFO:root:API Query ID: 477782688, Query Index: 10525, Output Tokens: 0
+INFO:root:API Query ID: 477782720, Query Index: 328, Output Tokens: 0
+INFO:root:API Query ID: 477782752, Query Index: 10585, Output Tokens: 0
+INFO:root:API Query ID: 477782784, Query Index: 9695, Output Tokens: 0
+INFO:root:API Query ID: 477782816, Query Index: 9047, Output Tokens: 128
+
+text_response:  
+text_response:  
+text_response:   A man who allegedly stabbed teenage twins leaving one'millimetres from death' is being hunted by police today. The suspect, who is described as  between 20 and 30-years-old, is accused of attacking the 16-year-old brothers with a'very sharp blade' following a party in Dilton Marsh, near Westbury in Wiltshire, last night. One of the boys remains in a serious but stable condition in Southmead Hospital in Bristol after the knife slashed his chest, only narrowly missing his heart. The suspect, who is described as between 20 and 30-years-old, is accused of attacking the
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   Stephen Curry had 24 points as the Golden State Warriors used a smothering defensive effort in the third quarter to pound the Washington Wizards 107-76 on Monday. The Warriors held the Wizards without a field goal for nearly 11 minutes after halftime, with Washington missing its first 15 shots. Golden State outscored the Wizards 29-8 in the quarter to take a 24-point lead. Curry also had six assists and five rebounds as the NBA-leading Warriors (57-13) moved closer to securing the league's top playoff seed. Golden State has a huge lead over Memphis (50-21) in the Western Conference
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   Nazir Afzal, a highly experienced lawyer, resigned from the Crown Prosecution Service despite being cleared of improper conduct. He was accused of sending a text message to a defendant. An internal inquiry exonerated him of any wrongdoing. But he nevertheless handed in his resignation as more senior colleagues insisted his departure is due to an 'on-going drive for efficiency'. The resignation is a direct blow to Director of Public Prosecutions Alison Saunders who has faced criticism for pursuing campaign agendas instead of serving the general public. Mr Afzal proved himself to be an outspoken advocate of bringing to justice those accused of the most heinous and sometimes sensitive offences
+text_response:  
+text_response:  
+text_response:  
+text_response:   England captain Chris Robshaw is 'devastated' after his side ended up being RBS 6 Nations runners-up  at the weekend. The Harlequins openside was understandably disappointed not to get his hands on the trophy after an extraordinary final day as the Red Rose fell six points short of the required total, despite beating France 55-35 at Twickenham on Saturday evening. Instead it was Ireland who retained the title, with their 40-10 triumph over Scotland enough to overhaul a tough target set by Wales with their 61-20 win over Italy on what is already being touted as the greatest day in the
+text_response:  
+text_response:  
+text_response:   
+Manchester United will fight till the very end to ensure they qualify for the Champions League. The Red Devils prepare for a make or break four game run-in. Di Maria sat out the win over Tottenham after being sent off for tugging referee Michael Oliver's shirt in United's FA Cup defeat to Arsenal. The £59.7million midfielder knows the next four fixtures - against Liverpool, Aston Villa, Manchester City and Chelsea will ultimately make or break United's season. Di Maria insists Manchester United will fight till the very end to ensure they qualify for the Champions league as the Red Devils prepare for a make or break four game run-in. Di
+text_response:   Connor Wickham is a talented footballer who has struggled to make an impact at Sunderland. He has been criticized for his extravagant spending and lack of self-awareness, but he has also been hampered by the instability at the club. Sunderland need to provide their players with the right guidance and environment to succeed, and Wickham deserves a chance to prove himself.
+text_response:    The author of the Poldark series was furious with the BBC's portrayal of Demelza, the main character in the series, as a promiscuous woman. He wanted the show to be stopped, but he eventually came to embrace the show. The new version of the series, which is set to air tonight, stars Aidan Turner as Ross Poldark and Eleanor Tomlinson as Demelza. The author's daughter, Rosamund Barteau, runs a Poldark-themed guesthouse in Idaho. The bedrooms are named after the main characters in the series. The new version of the series is
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:    Li Tan, 23, from China, decided to stick sanitary pads to her boyfriend's car because she thought he was having an affair. She bought 30 sanitary towels and stuck them on his rental car as stunned passers-by watched on. Li then posted pictures of the Toyota online with the caption: 'That's right, I did it!!' She was soon swamped with messages of support from online viewers. De was somewhat bewildered when he returned home and tried to explain why he had been out all night. He showed her the reservation he had made online for a fancy restaurant and told her that all her friends were
+response:  {"id":"cmpl-5e5bb9a119a64c389c233e98b42ecf72","object":"text_completion","created":1753232673,"model":"meta-llama/Llama-3.1-8B","choices":[{"index":0,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":1,"text":" \nThe couple has been married for 45 years and has a 42-year-old son. They moved back to the UK to care for Mr. Summers's sick mother. Border officials have questioned their relationship and denied Mrs. Summers's application for a permanent UK visa. The couple is trying to prove that their marriage is genuine for fear Mrs. Summers could be permanently excluded from the UK when her temporary tourist visa expires. They have five decades' worth of pictures to prove their long-running marriage is genuine. The couple met at a dance in Kingston, Ontario in 1966 while Mr. Summers was in the country working in retail and soon","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":2,"text":" A sprawling country estate with 600 acres of grounds, two chocolate-box cottages, and it own wooded island has gone on sale for just £8million. Green Farm, near to the village of Ashton in Northhamptonshire, also features a seven-bedroom farmhouse and it is the first time the property has been on the market for 150 years. Andrew Meikle, from estate agents Bletsoes, said this is a chance for people to own a picturesque piece of England 'as beautiful as anything in the Cotswolds', but for a fraction of the price. Sprawling: Green Farm estate features this seven bedroom","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":3,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":4,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":5,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":6,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":7,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":8,"text":" Smaller broadband providers have beaten bigger rivals in an annual customer satisfaction survey. While BT, Sky and TalkTalk all scored less than 50 per cent in the Which? poll, John Lewis Broadband, Zen Internet, Utility Warehouse and Plusnet achieved more than 70 per cent. John Lewis came top with 76 per cent while BT was bottom with 45 per cent, just below Sky and TalkTalk, both on 48. Smaller broadband providers have beaten bigger rivals in an annual customer satisfaction survey, with John Lewis (file picture) given the highest score. However, most of the 11 providers in the poll received only","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":9,"text":" Parisian women have always been known for their ability to look chic under any circumstances. As well as their sophisticated diet and their relaxed attitude to life, the women of the French capital have a few key rules to dressing that mean they nail it every time. Natalie Portman, who is married to the French dancer and choreographer Benjamin Millepied, revealed one of the key style points in an interview this weekend that has previously been unknown by many - that Parisian women don't wear shorts. Scroll down for video. Natalie Portman, 33, who married a Frenchman, says that Parisians would never wear shorts in the","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":10,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":11,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":12,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":13,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":14,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":15,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":16,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":17,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":18,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":19,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":20,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":21,"text":" A Pennsylvania woman high from smoking methamphetamine fatally shot her husband after mistaking him for an intruder. Police say the couple had argued after smoking the drug together and that Trista Zickefoose later heard a noise that she believed was from an intruder. She grabbed a 9mm pistol she kept under her pillow and fired a warning shot. Her husband tried to take the gun away from her, but she shot him in the chest. She remains jailed Tuesday on a charge of criminal homicide. Court records don't list an attorney for her. Neighbor Ray Chappel told WJAC 'Well, I was awake last","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":22,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":23,"text":" Newcastle United are willing to pay the £2million compensation fee for Derby County boss Steve McClaren, Sportsmail understands. Senior sources within St James’ Park are convinced that the former England manager will be their next head coach come the summer and say the £3.5m pocketed from Alan Pardew’s defection to Crystal Palace in January will cover the cost of his arrival. It is McClaren’s relationship with United’s chief scout Graham Carr – in essence, the club’s director of football – which is the driving force behind their move for the 53-year-old. Newcastle United are willing to pay the £2million compensation","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":24,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":25,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":26,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":27,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":28,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":29,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":30,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":31,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null}],"usage":{"prompt_tokens":23684,"total_tokens":24478,"completion_tokens":794,"prompt_tokens_details":null},"kv_transfer_params":null}INFO:root:API Query ID: 477782848, Query Index: 4659, Output Tokens: 0
+INFO:root:API Query ID: 477782880, Query Index: 9634, Output Tokens: 128
+INFO:root:API Query ID: 477782912, Query Index: 9817, Output Tokens: 128
+INFO:root:API Query ID: 477782944, Query Index: 13295, Output Tokens: 0
+INFO:root:API Query ID: 477782976, Query Index: 10843, Output Tokens: 0
+INFO:root:API Query ID: 477783008, Query Index: 3813, Output Tokens: 0
+INFO:root:API Query ID: 477783040, Query Index: 7546, Output Tokens: 0
+INFO:root:API Query ID: 477783072, Query Index: 10864, Output Tokens: 0
+INFO:root:API Query ID: 477783104, Query Index: 10527, Output Tokens: 128
+INFO:root:API Query ID: 477783136, Query Index: 13281, Output Tokens: 128
+INFO:root:API Query ID: 477783168, Query Index: 12203, Output Tokens: 0
+INFO:root:API Query ID: 477783200, Query Index: 6421, Output Tokens: 0
+INFO:root:API Query ID: 477783232, Query Index: 7032, Output Tokens: 0
+INFO:root:API Query ID: 477783264, Query Index: 10357, Output Tokens: 0
+INFO:root:API Query ID: 477783296, Query Index: 3998, Output Tokens: 0
+INFO:root:API Query ID: 477783328, Query Index: 10962, Output Tokens: 0
+INFO:root:API Query ID: 477783360, Query Index: 3752, Output Tokens: 0
+INFO:root:API Query ID: 477783392, Query Index: 8557, Output Tokens: 0
+INFO:root:API Query ID: 477783424, Query Index: 11382, Output Tokens: 0
+INFO:root:API Query ID: 477783456, Query Index: 9955, Output Tokens: 0
+INFO:root:API Query ID: 477783488, Query Index: 4601, Output Tokens: 0
+INFO:root:API Query ID: 477783520, Query Index: 10482, Output Tokens: 128
+INFO:root:API Query ID: 477783552, Query Index: 7347, Output Tokens: 0
+INFO:root:API Query ID: 477783584, Query Index: 3291, Output Tokens: 128
+INFO:root:API Query ID: 477783616, Query Index: 6511, Output Tokens: 0
+INFO:root:API Query ID: 477783648, Query Index: 11855, Output Tokens: 0
+INFO:root:API Query ID: 477783680, Query Index: 6162, Output Tokens: 0
+INFO:root:API Query ID: 477783712, Query Index: 9033, Output Tokens: 0
+INFO:root:API Query ID: 477783744, Query Index: 5105, Output Tokens: 0
+INFO:root:API Query ID: 477783776, Query Index: 8874, Output Tokens: 0
+INFO:root:API Query ID: 477783808, Query Index: 5164, Output Tokens: 0
+INFO:root:API Query ID: 477783840, Query Index: 10428, Output Tokens: 0
+
+text_response:  
+text_response:   
+The couple has been married for 45 years and has a 42-year-old son. They moved back to the UK to care for Mr. Summers's sick mother. Border officials have questioned their relationship and denied Mrs. Summers's application for a permanent UK visa. The couple is trying to prove that their marriage is genuine for fear Mrs. Summers could be permanently excluded from the UK when her temporary tourist visa expires. They have five decades' worth of pictures to prove their long-running marriage is genuine. The couple met at a dance in Kingston, Ontario in 1966 while Mr. Summers was in the country working in retail and soon
+text_response:   A sprawling country estate with 600 acres of grounds, two chocolate-box cottages, and it own wooded island has gone on sale for just £8million. Green Farm, near to the village of Ashton in Northhamptonshire, also features a seven-bedroom farmhouse and it is the first time the property has been on the market for 150 years. Andrew Meikle, from estate agents Bletsoes, said this is a chance for people to own a picturesque piece of England 'as beautiful as anything in the Cotswolds', but for a fraction of the price. Sprawling: Green Farm estate features this seven bedroom
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   Smaller broadband providers have beaten bigger rivals in an annual customer satisfaction survey. While BT, Sky and TalkTalk all scored less than 50 per cent in the Which? poll, John Lewis Broadband, Zen Internet, Utility Warehouse and Plusnet achieved more than 70 per cent. John Lewis came top with 76 per cent while BT was bottom with 45 per cent, just below Sky and TalkTalk, both on 48. Smaller broadband providers have beaten bigger rivals in an annual customer satisfaction survey, with John Lewis (file picture) given the highest score. However, most of the 11 providers in the poll received only
+text_response:   Parisian women have always been known for their ability to look chic under any circumstances. As well as their sophisticated diet and their relaxed attitude to life, the women of the French capital have a few key rules to dressing that mean they nail it every time. Natalie Portman, who is married to the French dancer and choreographer Benjamin Millepied, revealed one of the key style points in an interview this weekend that has previously been unknown by many - that Parisian women don't wear shorts. Scroll down for video. Natalie Portman, 33, who married a Frenchman, says that Parisians would never wear shorts in the
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   A Pennsylvania woman high from smoking methamphetamine fatally shot her husband after mistaking him for an intruder. Police say the couple had argued after smoking the drug together and that Trista Zickefoose later heard a noise that she believed was from an intruder. She grabbed a 9mm pistol she kept under her pillow and fired a warning shot. Her husband tried to take the gun away from her, but she shot him in the chest. She remains jailed Tuesday on a charge of criminal homicide. Court records don't list an attorney for her. Neighbor Ray Chappel told WJAC 'Well, I was awake last
+text_response:  
+text_response:   Newcastle United are willing to pay the £2million compensation fee for Derby County boss Steve McClaren, Sportsmail understands. Senior sources within St James’ Park are convinced that the former England manager will be their next head coach come the summer and say the £3.5m pocketed from Alan Pardew’s defection to Crystal Palace in January will cover the cost of his arrival. It is McClaren’s relationship with United’s chief scout Graham Carr – in essence, the club’s director of football – which is the driving force behind their move for the 53-year-old. Newcastle United are willing to pay the £2million compensation
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+response:  {"id":"cmpl-b87574be142b48b6a0b65ed884af6e89","object":"text_completion","created":1753232678,"model":"meta-llama/Llama-3.1-8B","choices":[{"index":0,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":1,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":2,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":3,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":4,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":5,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":6,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":7,"text":" Tracey Ullman is a British comedian who has made a fortune in the US. She is returning to the BBC with a six-episode sketch show. She made her fortune when her career took off in the US and now comedienne Tracey Ullman is set to mark her UK comeback - with a six-episode of her sketch show on BBC1. Worth an estimated £75million, the mother-of-two is a far cry from the star who was introduced to the public in Three of a Kind and A Kick Up the EIghties. And thanks to The Tracey Ullman show, she became one of","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":8,"text":" Jesus Rodriguez Rojas was arrested and charged with sex abuse and injuring a child after witnesses saw him touching his four-year-old niece inappropriately on a bus in Queens. The child was taken to the hospital for evaluation and it is unknown whether or not she will be placed with her other family members.","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":9,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":10,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":11,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":12,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":13,"text":" \nThe stickers were placed on the storefronts of several businesses in Austin, Texas, during the night between Tuesday and Wednesday. The stickers feature a message that reads 'Exclusively for white people' and 'Maximum of 5 colored customers/colored BOH staff accepted.' The stickers also feature what looks like an official City of Austin seal and the message'sponsored by the City of Austin Contemporary Partition and Restoration Program.' Austin Mayor Steve Adler condemned the stickers as an 'appalling and offensive display of ignorance' and said that the city had nothing to do with them. While some people believe that the stickers are a joke or a statement","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":14,"text":" Australia's cricket team was supported by fans in Sydney and Melbourne, and airline Qantas provided special headrests for the flight with the slogan '#GoGold'. The team celebrated their win over India in the World Cup semi-final, and will now face New Zealand in the final at the Melbourne Cricket Ground on Sunday.","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":15,"text":" A preliminary report detailing actor Harrison Ford's actions just seconds before he crash-landed his 1940s vintage plane on to a California golf course was today released by federal transport officials. The document, issued by the National Transportation Safety Board, describes how the 72-year-old actor reported an engine failure shortly after taking off from Santa Monica Airport last Thursday. He then alerted air traffic controllers and turned back toward the airport, the report states. However, as he did so, the aircraft struck the top of a tall tree. Seconds later, it crashed to the ground. The plane - which came to rest around 800 feet from the","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":16,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":17,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":18,"text":" Michael Douglas' son Dylan had a run-in with anti-Semitism -- and the actor wants to do something about it. In an opinion column for the Los Angeles Times, the producer and \"Wall Street\" Oscar winner described an incident last summer in an unidentified country in \"southern Europe.\" The older of his two children with actress Catherine Zeta-Jones, 14-year-old Dylan, came to his father in tears. \"A man at the pool had started hurling insults at him,\" Douglas writes. It wasn't because of anything Dylan did, he continued: \"Suddenly I had an awful realization of what might have caused the man's","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":19,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":20,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":21,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":22,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":23,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":24,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":25,"text":" The Battersea Arts Centre was destroyed by a fire on Friday, but the building was saved by firefighters. The fire was caused by a faulty electrical system, and the building was evacuated. The fire was contained to the roof, and the building was saved. The cause of the fire is still under investigation.","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":26,"text":" Formula One driver Giedo van der Garde's fight for a race seat for the 2015 season should move a step nearer to a conclusion on Wednesday. Van der Garde, who was axed as test driver by Sauber at the end of last season, claims he was promised a full-time race seat for the forthcoming campaign that begins in Australia this weekend. Sauber eventually hired Sweden's Marcus Ericsson and Brazilian Felipe Nasr, but Van der Garde has already seen an arbitration panel in Switzerland rule in his favour and is now looking for that decision to be enforced ahead of the season-opener. Giedo van Der Gar","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":27,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":28,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":29,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":30,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":31,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null}],"usage":{"prompt_tokens":25643,"total_tokens":26495,"completion_tokens":852,"prompt_tokens_details":null},"kv_transfer_params":null}INFO:root:API Query ID: 477783872, Query Index: 401, Output Tokens: 0
+INFO:root:API Query ID: 477783904, Query Index: 1724, Output Tokens: 0
+INFO:root:API Query ID: 477783936, Query Index: 2039, Output Tokens: 0
+INFO:root:API Query ID: 477783968, Query Index: 7910, Output Tokens: 0
+INFO:root:API Query ID: 477784000, Query Index: 1047, Output Tokens: 0
+INFO:root:API Query ID: 477784032, Query Index: 1919, Output Tokens: 0
+INFO:root:API Query ID: 477784064, Query Index: 5160, Output Tokens: 0
+INFO:root:API Query ID: 477784096, Query Index: 6647, Output Tokens: 128
+INFO:root:API Query ID: 477784128, Query Index: 9525, Output Tokens: 61
+INFO:root:API Query ID: 477784160, Query Index: 5806, Output Tokens: 0
+INFO:root:API Query ID: 477784192, Query Index: 9454, Output Tokens: 0
+INFO:root:API Query ID: 477784224, Query Index: 11801, Output Tokens: 0
+INFO:root:API Query ID: 477784256, Query Index: 10647, Output Tokens: 0
+INFO:root:API Query ID: 477784288, Query Index: 10992, Output Tokens: 128
+INFO:root:API Query ID: 477784320, Query Index: 2574, Output Tokens: 63
+INFO:root:API Query ID: 477784352, Query Index: 10325, Output Tokens: 128
+INFO:root:API Query ID: 477784384, Query Index: 6007, Output Tokens: 0
+INFO:root:API Query ID: 477784416, Query Index: 8780, Output Tokens: 0
+INFO:root:API Query ID: 477784448, Query Index: 238, Output Tokens: 128
+INFO:root:API Query ID: 477784480, Query Index: 11190, Output Tokens: 0
+INFO:root:API Query ID: 477784512, Query Index: 6831, Output Tokens: 0
+INFO:root:API Query ID: 477784544, Query Index: 4759, Output Tokens: 0
+INFO:root:API Query ID: 477784576, Query Index: 12564, Output Tokens: 0
+INFO:root:API Query ID: 477784608, Query Index: 10804, Output Tokens: 0
+INFO:root:API Query ID: 477784640, Query Index: 8615, Output Tokens: 0
+INFO:root:API Query ID: 477784672, Query Index: 13117, Output Tokens: 61
+INFO:root:API Query ID: 477784704, Query Index: 5220, Output Tokens: 128
+INFO:root:API Query ID: 477784736, Query Index: 3978, Output Tokens: 0
+INFO:root:API Query ID: 477784768, Query Index: 1107, Output Tokens: 0
+INFO:root:API Query ID: 477784800, Query Index: 11117, Output Tokens: 0
+INFO:root:API Query ID: 477784832, Query Index: 6821, Output Tokens: 0
+INFO:root:API Query ID: 477784864, Query Index: 10359, Output Tokens: 0
+
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   Tracey Ullman is a British comedian who has made a fortune in the US. She is returning to the BBC with a six-episode sketch show. She made her fortune when her career took off in the US and now comedienne Tracey Ullman is set to mark her UK comeback - with a six-episode of her sketch show on BBC1. Worth an estimated £75million, the mother-of-two is a far cry from the star who was introduced to the public in Three of a Kind and A Kick Up the EIghties. And thanks to The Tracey Ullman show, she became one of
+text_response:   Jesus Rodriguez Rojas was arrested and charged with sex abuse and injuring a child after witnesses saw him touching his four-year-old niece inappropriately on a bus in Queens. The child was taken to the hospital for evaluation and it is unknown whether or not she will be placed with her other family members.
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   
+The stickers were placed on the storefronts of several businesses in Austin, Texas, during the night between Tuesday and Wednesday. The stickers feature a message that reads 'Exclusively for white people' and 'Maximum of 5 colored customers/colored BOH staff accepted.' The stickers also feature what looks like an official City of Austin seal and the message'sponsored by the City of Austin Contemporary Partition and Restoration Program.' Austin Mayor Steve Adler condemned the stickers as an 'appalling and offensive display of ignorance' and said that the city had nothing to do with them. While some people believe that the stickers are a joke or a statement
+text_response:   Australia's cricket team was supported by fans in Sydney and Melbourne, and airline Qantas provided special headrests for the flight with the slogan '#GoGold'. The team celebrated their win over India in the World Cup semi-final, and will now face New Zealand in the final at the Melbourne Cricket Ground on Sunday.
+text_response:   A preliminary report detailing actor Harrison Ford's actions just seconds before he crash-landed his 1940s vintage plane on to a California golf course was today released by federal transport officials. The document, issued by the National Transportation Safety Board, describes how the 72-year-old actor reported an engine failure shortly after taking off from Santa Monica Airport last Thursday. He then alerted air traffic controllers and turned back toward the airport, the report states. However, as he did so, the aircraft struck the top of a tall tree. Seconds later, it crashed to the ground. The plane - which came to rest around 800 feet from the
+text_response:  
+text_response:  
+text_response:   Michael Douglas' son Dylan had a run-in with anti-Semitism -- and the actor wants to do something about it. In an opinion column for the Los Angeles Times, the producer and "Wall Street" Oscar winner described an incident last summer in an unidentified country in "southern Europe." The older of his two children with actress Catherine Zeta-Jones, 14-year-old Dylan, came to his father in tears. "A man at the pool had started hurling insults at him," Douglas writes. It wasn't because of anything Dylan did, he continued: "Suddenly I had an awful realization of what might have caused the man's
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   The Battersea Arts Centre was destroyed by a fire on Friday, but the building was saved by firefighters. The fire was caused by a faulty electrical system, and the building was evacuated. The fire was contained to the roof, and the building was saved. The cause of the fire is still under investigation.
+text_response:   Formula One driver Giedo van der Garde's fight for a race seat for the 2015 season should move a step nearer to a conclusion on Wednesday. Van der Garde, who was axed as test driver by Sauber at the end of last season, claims he was promised a full-time race seat for the forthcoming campaign that begins in Australia this weekend. Sauber eventually hired Sweden's Marcus Ericsson and Brazilian Felipe Nasr, but Van der Garde has already seen an arbitration panel in Switzerland rule in his favour and is now looking for that decision to be enforced ahead of the season-opener. Giedo van Der Gar
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+response:  {"id":"cmpl-e6dc7dae7c764f82b7b30033c64a01a9","object":"text_completion","created":1753232684,"model":"meta-llama/Llama-3.1-8B","choices":[{"index":0,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":1,"text":" New York City has spent $18 million in five years unclogging 'flushable' wet wipes from the sewer system. As the products have become increasingly popular, many manufacturers claim to have 'adapted' them to biodegrade when flushed. But the city's waste management directors have told the New York Times: that is not the case. 'Indestructible': Wet wipes branded as 'flushable' have been clogging up the system by twisting into knots. When the wipes twist into a knot and mix with grease or oil, they are'really indestructible,' deputy commissioner Vincent Sapienza of the Department of Environmental Protection","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":2,"text":" Christine Hamilton is turning businesswoman and has sunk her cash into a slimming drink that she credits with helping her drop a dress size. Christine, pictured below with husband Neil, the former Tory MP, is set to become the face of £19-per-pack SLIM-BE Shots. The powdered drink contains konjac, a jelly-like substance made from a Japanese plant, which aids weight loss by gently expanding in the stomach to give a feeling of fullness. Christine Hamilton, pictured right with her husband Neil, is set to be the face of £19-per-pack SLIM-BE Shots. Christine, 65, isn’t saying just","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":3,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":4,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":5,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":6,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":7,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":8,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":9,"text":" A chimpanzee who was allegedly left isolated in a 'hell hole' for years has finally found romance after being rescued and re-homed. Keepers at the 150-acre Save the Chimps sanctuary in Fort Pierce, Florida, say it was 'love at first sight' when 32-year-old Iris clapped eyes on 40-year-old Abdul last month. Apparently the pair have been inseparable and heartwarming footage shows the pair lovingly kissing each other. In March 2015 Iris was retrieved from a roadside zoo in Georgia following an undercover PETA investigation. She had reportedly been kept alone in a 'tiny, barren,","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":10,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":11,"text":" James DeGale will fight Andre Dirrell in Boston on May 23 for the IBF super-middleweight title. The 29-year-old had hoped for home advantage but his promoter Eddie Hearn lost out when the fight went to purse bids earlier this month. DeGale will, however, earn a minimum of $1.5million (£1m) from the bout. DeGale will fight for the IBF belt which was vacated by Carl Froch. Andre Dirrell has lost one professional fight in his career - to Carl Froch back in 2009. 'Andre Dirrell is a very, very good","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":12,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":13,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":14,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":15,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":16,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":17,"text":" England have fallen behind the likes of Romania and Czech Republic in the latest FIFA rankings. Three Lions manager Roy Hodgson has seen his side fallen despite being unbeaten since the World Cup. A team’s total number of points over a four-year period is determined by adding:. The average number of points gained from matches during the past 12 months. And, the average number of points gained from matches older than 12 months (depreciates yearly). Meanwhile, 2010 World Cup winners and reigning European champions Spain have fallen out of the top 10 in FIFA's rankings for the first time since 2007. World Cup winners Germany","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":18,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":19,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":20,"text":" A seven-year-old boy was killed when a heavy goods vehicle collided with the car he was travelling in. The youngster was sitting in a silver Toyota which was driving on an A-road in Buckinghamshire when it collided with a blue DAF lorry. Paramedics and an air ambulance crew raced to the scene but the youngster was declared dead at the scene. The seven-year-old boy died following the collision on the Stoke Hammond by-pass in Buckinghamshire. Three people were taken to the John Radcliffe Hospital in Oxford with serious injuries and the road was closed for several hours while investigators gathered evidence. A Thames Valley Police spokesman said: 'At ","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":21,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":22,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":23,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":24,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":25,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":26,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":27,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":28,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":29,"text":" Vladimir Putin has put on a show of Russia's military strength after mobilizing the entire 'Northern Fleet' of 45,000 troops, 41 ships, 15 submarines and 110 aircraft. In what was one of the Kremlin's biggest shows of force since its ties with the West plunged to Cold War-lows, the exercises seemed to be aimed at dwarfing Nato drills in neighboring Norway. President Mr Putin - who has promised to spend more than 21 trillion roubles (£228billion) by the end of the decade to overhaul Russia's fighting forces - called the fleet to full combat readiness. Full combat readiness: Russian","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":30,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":31,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null}],"usage":{"prompt_tokens":26234,"total_tokens":27155,"completion_tokens":921,"prompt_tokens_details":null},"kv_transfer_params":null}INFO:root:API Query ID: 477784896, Query Index: 98, Output Tokens: 0
+INFO:root:API Query ID: 477784928, Query Index: 1751, Output Tokens: 128
+INFO:root:API Query ID: 477784960, Query Index: 12723, Output Tokens: 128
+INFO:root:API Query ID: 477784992, Query Index: 3735, Output Tokens: 0
+INFO:root:API Query ID: 477785024, Query Index: 8751, Output Tokens: 0
+INFO:root:API Query ID: 477785056, Query Index: 3165, Output Tokens: 0
+INFO:root:API Query ID: 477785088, Query Index: 2566, Output Tokens: 0
+INFO:root:API Query ID: 477785120, Query Index: 7514, Output Tokens: 0
+INFO:root:API Query ID: 477785152, Query Index: 427, Output Tokens: 0
+INFO:root:API Query ID: 477785184, Query Index: 11793, Output Tokens: 128
+INFO:root:API Query ID: 477785216, Query Index: 12913, Output Tokens: 0
+INFO:root:API Query ID: 477785248, Query Index: 2568, Output Tokens: 128
+INFO:root:API Query ID: 477785280, Query Index: 12495, Output Tokens: 0
+INFO:root:API Query ID: 477785312, Query Index: 13336, Output Tokens: 0
+INFO:root:API Query ID: 477785344, Query Index: 7031, Output Tokens: 0
+INFO:root:API Query ID: 477785376, Query Index: 12005, Output Tokens: 0
+INFO:root:API Query ID: 477785408, Query Index: 6515, Output Tokens: 0
+INFO:root:API Query ID: 477785440, Query Index: 3847, Output Tokens: 128
+INFO:root:API Query ID: 477785472, Query Index: 8972, Output Tokens: 0
+INFO:root:API Query ID: 477785504, Query Index: 11765, Output Tokens: 0
+INFO:root:API Query ID: 477785536, Query Index: 12394, Output Tokens: 128
+INFO:root:API Query ID: 477785568, Query Index: 4908, Output Tokens: 0
+INFO:root:API Query ID: 477785600, Query Index: 6516, Output Tokens: 0
+INFO:root:API Query ID: 477785632, Query Index: 13069, Output Tokens: 0
+INFO:root:API Query ID: 477785664, Query Index: 4836, Output Tokens: 0
+INFO:root:API Query ID: 477785696, Query Index: 4109, Output Tokens: 0
+INFO:root:API Query ID: 477785728, Query Index: 17, Output Tokens: 0
+INFO:root:API Query ID: 477785760, Query Index: 11120, Output Tokens: 0
+INFO:root:API Query ID: 477785792, Query Index: 3836, Output Tokens: 0
+INFO:root:API Query ID: 477785824, Query Index: 7655, Output Tokens: 128
+INFO:root:API Query ID: 477785856, Query Index: 11035, Output Tokens: 0
+INFO:root:API Query ID: 477785888, Query Index: 391, Output Tokens: 0
+
+text_response:  
+text_response:   New York City has spent $18 million in five years unclogging 'flushable' wet wipes from the sewer system. As the products have become increasingly popular, many manufacturers claim to have 'adapted' them to biodegrade when flushed. But the city's waste management directors have told the New York Times: that is not the case. 'Indestructible': Wet wipes branded as 'flushable' have been clogging up the system by twisting into knots. When the wipes twist into a knot and mix with grease or oil, they are'really indestructible,' deputy commissioner Vincent Sapienza of the Department of Environmental Protection
+text_response:   Christine Hamilton is turning businesswoman and has sunk her cash into a slimming drink that she credits with helping her drop a dress size. Christine, pictured below with husband Neil, the former Tory MP, is set to become the face of £19-per-pack SLIM-BE Shots. The powdered drink contains konjac, a jelly-like substance made from a Japanese plant, which aids weight loss by gently expanding in the stomach to give a feeling of fullness. Christine Hamilton, pictured right with her husband Neil, is set to be the face of £19-per-pack SLIM-BE Shots. Christine, 65, isn’t saying just
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   A chimpanzee who was allegedly left isolated in a 'hell hole' for years has finally found romance after being rescued and re-homed. Keepers at the 150-acre Save the Chimps sanctuary in Fort Pierce, Florida, say it was 'love at first sight' when 32-year-old Iris clapped eyes on 40-year-old Abdul last month. Apparently the pair have been inseparable and heartwarming footage shows the pair lovingly kissing each other. In March 2015 Iris was retrieved from a roadside zoo in Georgia following an undercover PETA investigation. She had reportedly been kept alone in a 'tiny, barren,
+text_response:  
+text_response:   James DeGale will fight Andre Dirrell in Boston on May 23 for the IBF super-middleweight title. The 29-year-old had hoped for home advantage but his promoter Eddie Hearn lost out when the fight went to purse bids earlier this month. DeGale will, however, earn a minimum of $1.5million (£1m) from the bout. DeGale will fight for the IBF belt which was vacated by Carl Froch. Andre Dirrell has lost one professional fight in his career - to Carl Froch back in 2009. 'Andre Dirrell is a very, very good
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   England have fallen behind the likes of Romania and Czech Republic in the latest FIFA rankings. Three Lions manager Roy Hodgson has seen his side fallen despite being unbeaten since the World Cup. A team’s total number of points over a four-year period is determined by adding:. The average number of points gained from matches during the past 12 months. And, the average number of points gained from matches older than 12 months (depreciates yearly). Meanwhile, 2010 World Cup winners and reigning European champions Spain have fallen out of the top 10 in FIFA's rankings for the first time since 2007. World Cup winners Germany
+text_response:  
+text_response:  
+text_response:   A seven-year-old boy was killed when a heavy goods vehicle collided with the car he was travelling in. The youngster was sitting in a silver Toyota which was driving on an A-road in Buckinghamshire when it collided with a blue DAF lorry. Paramedics and an air ambulance crew raced to the scene but the youngster was declared dead at the scene. The seven-year-old boy died following the collision on the Stoke Hammond by-pass in Buckinghamshire. Three people were taken to the John Radcliffe Hospital in Oxford with serious injuries and the road was closed for several hours while investigators gathered evidence. A Thames Valley Police spokesman said: 'At 
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   Vladimir Putin has put on a show of Russia's military strength after mobilizing the entire 'Northern Fleet' of 45,000 troops, 41 ships, 15 submarines and 110 aircraft. In what was one of the Kremlin's biggest shows of force since its ties with the West plunged to Cold War-lows, the exercises seemed to be aimed at dwarfing Nato drills in neighboring Norway. President Mr Putin - who has promised to spend more than 21 trillion roubles (£228billion) by the end of the decade to overhaul Russia's fighting forces - called the fleet to full combat readiness. Full combat readiness: Russian
+text_response:  
+text_response:  
+response:  {"id":"cmpl-a0487fa34ea54f24a9d7541dff2ea773","object":"text_completion","created":1753232689,"model":"meta-llama/Llama-3.1-8B","choices":[{"index":0,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":1,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":2,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":3,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":4,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":5,"text":" The Rock, a WWE legend, has hinted on Instagram that he is a Liverpool fan by posing with a 'You'll Never Walk Alone' artwork. He spent time in Liverpool filming scenes for Fast and the Furious 6. The Rock may have taken a liking to the red side of Liverpool. He knows his stuff as he gives his followers a brief history on the famous song. Juan Mata pulled off an incredible scissor-kick against Liverpool as Manchester United won 2-1 at Anfield. The Rock clearly knows his stuff as he gives his followers a brief history on the famous song. Juan Mata pulled off an incredible scissor-k","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":6,"text":" Australia's property market is continuously booming, with house prices soaring through the roof - but unfortunately for prospective property buyers, it's showing no sign of slowing down. An auction of a quaint, unrenovated Surry Hills home on Saturday reaped surprising bids, with the owner of the property managing to bag a whooping $1.5 million for the home, which didn't even have a bathroom and had holes in the ceiling. On the same day, a stunning beachfront home, owned by former TV comedian John 'Strop' Cornell, in the stylish area of Belongil in Byron Bay was picked up by Harvey Norman","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":7,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":8,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":9,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":10,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":11,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":12,"text":" A mother was left with a paralysed face and in agonising pain after being bitten by a tick in her own back garden. Claire Dean, 43, noticed an insect bite on her hip while gardening in September last year, but thought nothing of it. A few days later she began suffering mysterious flu-like symptoms, and soon found herself in crippling pain. A few days later she woke up with numb cheeks and noticed her face was paralysed - to the point where she looked unrecognisable in the mirror. She was in such agony she had to quit her job as a cleaner and was hospitalised for two weeks","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":13,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":14,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":15,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":16,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":17,"text":" Tori Spelling was taken to an emergency room in LA on Friday by her husband, Dean McDermott, adding to what has been a sickness-plagued 12 months for the reality star. The 41-year-old mother-of-four appeared pale and tired as she stepped out of the passenger side of her husband's black Ford Flex station wagon at Encino Hospital Medical Center. Wrapped in a cardigan and beanie, she then took herself into the emergency room. Spelling was seeking treatment for a migraine, which she tweeted about the next day. She was last hospitalized in October. Emergency: A tired-looking Tori Spelling","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":18,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":19,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":20,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":21,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":22,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":23,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":24,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":25,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":26,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":27,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":28,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":29,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":30,"text":" \nSean Dyche's Burnley earned a shock win against Manchester City to boost their survival hopes and all but end the Manuel Pellegrini's side's hopes of catching Chelsea at the top of the table. The only goal of the game came from midfielder George Boyd who expertly fired home a volley past Joe Hart in the City goal. Burnley's win sends them above relegation threatened QPR and leaves Manchester City five points adrift of Chelsea having played two more games than their west London rivals. Find out how each player fared at Turf Moor with Sportmail's Craig Hope. BURNLEY (4-4-","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":31,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null}],"usage":{"prompt_tokens":27586,"total_tokens":28253,"completion_tokens":667,"prompt_tokens_details":null},"kv_transfer_params":null}INFO:root:API Query ID: 477785920, Query Index: 4848, Output Tokens: 0
+INFO:root:API Query ID: 477785952, Query Index: 11082, Output Tokens: 0
+INFO:root:API Query ID: 477785984, Query Index: 5610, Output Tokens: 0
+INFO:root:API Query ID: 477786016, Query Index: 3440, Output Tokens: 0
+INFO:root:API Query ID: 477786048, Query Index: 3101, Output Tokens: 0
+INFO:root:API Query ID: 477786080, Query Index: 4860, Output Tokens: 128
+INFO:root:API Query ID: 477786112, Query Index: 11153, Output Tokens: 128
+INFO:root:API Query ID: 477786144, Query Index: 868, Output Tokens: 0
+INFO:root:API Query ID: 477786176, Query Index: 756, Output Tokens: 0
+INFO:root:API Query ID: 477786208, Query Index: 7129, Output Tokens: 0
+INFO:root:API Query ID: 477786240, Query Index: 6071, Output Tokens: 0
+INFO:root:API Query ID: 477786272, Query Index: 1309, Output Tokens: 0
+INFO:root:API Query ID: 477786304, Query Index: 8588, Output Tokens: 128
+INFO:root:API Query ID: 477786336, Query Index: 9427, Output Tokens: 0
+INFO:root:API Query ID: 477786368, Query Index: 5168, Output Tokens: 0
+INFO:root:API Query ID: 477786400, Query Index: 4653, Output Tokens: 0
+INFO:root:API Query ID: 477786432, Query Index: 11244, Output Tokens: 0
+INFO:root:API Query ID: 477786464, Query Index: 7106, Output Tokens: 128
+INFO:root:API Query ID: 477786496, Query Index: 3834, Output Tokens: 0
+INFO:root:API Query ID: 477786528, Query Index: 188, Output Tokens: 0
+INFO:root:API Query ID: 477786560, Query Index: 3772, Output Tokens: 0
+INFO:root:API Query ID: 477786592, Query Index: 3969, Output Tokens: 0
+INFO:root:API Query ID: 477786624, Query Index: 9172, Output Tokens: 0
+INFO:root:API Query ID: 477786656, Query Index: 3578, Output Tokens: 0
+INFO:root:API Query ID: 477786688, Query Index: 1485, Output Tokens: 0
+INFO:root:API Query ID: 477786720, Query Index: 9647, Output Tokens: 0
+INFO:root:API Query ID: 477786752, Query Index: 11607, Output Tokens: 0
+INFO:root:API Query ID: 477786784, Query Index: 10309, Output Tokens: 0
+INFO:root:API Query ID: 477786816, Query Index: 3387, Output Tokens: 0
+INFO:root:API Query ID: 477786848, Query Index: 20, Output Tokens: 0
+INFO:root:API Query ID: 477786880, Query Index: 1869, Output Tokens: 128
+INFO:root:API Query ID: 477786912, Query Index: 8568, Output Tokens: 0
+
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   The Rock, a WWE legend, has hinted on Instagram that he is a Liverpool fan by posing with a 'You'll Never Walk Alone' artwork. He spent time in Liverpool filming scenes for Fast and the Furious 6. The Rock may have taken a liking to the red side of Liverpool. He knows his stuff as he gives his followers a brief history on the famous song. Juan Mata pulled off an incredible scissor-kick against Liverpool as Manchester United won 2-1 at Anfield. The Rock clearly knows his stuff as he gives his followers a brief history on the famous song. Juan Mata pulled off an incredible scissor-k
+text_response:   Australia's property market is continuously booming, with house prices soaring through the roof - but unfortunately for prospective property buyers, it's showing no sign of slowing down. An auction of a quaint, unrenovated Surry Hills home on Saturday reaped surprising bids, with the owner of the property managing to bag a whooping $1.5 million for the home, which didn't even have a bathroom and had holes in the ceiling. On the same day, a stunning beachfront home, owned by former TV comedian John 'Strop' Cornell, in the stylish area of Belongil in Byron Bay was picked up by Harvey Norman
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   A mother was left with a paralysed face and in agonising pain after being bitten by a tick in her own back garden. Claire Dean, 43, noticed an insect bite on her hip while gardening in September last year, but thought nothing of it. A few days later she began suffering mysterious flu-like symptoms, and soon found herself in crippling pain. A few days later she woke up with numb cheeks and noticed her face was paralysed - to the point where she looked unrecognisable in the mirror. She was in such agony she had to quit her job as a cleaner and was hospitalised for two weeks
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   Tori Spelling was taken to an emergency room in LA on Friday by her husband, Dean McDermott, adding to what has been a sickness-plagued 12 months for the reality star. The 41-year-old mother-of-four appeared pale and tired as she stepped out of the passenger side of her husband's black Ford Flex station wagon at Encino Hospital Medical Center. Wrapped in a cardigan and beanie, she then took herself into the emergency room. Spelling was seeking treatment for a migraine, which she tweeted about the next day. She was last hospitalized in October. Emergency: A tired-looking Tori Spelling
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   
+Sean Dyche's Burnley earned a shock win against Manchester City to boost their survival hopes and all but end the Manuel Pellegrini's side's hopes of catching Chelsea at the top of the table. The only goal of the game came from midfielder George Boyd who expertly fired home a volley past Joe Hart in the City goal. Burnley's win sends them above relegation threatened QPR and leaves Manchester City five points adrift of Chelsea having played two more games than their west London rivals. Find out how each player fared at Turf Moor with Sportmail's Craig Hope. BURNLEY (4-4-
+text_response:  
+response:  {"id":"cmpl-0f8e8f895cb243d4bcd9737589a5d252","object":"text_completion","created":1753232695,"model":"meta-llama/Llama-3.1-8B","choices":[{"index":0,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":1,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":2,"text":" Bradley Wright-Phillips, the top goal scorer in MLS last season, is going to have to adjust to a new strike partner and a revamped roster. The Red Bulls have added midfielders Sacha Kljestan and Felipe Martins and striker Mike Grella, but the chemistry was lacking up front in the season opener. The team could have helped Wright-Phillips more in the opening game, and he will have to make better runs and the team will have to look for him more. Wright-Phillips isn't interested in heading back to England, where he played for Manchester City, Southampton, Plymouth Argyle, Charlton Athletic and","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":3,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":4,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":5,"text":" Bayern Munich will be without winger Arjen Robben for several weeks after he suffered a stomach muscle tear in the shock 2-0 defeat to Borussia Monchengladbach on Sunday. Robben, who has only recently returned from a back injury, was taken off after just 24 minutes following a challenge from Gladbach's Tony Jantschke. The Dutchman could now be a doubt for Bayern's Champions League quarter-final first leg against Porto on April 15 with the club saying he would be out 'for several weeks.' Arjen Robben tore a stomach muscle in Bayern Munich's loss to Borussia Monchengladbach","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":6,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":7,"text":" Annie Ramsay, 8, was walking to the park with friends when she was attacked by a dog last week. An eight-year-old girl has been left eating through a syringe after she was attacked by a springer spaniel that tore a centimetre off her lip and bit through her cheek. Annie Ramsay was walking with her friends near her home in Whittle-le-Woods, Lancashire, on Thursday when she bent down to stroke the dog as it made its way out of a park with its owner. Her friend stroked the animal first before Annie did the same but the spaniel, which was known to her","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":8,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":9,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":10,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":11,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":12,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":13,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":14,"text":" With his thick beard and fearsome axe, Abu Azrael is one of the most recognisable soldiers fighting among the Iraqi forces against ISIS. Nicknamed the 'father of archangel of death' in Arabic, Abu Azrael has become the poster boy of the Imam Ali brigade, a Iraqi Shi'a militia group sponsored by Iran. He is believed to be a 40-year-old former university lecturer, who left his home to fight Islamic State back in June 2014. Iraqi warrior: With his thick beard and fearsome axe, Abu Azrael is one of the most feared soldiers among the Iraqi forces fighting ISIS. Such is his fame","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":15,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":16,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":17,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":18,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":19,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":20,"text":" Renault is considering leaving Formula One because of the damage done to its reputation after a difficult start to the season. Renault Sport F1 managing director Cyril Abiteboul said he is looking at his options, including getting out of Formula One. However, Abiteboul was also asked whether Renault was weighing up the option of buying an existing F1 team and becoming a race constructor again. The team principal of Toro Rosso, which is considered to be a takeover target if Renault took that step, said the Italy-based team would be receptive to an offer from Renault. Red Bull team principal Christian Horner said such a change may leave the","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":21,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":22,"text":" West Bromwich Albion midfielder Chris Brunt has been suspended for one match and fined £8,000 after accepting a Football Association misconduct charge. The 30-year-old had requested a personal hearing after being charged with using abusive and/or insulting words and/or behaviour towards a match official in or around the tunnel area after the final whistle following Albion's 2-0 FA Cup defeat to Aston Villa this month. Brunt is banned with immediate effect and will miss Saturday's Barclays Premier League trip to Manchester City. West Bromwich Albion midfielder has been handed a one match ban and an £8,000 fine by the FA. Br","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":23,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":24,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":25,"text":" Seren Bundy-Davies won a 400m bronze medal at the European Indoor Championships in Prague. She had not broken 54sec until last year but has been running well this year. She was controversially beaten by Nataliya Pyhyda, who has served a two-year ban for taking anabolic steroid stanozolol. Jenny Meadows is through to Sunday's 800m final after Russian Anastasiya Bazdyreva was disqualified for running outside the track. Meadows finished fourth in her semi-final but has been suffering from a bad cold all week. Gold medal winner Nataliya Pyhyda, silver medal winner Ind","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":26,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":27,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":28,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":29,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":30,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":31,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null}],"usage":{"prompt_tokens":25945,"total_tokens":26866,"completion_tokens":921,"prompt_tokens_details":null},"kv_transfer_params":null}INFO:root:API Query ID: 477786944, Query Index: 13202, Output Tokens: 0
+INFO:root:API Query ID: 477786976, Query Index: 8270, Output Tokens: 0
+INFO:root:API Query ID: 477787008, Query Index: 1876, Output Tokens: 128
+INFO:root:API Query ID: 477787040, Query Index: 8084, Output Tokens: 0
+INFO:root:API Query ID: 477787072, Query Index: 177, Output Tokens: 0
+INFO:root:API Query ID: 477787104, Query Index: 1979, Output Tokens: 128
+INFO:root:API Query ID: 477787136, Query Index: 6871, Output Tokens: 0
+INFO:root:API Query ID: 477787168, Query Index: 9212, Output Tokens: 128
+INFO:root:API Query ID: 477787200, Query Index: 97, Output Tokens: 0
+INFO:root:API Query ID: 477787232, Query Index: 3696, Output Tokens: 0
+INFO:root:API Query ID: 477787264, Query Index: 5517, Output Tokens: 0
+INFO:root:API Query ID: 477787296, Query Index: 3444, Output Tokens: 0
+INFO:root:API Query ID: 477787328, Query Index: 6322, Output Tokens: 0
+INFO:root:API Query ID: 477787360, Query Index: 11129, Output Tokens: 0
+INFO:root:API Query ID: 477787392, Query Index: 7601, Output Tokens: 128
+INFO:root:API Query ID: 477787424, Query Index: 5296, Output Tokens: 0
+INFO:root:API Query ID: 477787456, Query Index: 88, Output Tokens: 0
+INFO:root:API Query ID: 477787488, Query Index: 10137, Output Tokens: 0
+INFO:root:API Query ID: 477787520, Query Index: 11396, Output Tokens: 0
+INFO:root:API Query ID: 477787552, Query Index: 13012, Output Tokens: 0
+INFO:root:API Query ID: 477787584, Query Index: 2341, Output Tokens: 128
+INFO:root:API Query ID: 477787616, Query Index: 13148, Output Tokens: 0
+INFO:root:API Query ID: 477787648, Query Index: 4267, Output Tokens: 128
+INFO:root:API Query ID: 477787680, Query Index: 86, Output Tokens: 0
+INFO:root:API Query ID: 477787712, Query Index: 8937, Output Tokens: 0
+INFO:root:API Query ID: 477787744, Query Index: 3315, Output Tokens: 128
+INFO:root:API Query ID: 477787776, Query Index: 9617, Output Tokens: 0
+INFO:root:API Query ID: 477787808, Query Index: 9718, Output Tokens: 0
+INFO:root:API Query ID: 477787840, Query Index: 5223, Output Tokens: 0
+INFO:root:API Query ID: 477787872, Query Index: 7908, Output Tokens: 0
+INFO:root:API Query ID: 477787904, Query Index: 10854, Output Tokens: 0
+INFO:root:API Query ID: 477787936, Query Index: 12755, Output Tokens: 0
+
+text_response:  
+text_response:  
+text_response:   Bradley Wright-Phillips, the top goal scorer in MLS last season, is going to have to adjust to a new strike partner and a revamped roster. The Red Bulls have added midfielders Sacha Kljestan and Felipe Martins and striker Mike Grella, but the chemistry was lacking up front in the season opener. The team could have helped Wright-Phillips more in the opening game, and he will have to make better runs and the team will have to look for him more. Wright-Phillips isn't interested in heading back to England, where he played for Manchester City, Southampton, Plymouth Argyle, Charlton Athletic and
+text_response:  
+text_response:  
+text_response:   Bayern Munich will be without winger Arjen Robben for several weeks after he suffered a stomach muscle tear in the shock 2-0 defeat to Borussia Monchengladbach on Sunday. Robben, who has only recently returned from a back injury, was taken off after just 24 minutes following a challenge from Gladbach's Tony Jantschke. The Dutchman could now be a doubt for Bayern's Champions League quarter-final first leg against Porto on April 15 with the club saying he would be out 'for several weeks.' Arjen Robben tore a stomach muscle in Bayern Munich's loss to Borussia Monchengladbach
+text_response:  
+text_response:   Annie Ramsay, 8, was walking to the park with friends when she was attacked by a dog last week. An eight-year-old girl has been left eating through a syringe after she was attacked by a springer spaniel that tore a centimetre off her lip and bit through her cheek. Annie Ramsay was walking with her friends near her home in Whittle-le-Woods, Lancashire, on Thursday when she bent down to stroke the dog as it made its way out of a park with its owner. Her friend stroked the animal first before Annie did the same but the spaniel, which was known to her
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   With his thick beard and fearsome axe, Abu Azrael is one of the most recognisable soldiers fighting among the Iraqi forces against ISIS. Nicknamed the 'father of archangel of death' in Arabic, Abu Azrael has become the poster boy of the Imam Ali brigade, a Iraqi Shi'a militia group sponsored by Iran. He is believed to be a 40-year-old former university lecturer, who left his home to fight Islamic State back in June 2014. Iraqi warrior: With his thick beard and fearsome axe, Abu Azrael is one of the most feared soldiers among the Iraqi forces fighting ISIS. Such is his fame
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   Renault is considering leaving Formula One because of the damage done to its reputation after a difficult start to the season. Renault Sport F1 managing director Cyril Abiteboul said he is looking at his options, including getting out of Formula One. However, Abiteboul was also asked whether Renault was weighing up the option of buying an existing F1 team and becoming a race constructor again. The team principal of Toro Rosso, which is considered to be a takeover target if Renault took that step, said the Italy-based team would be receptive to an offer from Renault. Red Bull team principal Christian Horner said such a change may leave the
+text_response:  
+text_response:   West Bromwich Albion midfielder Chris Brunt has been suspended for one match and fined £8,000 after accepting a Football Association misconduct charge. The 30-year-old had requested a personal hearing after being charged with using abusive and/or insulting words and/or behaviour towards a match official in or around the tunnel area after the final whistle following Albion's 2-0 FA Cup defeat to Aston Villa this month. Brunt is banned with immediate effect and will miss Saturday's Barclays Premier League trip to Manchester City. West Bromwich Albion midfielder has been handed a one match ban and an £8,000 fine by the FA. Br
+text_response:  
+text_response:  
+text_response:   Seren Bundy-Davies won a 400m bronze medal at the European Indoor Championships in Prague. She had not broken 54sec until last year but has been running well this year. She was controversially beaten by Nataliya Pyhyda, who has served a two-year ban for taking anabolic steroid stanozolol. Jenny Meadows is through to Sunday's 800m final after Russian Anastasiya Bazdyreva was disqualified for running outside the track. Meadows finished fourth in her semi-final but has been suffering from a bad cold all week. Gold medal winner Nataliya Pyhyda, silver medal winner Ind
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+response:  {"id":"cmpl-46289f818b6043ea890b7e5578730a1e","object":"text_completion","created":1753232701,"model":"meta-llama/Llama-3.1-8B","choices":[{"index":0,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":1,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":2,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":3,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":4,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":5,"text":" The University of Washington is investigating allegations that fraternity members made racial slurs and obscene gestures to black students as they marched past the fraternity house during a protest. The Seattle Times reports that students allege several white men shouted the comments from the Sigma Alpha Epsilon house as demonstrators passed Feb. 25. The protesters were in a Black Lives Matter march to raise awareness about racism. The University of Washington is investigating allegations SAE fraternity members made racial slurs and obscene gestures to black students marching in protest. Several students from the University of Oklahoma chapter captured here on video performing their racist song say they've received death threats. The fraternity's chapter president,","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":6,"text":" Three Ajax youth team players were suspended on Friday pending an investigation into the beating of an undercover policewoman. The players were identified by Dutch media as 18-year-old forward Zakaria El Azzouzi, midfielder Ashraf El Mahdioui, also 18, and Samet Bulut, a 19-year-old forward. Police questioned them about the beating on Thursday of a police woman dressed in plain clothes who reportedly honked her car horn at them. Ajax boss Frank de Boer shouts instructions during his side's defeat to Dnipro in the Europa League. Dnipro's players celebrate Roman Zozulya (","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":7,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":8,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":9,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":10,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":11,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":12,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":13,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":14,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":15,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":16,"text":" Australia beat Scotland by seven wickets in Hobart on Saturday. Michael Clarke top-scored with 47 as Australia beat Scotland by seven wickets in Hobart on Saturday. Clarke plays a pull shot before there was an hour and a half break in play due to rain. It was a dominant performance by Australia starting with their bowling attack. Starc accounted for opening batsmen Kyle Coetzer (nought) and Calum MacLeod (22) before returning to bowl out Josh Davey (26) and last man Iain Wardlaw (nought). Matt Machan offered some brief resistance with a knock of 40 before being","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":17,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":18,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":19,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":20,"text":" Majid Haq, Scotland's leading wicket-taker and most capped player, has been forced to fly home from the World Cup after a controversial tweet. One of Scotland's most successful cricketers has been sent home from the World Cup in disgrace after suggesting his axing from a match was racially motivated. Majid Haq, the country's leading wicket-taker and most capped player, was ordered to fly back early from Australia for breaching the team's code of conduct. Haq was not selected for the team that lost to Sri Lanka in Hobart yesterday and later tweeted: 'Always tougher when your in the minority","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":21,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":22,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":23,"text":" England have the biggest representation on a 12-strong shortlist announced by tournament organisers for this season's RBS 6 Nations player of the tournament. Centre Jonathan Joseph, fly-half George Ford, scrum-half Ben Youngs and No 8 Billy Vunipola all feature among the group. England, despite beating France 55-35 two days ago, were pipped to the title by Ireland, with Wales finishing third. George Ford (right) has been named in a 12-man shortlist for Six Nations player of the tournament. Ford's England team-mate Jonathan Joseph (centre) also features as does Ben Youngs","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null},{"index":24,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":25,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":26,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":27,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":28,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":29,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":30,"text":"","logprobs":null,"finish_reason":"stop","stop_reason":null,"prompt_logprobs":null},{"index":31,"text":" A mother was told she could not change her baby in the restaurant's toilets, and was instead told to go to a nearby Tesco. The restaurant manager apologised and said the incident was a misunderstanding. He said the waiter was just trying to say that there is a dedicated baby change room at Tesco if they preferred. The restaurant does not have a baby change room but most people change in the ladies, so they let them do it. The waiter was just trying to say that there is a dedicated baby change room at Tesco if they preferred. The restaurant does not have a baby change room but most people change in the ladies,","logprobs":null,"finish_reason":"length","stop_reason":null,"prompt_logprobs":null}],"usage":{"prompt_tokens":25350,"total_tokens":26144,"completion_tokens":794,"prompt_tokens_details":null},"kv_transfer_params":null}INFO:root:API Query ID: 477787968, Query Index: 4062, Output Tokens: 0
+INFO:root:API Query ID: 477788000, Query Index: 1657, Output Tokens: 0
+INFO:root:API Query ID: 477788032, Query Index: 4764, Output Tokens: 0
+INFO:root:API Query ID: 477788064, Query Index: 842, Output Tokens: 0
+INFO:root:API Query ID: 477788096, Query Index: 4102, Output Tokens: 0
+INFO:root:API Query ID: 477788128, Query Index: 10536, Output Tokens: 128
+INFO:root:API Query ID: 477788160, Query Index: 5512, Output Tokens: 128
+INFO:root:API Query ID: 477788192, Query Index: 2690, Output Tokens: 0
+INFO:root:API Query ID: 477788224, Query Index: 7624, Output Tokens: 0
+INFO:root:API Query ID: 477788256, Query Index: 8080, Output Tokens: 0
+INFO:root:API Query ID: 477788288, Query Index: 3109, Output Tokens: 0
+INFO:root:API Query ID: 477788320, Query Index: 124, Output Tokens: 0
+INFO:root:API Query ID: 477788352, Query Index: 1363, Output Tokens: 0
+INFO:root:API Query ID: 477788384, Query Index: 780, Output Tokens: 0
+INFO:root:API Query ID: 477788416, Query Index: 5418, Output Tokens: 0
+INFO:root:API Query ID: 477788448, Query Index: 3637, Output Tokens: 0
+INFO:root:API Query ID: 477788480, Query Index: 1670, Output Tokens: 128
+INFO:root:API Query ID: 477788512, Query Index: 3598, Output Tokens: 0
+INFO:root:API Query ID: 477788544, Query Index: 12911, Output Tokens: 0
+INFO:root:API Query ID: 477788576, Query Index: 6090, Output Tokens: 0
+INFO:root:API Query ID: 477788608, Query Index: 1438, Output Tokens: 128
+INFO:root:API Query ID: 477788640, Query Index: 7793, Output Tokens: 0
+INFO:root:API Query ID: 477788672, Query Index: 9159, Output Tokens: 0
+INFO:root:API Query ID: 477788704, Query Index: 2129, Output Tokens: 128
+INFO:root:API Query ID: 477788736, Query Index: 4531, Output Tokens: 0
+INFO:root:API Query ID: 477788768, Query Index: 1025, Output Tokens: 0
+INFO:root:API Query ID: 477788800, Query Index: 3918, Output Tokens: 0
+INFO:root:API Query ID: 477788832, Query Index: 7545, Output Tokens: 0
+INFO:root:API Query ID: 477788864, Query Index: 3615, Output Tokens: 0
+INFO:root:API Query ID: 477788896, Query Index: 10555, Output Tokens: 0
+INFO:root:API Query ID: 477788928, Query Index: 11819, Output Tokens: 0
+INFO:root:API Query ID: 477788960, Query Index: 8039, Output Tokens: 128
+
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   The University of Washington is investigating allegations that fraternity members made racial slurs and obscene gestures to black students as they marched past the fraternity house during a protest. The Seattle Times reports that students allege several white men shouted the comments from the Sigma Alpha Epsilon house as demonstrators passed Feb. 25. The protesters were in a Black Lives Matter march to raise awareness about racism. The University of Washington is investigating allegations SAE fraternity members made racial slurs and obscene gestures to black students marching in protest. Several students from the University of Oklahoma chapter captured here on video performing their racist song say they've received death threats. The fraternity's chapter president,
+text_response:   Three Ajax youth team players were suspended on Friday pending an investigation into the beating of an undercover policewoman. The players were identified by Dutch media as 18-year-old forward Zakaria El Azzouzi, midfielder Ashraf El Mahdioui, also 18, and Samet Bulut, a 19-year-old forward. Police questioned them about the beating on Thursday of a police woman dressed in plain clothes who reportedly honked her car horn at them. Ajax boss Frank de Boer shouts instructions during his side's defeat to Dnipro in the Europa League. Dnipro's players celebrate Roman Zozulya (
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   Australia beat Scotland by seven wickets in Hobart on Saturday. Michael Clarke top-scored with 47 as Australia beat Scotland by seven wickets in Hobart on Saturday. Clarke plays a pull shot before there was an hour and a half break in play due to rain. It was a dominant performance by Australia starting with their bowling attack. Starc accounted for opening batsmen Kyle Coetzer (nought) and Calum MacLeod (22) before returning to bowl out Josh Davey (26) and last man Iain Wardlaw (nought). Matt Machan offered some brief resistance with a knock of 40 before being
+text_response:  
+text_response:  
+text_response:  
+text_response:   Majid Haq, Scotland's leading wicket-taker and most capped player, has been forced to fly home from the World Cup after a controversial tweet. One of Scotland's most successful cricketers has been sent home from the World Cup in disgrace after suggesting his axing from a match was racially motivated. Majid Haq, the country's leading wicket-taker and most capped player, was ordered to fly back early from Australia for breaching the team's code of conduct. Haq was not selected for the team that lost to Sri Lanka in Hobart yesterday and later tweeted: 'Always tougher when your in the minority
+text_response:  
+text_response:  
+text_response:   England have the biggest representation on a 12-strong shortlist announced by tournament organisers for this season's RBS 6 Nations player of the tournament. Centre Jonathan Joseph, fly-half George Ford, scrum-half Ben Youngs and No 8 Billy Vunipola all feature among the group. England, despite beating France 55-35 two days ago, were pipped to the title by Ireland, with Wales finishing third. George Ford (right) has been named in a 12-man shortlist for Six Nations player of the tournament. Ford's England team-mate Jonathan Joseph (centre) also features as does Ben Youngs
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:  
+text_response:   A mother was told she could not change her baby in the restaurant's toilets, and was instead told to go to a nearby Tesco. The restaurant manager apologised and said the incident was a misunderstanding. He said the waiter was just trying to say that there is a dedicated baby change room at Tesco if they preferred. The restaurant does not have a baby change room but most people change in the ladies, so they let them do it. The waiter was just trying to say that there is a dedicated baby change room at Tesco if they preferred. The restaurant does not have a baby change room but most people change in the ladies,
+Traceback (most recent call last):
+  File "/root/rehan/mlperf-inference-5.1-redhat/language/llama3.1-8b/SUT_VLLM_SingleReplica.py", line 814, in <module>
+    lg.StartTestWithLogSettings(SUTToTest, qsl, settings, log_settings)
+  File "/root/rehan/mlperf-inference-5.1-redhat/language/llama3.1-8b/SUT_VLLM_SingleReplica.py", line 499, in issue_query
+    response = requests.post(self.completions_endpoint, json=api_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/requests/adapters.py", line 667, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/urllib3/connectionpool.py", line 534, in _make_request
+    response = conn.getresponse()
+               ^^^^^^^^^^^^^^^^^^
+  File "/root/rehan/.venv/lib/python3.12/site-packages/urllib3/connection.py", line 516, in getresponse
+    httplib_response = super().getresponse()
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/http/client.py", line 1430, in getresponse
+    response.begin()
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/http/client.py", line 331, in begin
+    version, status, reason = self._read_status()
+                              ^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/http/client.py", line 292, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/socket.py", line 720, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

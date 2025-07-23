@@ -1,0 +1,1438 @@
+INFO 07-21 19:38:13 [__init__.py:243] Automatically detected platform cuda.
+INFO 07-21 19:38:19 [__init__.py:31] Available plugins for group vllm.general_plugins:
+INFO 07-21 19:38:19 [__init__.py:33] - lora_filesystem_resolver -> vllm.plugins.lora_resolvers.filesystem_resolver:register_filesystem_resolver
+INFO 07-21 19:38:19 [__init__.py:36] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 07-21 19:38:20 [api_server.py:1289] vLLM API server version 0.9.0.1
+INFO 07-21 19:38:20 [cli_args.py:300] non-default args: {'max_model_len': 8192, 'disable_log_requests': True}
+INFO 07-21 19:38:31 [config.py:793] This model supports multiple tasks: {'generate', 'embed', 'classify', 'reward', 'score'}. Defaulting to 'generate'.
+INFO 07-21 19:38:31 [config.py:2118] Chunked prefill is enabled with max_num_batched_tokens=2048.
+INFO 07-21 19:38:37 [__init__.py:243] Automatically detected platform cuda.
+INFO 07-21 19:38:39 [core.py:438] Waiting for init message from front-end.
+INFO 07-21 19:38:39 [__init__.py:31] Available plugins for group vllm.general_plugins:
+INFO 07-21 19:38:39 [__init__.py:33] - lora_filesystem_resolver -> vllm.plugins.lora_resolvers.filesystem_resolver:register_filesystem_resolver
+INFO 07-21 19:38:39 [__init__.py:36] All plugins in this group will be loaded. Set `VLLM_PLUGINS` to control which plugins to load.
+INFO 07-21 19:38:39 [core.py:65] Initializing a V1 LLM engine (v0.9.0.1) with config: model='meta-llama/Llama-3.1-8B', speculative_config=None, tokenizer='meta-llama/Llama-3.1-8B', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, override_neuron_config={}, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=8192, download_dir=None, load_format=LoadFormat.AUTO, tensor_parallel_size=1, pipeline_parallel_size=1, disable_custom_all_reduce=False, quantization=None, enforce_eager=False, kv_cache_dtype=auto,  device_config=cuda, decoding_config=DecodingConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_backend=''), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None), seed=0, served_model_name=meta-llama/Llama-3.1-8B, num_scheduler_steps=1, multi_step_stream_outputs=True, enable_prefix_caching=True, chunked_prefill_enabled=True, use_async_output_proc=True, pooler_config=None, compilation_config={"level": 3, "custom_ops": ["none"], "splitting_ops": ["vllm.unified_attention", "vllm.unified_attention_with_output"], "compile_sizes": [], "inductor_compile_config": {"enable_auto_functionalized_v2": false}, "use_cudagraph": true, "cudagraph_num_of_warmups": 1, "cudagraph_capture_sizes": [512, 504, 496, 488, 480, 472, 464, 456, 448, 440, 432, 424, 416, 408, 400, 392, 384, 376, 368, 360, 352, 344, 336, 328, 320, 312, 304, 296, 288, 280, 272, 264, 256, 248, 240, 232, 224, 216, 208, 200, 192, 184, 176, 168, 160, 152, 144, 136, 128, 120, 112, 104, 96, 88, 80, 72, 64, 56, 48, 40, 32, 24, 16, 8, 4, 2, 1], "max_capture_size": 512}
+WARNING 07-21 19:38:39 [utils.py:2671] Methods determine_num_available_blocks,device_config,get_cache_block_size_bytes,initialize_cache not implemented in <vllm.v1.worker.gpu_worker.Worker object at 0x7f169e6b1730>
+INFO 07-21 19:38:45 [parallel_state.py:1064] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, TP rank 0, EP rank 0
+WARNING 07-21 19:38:45 [topk_topp_sampler.py:58] FlashInfer is not available. Falling back to the PyTorch-native implementation of top-p & top-k sampling. For the best performance, please install FlashInfer.
+INFO 07-21 19:38:45 [gpu_model_runner.py:1531] Starting to load model meta-llama/Llama-3.1-8B...
+INFO 07-21 19:38:45 [cuda.py:217] Using Flash Attention backend on V1 engine.
+INFO 07-21 19:38:45 [backends.py:35] Using InductorAdaptor
+INFO 07-21 19:40:42 [weight_utils.py:291] Using model weights format ['*.safetensors']
+INFO 07-21 19:40:42 [weight_utils.py:307] Time spent downloading weights for meta-llama/Llama-3.1-8B: 0.581338 seconds
+Loading safetensors checkpoint shards:   0% Completed | 0/4 [00:00<?, ?it/s]
+Loading safetensors checkpoint shards:  25% Completed | 1/4 [00:00<00:00,  6.65it/s]
+Loading safetensors checkpoint shards:  50% Completed | 2/4 [00:00<00:00,  2.13it/s]
+Loading safetensors checkpoint shards:  75% Completed | 3/4 [00:01<00:00,  1.72it/s]
+Loading safetensors checkpoint shards: 100% Completed | 4/4 [00:02<00:00,  1.57it/s]
+Loading safetensors checkpoint shards: 100% Completed | 4/4 [00:02<00:00,  1.75it/s]
+
+INFO 07-21 19:40:45 [default_loader.py:280] Loading weights took 2.34 seconds
+INFO 07-21 19:40:45 [gpu_model_runner.py:1549] Model loading took 14.9889 GiB and 120.589715 seconds
+INFO 07-21 19:40:51 [backends.py:459] Using cache directory: /root/.cache/vllm/torch_compile_cache/8bd3ef7c96/rank_0_0 for vLLM's torch.compile
+INFO 07-21 19:40:51 [backends.py:469] Dynamo bytecode transform time: 6.00 s
+INFO 07-21 19:40:56 [backends.py:132] Directly load the compiled graph(s) for shape None from the cache, took 4.005 s
+INFO 07-21 19:40:56 [monitor.py:33] torch.compile takes 6.00 s in total
+INFO 07-21 19:40:57 [kv_cache_utils.py:637] GPU KV cache size: 191,328 tokens
+INFO 07-21 19:40:57 [kv_cache_utils.py:640] Maximum concurrency for 8,192 tokens per request: 23.36x
+INFO 07-21 19:41:15 [gpu_model_runner.py:1933] Graph capturing finished in 18 secs, took 0.52 GiB
+INFO 07-21 19:41:15 [core.py:167] init engine (profile, create kv cache, warmup model) took 29.59 seconds
+INFO 07-21 19:41:17 [loggers.py:134] vllm cache_config_info with initialization after num_gpu_blocks is: 11958
+WARNING 07-21 19:41:17 [config.py:1339] Default sampling parameters have been overridden by the model's Hugging Face generation config recommended from the model creator. If this is not intended, please relaunch vLLM instance with `--generation-config vllm`.
+INFO 07-21 19:41:17 [serving_chat.py:117] Using default chat sampling params from model: {'temperature': 0.6, 'top_p': 0.9}
+INFO 07-21 19:41:18 [serving_completion.py:65] Using default completion sampling params from model: {'temperature': 0.6, 'top_p': 0.9}
+INFO 07-21 19:41:18 [api_server.py:1336] Starting vLLM API server on http://0.0.0.0:8000
+INFO 07-21 19:41:18 [launcher.py:28] Available routes are:
+INFO 07-21 19:41:18 [launcher.py:36] Route: /openapi.json, Methods: GET, HEAD
+INFO 07-21 19:41:18 [launcher.py:36] Route: /docs, Methods: GET, HEAD
+INFO 07-21 19:41:18 [launcher.py:36] Route: /docs/oauth2-redirect, Methods: GET, HEAD
+INFO 07-21 19:41:18 [launcher.py:36] Route: /redoc, Methods: GET, HEAD
+INFO 07-21 19:41:18 [launcher.py:36] Route: /health, Methods: GET
+INFO 07-21 19:41:18 [launcher.py:36] Route: /load, Methods: GET
+INFO 07-21 19:41:18 [launcher.py:36] Route: /ping, Methods: POST
+INFO 07-21 19:41:18 [launcher.py:36] Route: /ping, Methods: GET
+INFO 07-21 19:41:18 [launcher.py:36] Route: /tokenize, Methods: POST
+INFO 07-21 19:41:18 [launcher.py:36] Route: /detokenize, Methods: POST
+INFO 07-21 19:41:18 [launcher.py:36] Route: /v1/models, Methods: GET
+INFO 07-21 19:41:18 [launcher.py:36] Route: /version, Methods: GET
+INFO 07-21 19:41:18 [launcher.py:36] Route: /v1/chat/completions, Methods: POST
+INFO 07-21 19:41:18 [launcher.py:36] Route: /v1/completions, Methods: POST
+INFO 07-21 19:41:18 [launcher.py:36] Route: /v1/embeddings, Methods: POST
+INFO 07-21 19:41:18 [launcher.py:36] Route: /pooling, Methods: POST
+INFO 07-21 19:41:18 [launcher.py:36] Route: /classify, Methods: POST
+INFO 07-21 19:41:18 [launcher.py:36] Route: /score, Methods: POST
+INFO 07-21 19:41:18 [launcher.py:36] Route: /v1/score, Methods: POST
+INFO 07-21 19:41:18 [launcher.py:36] Route: /v1/audio/transcriptions, Methods: POST
+INFO 07-21 19:41:18 [launcher.py:36] Route: /rerank, Methods: POST
+INFO 07-21 19:41:18 [launcher.py:36] Route: /v1/rerank, Methods: POST
+INFO 07-21 19:41:18 [launcher.py:36] Route: /v2/rerank, Methods: POST
+INFO 07-21 19:41:18 [launcher.py:36] Route: /invocations, Methods: POST
+INFO 07-21 19:41:18 [launcher.py:36] Route: /metrics, Methods: GET
+INFO:     Started server process [154450]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:56380 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56382 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56386 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56396 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56404 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56406 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44570 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44576 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44580 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44588 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44594 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44598 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44612 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44618 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44622 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44630 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58432 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58442 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58458 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58468 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58482 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58484 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58496 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58502 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58506 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60064 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60074 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60076 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60088 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60104 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60106 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60122 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60126 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60136 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42296 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42302 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42306 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42320 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42326 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42336 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42342 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42348 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42350 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42916 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42920 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42934 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42948 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42950 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42958 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42972 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42980 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42992 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47156 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47158 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47162 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47170 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47184 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47188 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47204 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47212 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47224 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47232 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37040 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37056 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37058 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37060 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37062 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37076 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37090 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37096 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37106 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53086 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53100 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53116 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53118 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53124 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53134 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53136 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53148 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53152 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47620 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47632 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47634 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47636 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47638 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47650 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47658 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47664 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47672 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59788 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59790 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59796 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59804 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59808 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59812 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59816 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59828 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59834 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60004 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60008 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60012 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60022 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60024 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60026 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60040 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60050 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60058 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60070 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33172 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33180 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33194 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33200 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33202 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33210 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33214 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33216 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33232 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56614 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56618 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56632 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56634 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56654 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56658 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56662 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56668 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56674 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53002 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53014 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53024 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53034 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53038 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53046 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53054 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53070 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53072 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53086 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59092 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59096 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59110 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59122 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59130 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59132 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59146 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59154 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34294 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34306 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34312 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34328 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34336 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34346 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34350 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:44:20 [loggers.py:116] Engine 000: Avg prompt throughput: 13846.1 tokens/s, Avg generation throughput: 199.2 tokens/s, Running: 63 reqs, Waiting: 13187 reqs, GPU KV cache usage: 21.3%, Prefix cache hit rate: 2.4%
+INFO:     127.0.0.1:34362 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34368 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34374 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51358 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51360 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51376 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51382 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51386 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51402 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51418 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:44:30 [loggers.py:116] Engine 000: Avg prompt throughput: 11883.2 tokens/s, Avg generation throughput: 440.4 tokens/s, Running: 105 reqs, Waiting: 13043 reqs, GPU KV cache usage: 38.7%, Prefix cache hit rate: 2.2%
+INFO:     127.0.0.1:51428 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51436 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51448 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33284 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33288 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33290 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33302 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33304 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33320 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33336 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:44:40 [loggers.py:116] Engine 000: Avg prompt throughput: 11539.7 tokens/s, Avg generation throughput: 597.0 tokens/s, Running: 80 reqs, Waiting: 12900 reqs, GPU KV cache usage: 29.5%, Prefix cache hit rate: 2.2%
+INFO:     127.0.0.1:33352 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33360 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33364 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48352 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48360 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48362 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48368 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48384 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48388 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48400 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:44:50 [loggers.py:116] Engine 000: Avg prompt throughput: 11433.1 tokens/s, Avg generation throughput: 493.3 tokens/s, Running: 87 reqs, Waiting: 12765 reqs, GPU KV cache usage: 30.9%, Prefix cache hit rate: 2.1%
+INFO:     127.0.0.1:48416 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48422 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48424 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59686 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59702 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59714 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59718 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59724 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59726 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59730 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:45:00 [loggers.py:116] Engine 000: Avg prompt throughput: 11928.9 tokens/s, Avg generation throughput: 411.4 tokens/s, Running: 72 reqs, Waiting: 12631 reqs, GPU KV cache usage: 28.3%, Prefix cache hit rate: 2.1%
+INFO:     127.0.0.1:59746 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59748 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59754 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46990 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47004 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47014 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47028 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47044 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47048 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47062 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:45:10 [loggers.py:116] Engine 000: Avg prompt throughput: 11434.7 tokens/s, Avg generation throughput: 412.9 tokens/s, Running: 70 reqs, Waiting: 12499 reqs, GPU KV cache usage: 30.6%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:47078 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47080 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47094 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33718 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33732 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33736 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33754 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33766 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33774 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:45:20 [loggers.py:116] Engine 000: Avg prompt throughput: 11379.7 tokens/s, Avg generation throughput: 412.0 tokens/s, Running: 69 reqs, Waiting: 12375 reqs, GPU KV cache usage: 30.7%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:33780 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33788 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59818 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59824 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59838 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59852 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59866 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59868 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59882 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59892 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:45:30 [loggers.py:116] Engine 000: Avg prompt throughput: 12127.8 tokens/s, Avg generation throughput: 385.4 tokens/s, Running: 65 reqs, Waiting: 12235 reqs, GPU KV cache usage: 24.3%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:59906 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59920 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39836 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39844 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39854 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39864 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39866 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39880 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39888 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:45:40 [loggers.py:116] Engine 000: Avg prompt throughput: 11879.3 tokens/s, Avg generation throughput: 396.8 tokens/s, Running: 72 reqs, Waiting: 12097 reqs, GPU KV cache usage: 27.8%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:39894 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39904 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39918 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40760 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40770 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40776 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40784 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40792 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40806 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:45:50 [loggers.py:116] Engine 000: Avg prompt throughput: 11695.5 tokens/s, Avg generation throughput: 423.2 tokens/s, Running: 74 reqs, Waiting: 11948 reqs, GPU KV cache usage: 28.9%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:40816 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40826 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40828 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53266 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53276 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53282 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53296 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53308 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53322 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53330 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:46:00 [loggers.py:116] Engine 000: Avg prompt throughput: 11481.4 tokens/s, Avg generation throughput: 434.1 tokens/s, Running: 74 reqs, Waiting: 11812 reqs, GPU KV cache usage: 28.6%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:53334 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53348 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53362 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38848 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38864 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38868 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38880 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38894 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38896 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38906 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:46:10 [loggers.py:116] Engine 000: Avg prompt throughput: 11703.8 tokens/s, Avg generation throughput: 425.8 tokens/s, Running: 69 reqs, Waiting: 11667 reqs, GPU KV cache usage: 26.8%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:38922 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38936 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38938 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33166 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33182 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33188 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33190 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33194 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33206 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33214 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:46:20 [loggers.py:116] Engine 000: Avg prompt throughput: 11779.7 tokens/s, Avg generation throughput: 390.4 tokens/s, Running: 62 reqs, Waiting: 11530 reqs, GPU KV cache usage: 25.5%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:33226 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33236 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33242 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33272 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33284 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33286 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33290 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33294 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33308 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33310 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:46:30 [loggers.py:116] Engine 000: Avg prompt throughput: 11774.1 tokens/s, Avg generation throughput: 369.9 tokens/s, Running: 67 reqs, Waiting: 11400 reqs, GPU KV cache usage: 29.3%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:33318 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33326 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33332 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37986 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37988 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37994 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38008 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38022 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38034 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38038 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:46:40 [loggers.py:116] Engine 000: Avg prompt throughput: 11712.2 tokens/s, Avg generation throughput: 416.5 tokens/s, Running: 70 reqs, Waiting: 11252 reqs, GPU KV cache usage: 30.0%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:38044 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38060 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57180 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57194 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57200 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57216 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57218 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57230 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57238 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57250 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:46:50 [loggers.py:116] Engine 000: Avg prompt throughput: 11138.7 tokens/s, Avg generation throughput: 441.2 tokens/s, Running: 75 reqs, Waiting: 11127 reqs, GPU KV cache usage: 31.9%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:57256 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57262 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40304 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40308 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40316 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40324 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40334 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40342 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40352 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:47:00 [loggers.py:116] Engine 000: Avg prompt throughput: 11687.5 tokens/s, Avg generation throughput: 453.0 tokens/s, Running: 79 reqs, Waiting: 10979 reqs, GPU KV cache usage: 28.4%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:40360 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40364 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40366 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45082 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45084 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45090 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45098 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45100 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45106 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45118 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:47:10 [loggers.py:116] Engine 000: Avg prompt throughput: 11697.7 tokens/s, Avg generation throughput: 423.6 tokens/s, Running: 66 reqs, Waiting: 10836 reqs, GPU KV cache usage: 22.6%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:45124 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45140 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45148 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41944 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41946 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41948 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41950 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41958 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41970 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41984 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:47:20 [loggers.py:116] Engine 000: Avg prompt throughput: 11689.8 tokens/s, Avg generation throughput: 408.6 tokens/s, Running: 73 reqs, Waiting: 10693 reqs, GPU KV cache usage: 28.0%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:41988 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42000 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42016 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36918 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36930 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36940 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36954 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36960 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36968 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36976 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:47:30 [loggers.py:116] Engine 000: Avg prompt throughput: 11402.2 tokens/s, Avg generation throughput: 460.7 tokens/s, Running: 77 reqs, Waiting: 10564 reqs, GPU KV cache usage: 29.8%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:36992 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37008 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57804 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57814 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57830 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57844 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57854 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57860 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57864 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57868 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:47:40 [loggers.py:116] Engine 000: Avg prompt throughput: 11530.4 tokens/s, Avg generation throughput: 438.6 tokens/s, Running: 77 reqs, Waiting: 10424 reqs, GPU KV cache usage: 31.6%, Prefix cache hit rate: 2.1%
+INFO:     127.0.0.1:57872 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57880 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40118 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40130 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40144 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40158 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40168 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40172 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40188 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:47:50 [loggers.py:116] Engine 000: Avg prompt throughput: 11821.1 tokens/s, Avg generation throughput: 414.3 tokens/s, Running: 78 reqs, Waiting: 10269 reqs, GPU KV cache usage: 31.6%, Prefix cache hit rate: 2.1%
+INFO:     127.0.0.1:40198 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40212 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40214 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35644 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35660 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35662 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35664 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35670 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35676 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35678 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:48:00 [loggers.py:116] Engine 000: Avg prompt throughput: 11285.3 tokens/s, Avg generation throughput: 454.6 tokens/s, Running: 84 reqs, Waiting: 10140 reqs, GPU KV cache usage: 34.2%, Prefix cache hit rate: 2.1%
+INFO:     127.0.0.1:35694 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35706 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35718 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56852 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56860 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56862 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56876 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56892 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56902 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56916 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:48:10 [loggers.py:116] Engine 000: Avg prompt throughput: 11481.7 tokens/s, Avg generation throughput: 437.1 tokens/s, Running: 68 reqs, Waiting: 10006 reqs, GPU KV cache usage: 27.5%, Prefix cache hit rate: 2.1%
+INFO:     127.0.0.1:56918 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56932 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56938 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52544 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52560 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52566 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52578 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52592 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52606 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52612 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:48:20 [loggers.py:116] Engine 000: Avg prompt throughput: 11705.3 tokens/s, Avg generation throughput: 402.8 tokens/s, Running: 79 reqs, Waiting: 9852 reqs, GPU KV cache usage: 27.0%, Prefix cache hit rate: 2.1%
+INFO:     127.0.0.1:52628 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52644 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52650 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42840 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42846 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42862 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42876 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42892 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42904 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42914 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:48:30 [loggers.py:116] Engine 000: Avg prompt throughput: 11381.0 tokens/s, Avg generation throughput: 479.6 tokens/s, Running: 76 reqs, Waiting: 9732 reqs, GPU KV cache usage: 27.2%, Prefix cache hit rate: 2.1%
+INFO:     127.0.0.1:42930 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42940 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37732 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37736 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37754 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37768 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37774 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37782 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37796 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:48:40 [loggers.py:116] Engine 000: Avg prompt throughput: 11496.5 tokens/s, Avg generation throughput: 444.3 tokens/s, Running: 65 reqs, Waiting: 9617 reqs, GPU KV cache usage: 30.2%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:37802 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37814 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55758 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55772 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55786 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55790 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55794 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55806 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55810 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:48:50 [loggers.py:116] Engine 000: Avg prompt throughput: 11393.6 tokens/s, Avg generation throughput: 334.9 tokens/s, Running: 60 reqs, Waiting: 9501 reqs, GPU KV cache usage: 33.8%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:55812 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55814 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49026 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49042 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49054 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49068 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49076 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49090 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49094 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49098 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:49:00 [loggers.py:116] Engine 000: Avg prompt throughput: 11680.6 tokens/s, Avg generation throughput: 357.1 tokens/s, Running: 68 reqs, Waiting: 9371 reqs, GPU KV cache usage: 35.1%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:49106 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49118 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34036 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34044 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34052 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34062 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34076 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34086 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34090 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:49:10 [loggers.py:116] Engine 000: Avg prompt throughput: 10971.1 tokens/s, Avg generation throughput: 407.0 tokens/s, Running: 75 reqs, Waiting: 9264 reqs, GPU KV cache usage: 39.2%, Prefix cache hit rate: 1.8%
+INFO:     127.0.0.1:34092 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34094 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34104 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51386 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51400 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51414 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51424 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51438 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51452 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51466 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:49:20 [loggers.py:116] Engine 000: Avg prompt throughput: 11263.4 tokens/s, Avg generation throughput: 426.3 tokens/s, Running: 72 reqs, Waiting: 9151 reqs, GPU KV cache usage: 38.8%, Prefix cache hit rate: 1.8%
+INFO:     127.0.0.1:51474 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51476 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51488 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32932 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32944 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32954 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32966 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32980 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32988 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33002 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:49:30 [loggers.py:116] Engine 000: Avg prompt throughput: 11060.8 tokens/s, Avg generation throughput: 406.8 tokens/s, Running: 75 reqs, Waiting: 9041 reqs, GPU KV cache usage: 39.1%, Prefix cache hit rate: 1.8%
+INFO:     127.0.0.1:33004 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33020 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33032 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54090 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54092 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54108 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54114 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54124 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54140 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54152 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:49:40 [loggers.py:116] Engine 000: Avg prompt throughput: 11297.5 tokens/s, Avg generation throughput: 406.6 tokens/s, Running: 76 reqs, Waiting: 8924 reqs, GPU KV cache usage: 39.6%, Prefix cache hit rate: 1.7%
+INFO:     127.0.0.1:54164 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54174 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54180 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40314 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40322 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40328 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40332 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40336 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40352 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40354 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:49:50 [loggers.py:116] Engine 000: Avg prompt throughput: 10989.4 tokens/s, Avg generation throughput: 464.9 tokens/s, Running: 85 reqs, Waiting: 8801 reqs, GPU KV cache usage: 42.4%, Prefix cache hit rate: 1.7%
+INFO:     127.0.0.1:40362 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40374 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40388 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34608 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34614 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34630 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34646 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34660 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34662 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34668 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:50:00 [loggers.py:116] Engine 000: Avg prompt throughput: 10922.5 tokens/s, Avg generation throughput: 495.8 tokens/s, Running: 81 reqs, Waiting: 8691 reqs, GPU KV cache usage: 42.2%, Prefix cache hit rate: 1.7%
+INFO:     127.0.0.1:34680 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34692 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44924 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44926 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44942 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44948 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44962 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44972 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44980 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44984 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:50:10 [loggers.py:116] Engine 000: Avg prompt throughput: 11231.8 tokens/s, Avg generation throughput: 421.2 tokens/s, Running: 70 reqs, Waiting: 8568 reqs, GPU KV cache usage: 34.7%, Prefix cache hit rate: 1.7%
+INFO:     127.0.0.1:44988 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44994 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41914 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41926 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41934 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41940 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41946 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41950 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41962 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41972 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:50:20 [loggers.py:116] Engine 000: Avg prompt throughput: 11622.1 tokens/s, Avg generation throughput: 334.2 tokens/s, Running: 49 reqs, Waiting: 8440 reqs, GPU KV cache usage: 21.2%, Prefix cache hit rate: 1.7%
+INFO:     127.0.0.1:41982 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41984 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33052 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33060 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33070 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33082 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33098 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33104 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33118 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33130 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:50:30 [loggers.py:116] Engine 000: Avg prompt throughput: 11951.5 tokens/s, Avg generation throughput: 300.3 tokens/s, Running: 51 reqs, Waiting: 8305 reqs, GPU KV cache usage: 21.7%, Prefix cache hit rate: 1.7%
+INFO:     127.0.0.1:33140 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33154 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34048 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34054 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34064 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34074 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34090 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34096 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34100 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34104 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:50:40 [loggers.py:116] Engine 000: Avg prompt throughput: 12150.6 tokens/s, Avg generation throughput: 317.5 tokens/s, Running: 66 reqs, Waiting: 8154 reqs, GPU KV cache usage: 27.9%, Prefix cache hit rate: 1.8%
+INFO:     127.0.0.1:34116 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34130 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48360 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48364 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48370 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48382 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48384 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48400 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48414 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:50:50 [loggers.py:116] Engine 000: Avg prompt throughput: 11522.7 tokens/s, Avg generation throughput: 427.0 tokens/s, Running: 73 reqs, Waiting: 8015 reqs, GPU KV cache usage: 30.5%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:48418 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48432 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48436 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44522 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44532 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44544 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44556 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44570 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44574 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44580 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:51:00 [loggers.py:116] Engine 000: Avg prompt throughput: 11426.0 tokens/s, Avg generation throughput: 401.5 tokens/s, Running: 62 reqs, Waiting: 7889 reqs, GPU KV cache usage: 26.5%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:44592 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44596 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44598 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38566 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38582 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38588 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38596 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38600 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38606 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38612 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:51:10 [loggers.py:116] Engine 000: Avg prompt throughput: 11788.4 tokens/s, Avg generation throughput: 299.5 tokens/s, Running: 42 reqs, Waiting: 7754 reqs, GPU KV cache usage: 17.7%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:38626 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38628 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38634 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49118 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49124 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49132 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49134 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49150 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49164 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49166 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:51:20 [loggers.py:116] Engine 000: Avg prompt throughput: 12317.1 tokens/s, Avg generation throughput: 252.0 tokens/s, Running: 33 reqs, Waiting: 7628 reqs, GPU KV cache usage: 13.8%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:49170 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49172 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49186 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50844 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50860 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50862 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50866 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50870 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50876 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50888 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:51:30 [loggers.py:116] Engine 000: Avg prompt throughput: 12218.4 tokens/s, Avg generation throughput: 193.1 tokens/s, Running: 27 reqs, Waiting: 7515 reqs, GPU KV cache usage: 14.1%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:50892 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50898 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50904 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47820 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47836 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47852 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47860 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47868 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47874 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47882 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:51:40 [loggers.py:116] Engine 000: Avg prompt throughput: 12164.0 tokens/s, Avg generation throughput: 201.4 tokens/s, Running: 34 reqs, Waiting: 7381 reqs, GPU KV cache usage: 20.1%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:47884 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47886 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47900 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55038 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55048 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55062 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55066 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55070 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55082 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55098 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:51:50 [loggers.py:116] Engine 000: Avg prompt throughput: 11986.5 tokens/s, Avg generation throughput: 209.6 tokens/s, Running: 37 reqs, Waiting: 7256 reqs, GPU KV cache usage: 19.9%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:55100 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55112 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57956 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57960 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57972 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57974 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57976 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57990 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58004 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58020 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:52:00 [loggers.py:116] Engine 000: Avg prompt throughput: 12192.1 tokens/s, Avg generation throughput: 273.0 tokens/s, Running: 47 reqs, Waiting: 7119 reqs, GPU KV cache usage: 20.5%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:58036 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58052 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38504 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38520 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38530 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38542 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38548 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38554 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38564 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38568 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:52:10 [loggers.py:116] Engine 000: Avg prompt throughput: 12027.9 tokens/s, Avg generation throughput: 268.4 tokens/s, Running: 43 reqs, Waiting: 6998 reqs, GPU KV cache usage: 16.4%, Prefix cache hit rate: 1.7%
+INFO:     127.0.0.1:38582 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38588 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42342 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42344 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42346 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42358 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42370 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42380 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42392 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42394 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:52:20 [loggers.py:116] Engine 000: Avg prompt throughput: 12318.2 tokens/s, Avg generation throughput: 213.3 tokens/s, Running: 30 reqs, Waiting: 6854 reqs, GPU KV cache usage: 10.6%, Prefix cache hit rate: 1.8%
+INFO:     127.0.0.1:42398 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42414 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52290 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52292 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52298 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52306 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52320 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52336 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52338 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52342 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:52:30 [loggers.py:116] Engine 000: Avg prompt throughput: 12318.1 tokens/s, Avg generation throughput: 208.3 tokens/s, Running: 36 reqs, Waiting: 6700 reqs, GPU KV cache usage: 13.8%, Prefix cache hit rate: 1.8%
+INFO:     127.0.0.1:52350 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52366 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40662 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40664 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40670 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40682 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40690 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40700 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40714 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:52:40 [loggers.py:116] Engine 000: Avg prompt throughput: 12366.3 tokens/s, Avg generation throughput: 231.8 tokens/s, Running: 34 reqs, Waiting: 6554 reqs, GPU KV cache usage: 13.4%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:40726 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40738 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40752 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32854 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32860 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32876 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32882 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32896 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32900 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32902 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:52:50 [loggers.py:116] Engine 000: Avg prompt throughput: 12264.1 tokens/s, Avg generation throughput: 213.4 tokens/s, Running: 33 reqs, Waiting: 6412 reqs, GPU KV cache usage: 13.4%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:32906 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32908 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32920 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57528 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57542 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57546 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57552 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57564 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57566 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57580 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:53:00 [loggers.py:116] Engine 000: Avg prompt throughput: 12371.0 tokens/s, Avg generation throughput: 209.8 tokens/s, Running: 29 reqs, Waiting: 6264 reqs, GPU KV cache usage: 12.1%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:57584 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57598 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57600 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49812 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49818 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49826 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49830 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49834 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49838 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49854 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:53:10 [loggers.py:116] Engine 000: Avg prompt throughput: 12593.1 tokens/s, Avg generation throughput: 174.4 tokens/s, Running: 21 reqs, Waiting: 6114 reqs, GPU KV cache usage: 8.4%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:49868 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49878 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49894 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53882 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53890 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53894 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53902 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53906 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53918 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53920 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:53:20 [loggers.py:116] Engine 000: Avg prompt throughput: 12668.7 tokens/s, Avg generation throughput: 145.1 tokens/s, Running: 29 reqs, Waiting: 5952 reqs, GPU KV cache usage: 12.0%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:53934 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53940 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53942 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50538 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50554 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50566 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50582 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50584 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50588 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50602 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:53:30 [loggers.py:116] Engine 000: Avg prompt throughput: 12069.5 tokens/s, Avg generation throughput: 295.2 tokens/s, Running: 66 reqs, Waiting: 5803 reqs, GPU KV cache usage: 23.8%, Prefix cache hit rate: 2.1%
+INFO:     127.0.0.1:50616 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50618 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50630 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34484 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34498 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34500 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34514 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34516 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34526 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34536 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:53:40 [loggers.py:116] Engine 000: Avg prompt throughput: 11312.4 tokens/s, Avg generation throughput: 498.1 tokens/s, Running: 84 reqs, Waiting: 5684 reqs, GPU KV cache usage: 32.1%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:34548 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34552 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34566 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34286 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34302 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34318 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34334 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34344 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34356 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34368 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:53:50 [loggers.py:116] Engine 000: Avg prompt throughput: 11533.3 tokens/s, Avg generation throughput: 397.9 tokens/s, Running: 47 reqs, Waiting: 5564 reqs, GPU KV cache usage: 21.0%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:34378 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34384 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37694 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37702 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37708 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37720 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37724 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37730 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37740 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37756 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:54:00 [loggers.py:116] Engine 000: Avg prompt throughput: 12184.5 tokens/s, Avg generation throughput: 195.3 tokens/s, Running: 23 reqs, Waiting: 5448 reqs, GPU KV cache usage: 11.9%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:37768 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37784 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46750 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46754 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46768 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46782 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46790 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46796 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46802 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46808 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:54:10 [loggers.py:116] Engine 000: Avg prompt throughput: 12390.4 tokens/s, Avg generation throughput: 170.5 tokens/s, Running: 32 reqs, Waiting: 5327 reqs, GPU KV cache usage: 16.6%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:46816 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46830 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43460 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43470 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43476 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43484 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43488 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43504 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43510 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43520 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:54:20 [loggers.py:116] Engine 000: Avg prompt throughput: 12040.8 tokens/s, Avg generation throughput: 215.7 tokens/s, Running: 45 reqs, Waiting: 5196 reqs, GPU KV cache usage: 20.1%, Prefix cache hit rate: 1.8%
+INFO:     127.0.0.1:43536 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43546 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34890 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34894 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34902 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34912 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34928 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34944 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34960 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34976 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:54:30 [loggers.py:116] Engine 000: Avg prompt throughput: 12113.2 tokens/s, Avg generation throughput: 260.9 tokens/s, Running: 45 reqs, Waiting: 5071 reqs, GPU KV cache usage: 20.8%, Prefix cache hit rate: 1.8%
+INFO:     127.0.0.1:34982 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34998 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55488 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55504 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55520 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55532 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55540 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55550 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55552 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55562 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:54:40 [loggers.py:116] Engine 000: Avg prompt throughput: 11962.0 tokens/s, Avg generation throughput: 269.1 tokens/s, Running: 42 reqs, Waiting: 4954 reqs, GPU KV cache usage: 21.8%, Prefix cache hit rate: 1.7%
+INFO:     127.0.0.1:55570 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55586 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35790 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35792 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35808 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35812 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35822 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35830 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35838 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:54:50 [loggers.py:116] Engine 000: Avg prompt throughput: 11948.6 tokens/s, Avg generation throughput: 228.9 tokens/s, Running: 32 reqs, Waiting: 4841 reqs, GPU KV cache usage: 17.3%, Prefix cache hit rate: 1.7%
+INFO:     127.0.0.1:35852 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35854 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35870 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55706 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55714 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55716 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55728 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55732 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55746 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55758 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:55:00 [loggers.py:116] Engine 000: Avg prompt throughput: 12303.0 tokens/s, Avg generation throughput: 208.3 tokens/s, Running: 30 reqs, Waiting: 4709 reqs, GPU KV cache usage: 15.2%, Prefix cache hit rate: 1.7%
+INFO:     127.0.0.1:55762 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55778 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55780 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33096 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33112 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33120 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33128 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33138 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33142 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33150 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:55:10 [loggers.py:116] Engine 000: Avg prompt throughput: 12061.4 tokens/s, Avg generation throughput: 222.6 tokens/s, Running: 46 reqs, Waiting: 4568 reqs, GPU KV cache usage: 21.1%, Prefix cache hit rate: 1.7%
+INFO:     127.0.0.1:33156 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33168 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33172 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39046 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39060 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39070 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39080 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39084 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39098 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39108 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:55:20 [loggers.py:116] Engine 000: Avg prompt throughput: 11983.7 tokens/s, Avg generation throughput: 306.2 tokens/s, Running: 50 reqs, Waiting: 4424 reqs, GPU KV cache usage: 22.9%, Prefix cache hit rate: 1.7%
+INFO:     127.0.0.1:39112 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39122 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39136 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34992 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35006 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35018 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35028 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35036 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35050 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35058 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:55:30 [loggers.py:116] Engine 000: Avg prompt throughput: 11840.8 tokens/s, Avg generation throughput: 335.1 tokens/s, Running: 54 reqs, Waiting: 4291 reqs, GPU KV cache usage: 21.6%, Prefix cache hit rate: 1.8%
+INFO:     127.0.0.1:35064 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35076 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35088 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39824 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39834 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39838 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39842 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39858 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39872 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39882 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:55:40 [loggers.py:116] Engine 000: Avg prompt throughput: 11757.2 tokens/s, Avg generation throughput: 312.2 tokens/s, Running: 56 reqs, Waiting: 4168 reqs, GPU KV cache usage: 24.2%, Prefix cache hit rate: 1.8%
+INFO:     127.0.0.1:39890 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39892 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39896 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49434 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49448 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49464 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49478 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49486 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49488 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49496 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:55:50 [loggers.py:116] Engine 000: Avg prompt throughput: 11784.4 tokens/s, Avg generation throughput: 351.9 tokens/s, Running: 62 reqs, Waiting: 4031 reqs, GPU KV cache usage: 26.7%, Prefix cache hit rate: 1.8%
+INFO:     127.0.0.1:49506 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49518 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49534 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45218 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45226 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45234 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45238 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45248 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45250 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45252 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:56:00 [loggers.py:116] Engine 000: Avg prompt throughput: 11692.7 tokens/s, Avg generation throughput: 422.2 tokens/s, Running: 81 reqs, Waiting: 3899 reqs, GPU KV cache usage: 34.4%, Prefix cache hit rate: 1.8%
+INFO:     127.0.0.1:45260 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45272 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50738 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50752 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50756 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50768 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50774 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50780 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50790 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50802 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:56:10 [loggers.py:116] Engine 000: Avg prompt throughput: 11215.6 tokens/s, Avg generation throughput: 502.7 tokens/s, Running: 85 reqs, Waiting: 3756 reqs, GPU KV cache usage: 33.2%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:50810 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50816 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47760 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47772 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47776 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47788 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47800 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47816 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47826 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47842 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:56:20 [loggers.py:116] Engine 000: Avg prompt throughput: 11179.3 tokens/s, Avg generation throughput: 525.0 tokens/s, Running: 101 reqs, Waiting: 3608 reqs, GPU KV cache usage: 36.4%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:47856 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47864 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41342 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41344 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41348 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41358 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41374 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41386 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41402 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41410 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:56:30 [loggers.py:116] Engine 000: Avg prompt throughput: 11117.1 tokens/s, Avg generation throughput: 551.2 tokens/s, Running: 97 reqs, Waiting: 3469 reqs, GPU KV cache usage: 38.1%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:41420 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41434 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44150 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44160 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44170 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44184 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44186 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44192 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44198 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44206 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:56:40 [loggers.py:116] Engine 000: Avg prompt throughput: 10812.8 tokens/s, Avg generation throughput: 591.3 tokens/s, Running: 106 reqs, Waiting: 3345 reqs, GPU KV cache usage: 43.1%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:44208 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44220 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40520 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40522 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40538 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40544 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40554 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40558 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40570 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40572 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:56:50 [loggers.py:116] Engine 000: Avg prompt throughput: 10973.1 tokens/s, Avg generation throughput: 534.7 tokens/s, Running: 94 reqs, Waiting: 3212 reqs, GPU KV cache usage: 41.9%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:40584 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40586 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43958 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43970 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43974 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43982 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43988 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44004 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44018 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44026 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:57:00 [loggers.py:116] Engine 000: Avg prompt throughput: 11187.8 tokens/s, Avg generation throughput: 455.3 tokens/s, Running: 65 reqs, Waiting: 3094 reqs, GPU KV cache usage: 28.5%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:44030 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44034 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40782 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40790 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40804 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40812 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40828 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40844 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40846 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40862 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:57:10 [loggers.py:116] Engine 000: Avg prompt throughput: 11748.4 tokens/s, Avg generation throughput: 391.7 tokens/s, Running: 73 reqs, Waiting: 2924 reqs, GPU KV cache usage: 24.8%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:40864 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40880 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34544 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34560 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34576 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34590 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34604 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34620 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34628 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34634 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:57:20 [loggers.py:116] Engine 000: Avg prompt throughput: 11700.1 tokens/s, Avg generation throughput: 399.6 tokens/s, Running: 66 reqs, Waiting: 2797 reqs, GPU KV cache usage: 25.2%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:34640 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34642 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39880 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39896 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39904 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39916 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39920 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39936 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39938 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39942 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:57:30 [loggers.py:116] Engine 000: Avg prompt throughput: 11809.9 tokens/s, Avg generation throughput: 378.2 tokens/s, Running: 56 reqs, Waiting: 2665 reqs, GPU KV cache usage: 26.1%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:39952 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39960 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57604 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57612 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57614 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57622 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57634 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57638 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57644 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:57:40 [loggers.py:116] Engine 000: Avg prompt throughput: 11747.1 tokens/s, Avg generation throughput: 348.6 tokens/s, Running: 71 reqs, Waiting: 2536 reqs, GPU KV cache usage: 32.8%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:57650 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57660 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57664 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58018 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58020 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58024 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58040 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58052 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58058 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58068 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:57:50 [loggers.py:116] Engine 000: Avg prompt throughput: 11508.0 tokens/s, Avg generation throughput: 382.1 tokens/s, Running: 67 reqs, Waiting: 2403 reqs, GPU KV cache usage: 28.4%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:58082 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58090 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58102 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33508 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33512 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33528 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33536 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33542 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33544 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33548 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:58:00 [loggers.py:116] Engine 000: Avg prompt throughput: 11590.0 tokens/s, Avg generation throughput: 397.9 tokens/s, Running: 82 reqs, Waiting: 2265 reqs, GPU KV cache usage: 33.8%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:33554 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33556 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33562 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35304 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35310 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35326 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35338 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35354 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35360 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35366 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:58:10 [loggers.py:116] Engine 000: Avg prompt throughput: 11409.3 tokens/s, Avg generation throughput: 444.8 tokens/s, Running: 92 reqs, Waiting: 2131 reqs, GPU KV cache usage: 34.9%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:35368 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35380 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35392 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52564 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52568 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52582 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52586 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52598 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52608 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52616 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:58:20 [loggers.py:116] Engine 000: Avg prompt throughput: 11211.9 tokens/s, Avg generation throughput: 516.3 tokens/s, Running: 92 reqs, Waiting: 2006 reqs, GPU KV cache usage: 36.9%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:52620 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52622 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52638 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45182 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45184 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45194 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45202 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45218 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45230 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45244 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:58:30 [loggers.py:116] Engine 000: Avg prompt throughput: 11147.7 tokens/s, Avg generation throughput: 472.9 tokens/s, Running: 88 reqs, Waiting: 1875 reqs, GPU KV cache usage: 36.2%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:45258 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45272 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45284 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46966 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46974 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46984 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46994 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46998 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47012 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47014 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:58:40 [loggers.py:116] Engine 000: Avg prompt throughput: 11500.8 tokens/s, Avg generation throughput: 438.3 tokens/s, Running: 71 reqs, Waiting: 1740 reqs, GPU KV cache usage: 29.6%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:47028 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47032 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47038 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60824 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60828 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60836 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60850 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60856 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60860 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60862 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:58:50 [loggers.py:116] Engine 000: Avg prompt throughput: 11534.1 tokens/s, Avg generation throughput: 386.5 tokens/s, Running: 69 reqs, Waiting: 1606 reqs, GPU KV cache usage: 31.3%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:60868 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60874 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58182 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58186 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58188 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58200 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58202 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58212 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58226 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58242 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:59:00 [loggers.py:116] Engine 000: Avg prompt throughput: 11766.8 tokens/s, Avg generation throughput: 379.9 tokens/s, Running: 58 reqs, Waiting: 1477 reqs, GPU KV cache usage: 25.1%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:58252 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58254 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40822 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40830 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40840 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40844 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40846 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40850 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40860 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40866 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:59:10 [loggers.py:116] Engine 000: Avg prompt throughput: 11739.4 tokens/s, Avg generation throughput: 356.0 tokens/s, Running: 61 reqs, Waiting: 1335 reqs, GPU KV cache usage: 25.2%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:40882 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40890 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56604 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56616 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56630 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56636 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56644 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56646 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56656 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56658 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:59:20 [loggers.py:116] Engine 000: Avg prompt throughput: 11474.3 tokens/s, Avg generation throughput: 392.9 tokens/s, Running: 74 reqs, Waiting: 1202 reqs, GPU KV cache usage: 31.4%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:56666 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56674 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52448 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52450 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52452 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52458 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52470 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52480 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52492 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52500 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:59:30 [loggers.py:116] Engine 000: Avg prompt throughput: 11524.8 tokens/s, Avg generation throughput: 423.6 tokens/s, Running: 74 reqs, Waiting: 1057 reqs, GPU KV cache usage: 30.7%, Prefix cache hit rate: 1.9%
+INFO:     127.0.0.1:52504 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52512 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53764 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53768 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53772 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53780 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53784 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53786 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53802 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53806 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:59:40 [loggers.py:116] Engine 000: Avg prompt throughput: 11726.2 tokens/s, Avg generation throughput: 425.2 tokens/s, Running: 61 reqs, Waiting: 887 reqs, GPU KV cache usage: 22.5%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:53818 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53822 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36638 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36652 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36658 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36668 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36670 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36676 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36692 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36694 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 19:59:50 [loggers.py:116] Engine 000: Avg prompt throughput: 11787.4 tokens/s, Avg generation throughput: 395.3 tokens/s, Running: 76 reqs, Waiting: 738 reqs, GPU KV cache usage: 29.5%, Prefix cache hit rate: 2.0%
+INFO:     127.0.0.1:36702 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36714 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37288 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37298 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37314 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37322 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37326 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37332 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37334 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37348 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 20:00:00 [loggers.py:116] Engine 000: Avg prompt throughput: 11454.9 tokens/s, Avg generation throughput: 427.7 tokens/s, Running: 79 reqs, Waiting: 598 reqs, GPU KV cache usage: 32.4%, Prefix cache hit rate: 2.1%
+INFO:     127.0.0.1:37352 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37356 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49682 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49692 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49708 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49720 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49728 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49744 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49760 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49762 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 20:00:10 [loggers.py:116] Engine 000: Avg prompt throughput: 11292.2 tokens/s, Avg generation throughput: 502.3 tokens/s, Running: 88 reqs, Waiting: 456 reqs, GPU KV cache usage: 37.7%, Prefix cache hit rate: 2.1%
+INFO:     127.0.0.1:49772 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49786 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50062 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50064 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50074 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50080 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50084 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50088 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50100 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50108 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 20:00:20 [loggers.py:116] Engine 000: Avg prompt throughput: 11091.4 tokens/s, Avg generation throughput: 560.9 tokens/s, Running: 95 reqs, Waiting: 325 reqs, GPU KV cache usage: 38.5%, Prefix cache hit rate: 2.1%
+INFO:     127.0.0.1:50120 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50136 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55024 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55032 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55036 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55046 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55062 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55064 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55072 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55080 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 20:00:30 [loggers.py:116] Engine 000: Avg prompt throughput: 11036.3 tokens/s, Avg generation throughput: 476.0 tokens/s, Running: 88 reqs, Waiting: 200 reqs, GPU KV cache usage: 39.1%, Prefix cache hit rate: 2.1%
+INFO:     127.0.0.1:55082 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55096 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46126 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46136 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46146 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46152 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46162 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46170 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46178 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46188 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 20:00:40 [loggers.py:116] Engine 000: Avg prompt throughput: 11494.7 tokens/s, Avg generation throughput: 450.7 tokens/s, Running: 77 reqs, Waiting: 55 reqs, GPU KV cache usage: 32.6%, Prefix cache hit rate: 2.1%
+INFO:     127.0.0.1:46196 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46210 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38138 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38144 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38146 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38156 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38168 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38178 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56638 - "POST /v1/completions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38182 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 20:00:50 [loggers.py:116] Engine 000: Avg prompt throughput: 5456.5 tokens/s, Avg generation throughput: 790.6 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 2.1%
+INFO:     127.0.0.1:38196 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38206 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38212 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40246 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40252 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40264 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40278 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40280 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40294 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40296 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 20:01:00 [loggers.py:116] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.0 tokens/s, Running: 0 reqs, Waiting: 0 reqs, GPU KV cache usage: 0.0%, Prefix cache hit rate: 2.1%
+INFO:     127.0.0.1:40306 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40322 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59548 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59564 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59580 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59594 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59606 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59620 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59626 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59640 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59656 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59664 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33262 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33274 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33288 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33294 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33296 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33310 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33314 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33322 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33336 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33352 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50816 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50824 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50828 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50830 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50832 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50842 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50854 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50870 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50880 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59150 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59166 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59172 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59180 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59182 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59194 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59208 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59222 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59236 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59244 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58582 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58594 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58600 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58602 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58614 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58620 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58632 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58636 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58652 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58656 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49180 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49190 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49200 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49212 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49218 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49222 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49226 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49234 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49246 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38910 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38918 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38926 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38932 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38948 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38960 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38974 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38980 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38996 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39002 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50548 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50550 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50556 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50570 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50586 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50602 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50612 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50616 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50620 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50630 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51554 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51570 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51576 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51586 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51600 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51612 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51618 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51620 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51630 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47984 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47990 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47994 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48006 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48008 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48022 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48024 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48030 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48038 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48050 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44650 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44660 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44662 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44674 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44686 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44692 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44694 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44698 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44702 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44704 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58042 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58058 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58062 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58074 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58078 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58088 - "GET /metrics HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58104 - "GET /metrics HTTP/1.1" 200 OK
+INFO 07-21 20:03:02 [launcher.py:79] Shutting down FastAPI HTTP server.
+[rank0]:[W721 20:03:02.484558175 ProcessGroupNCCL.cpp:1476] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
