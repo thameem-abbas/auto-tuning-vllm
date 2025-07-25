@@ -15,7 +15,6 @@ sys.path.append(PROJECT_ROOT)
 from src.serving.utils import validate_huggingface_model
 from src.serving.optimization import (
     objective, analyze_trial_results, 
-    get_optimization_recommendations
 )
 from src.serving.run_baseline import run_baseline_test
 from src.serving.vllm_server import cleanup_zombie_vllm_processes
@@ -259,7 +258,6 @@ Examples:
             print(f"Improvement over baseline: {improvement:.2f}%")
 
     analyze_trial_results(study, baseline_metrics)
-    get_optimization_recommendations(study)
 
 if __name__ == "__main__":
     main()

@@ -31,7 +31,7 @@ def run_mlperf(model_name, dataset_path, trial_dir, log_file, port=8000):
         "--model_name", model_name,
         "--api-server-url", f"http://0.0.0.0:{port}",
         # "--print-timing",
-        "--batch_size", "32",
+        "--batch_size", "5000",
         # "--print-histogram",
         # "--sort-by-token-contents",
         # "--enable-metrics-csv",

@@ -141,9 +141,6 @@ def objective(trial, model=None, dataset=None, vllm_config=None,
 
 def analyze_trial_results(study, baseline_metrics=None):
     """Analyze MLPerf optimization results"""
-    print("\n" + "="*80)
-    print("DETAILED MLPERF OPTIMIZATION ANALYSIS")
-    print("="*80)
     
     if len(study.trials) == 0:
         print("No completed trials found.")
@@ -184,30 +181,6 @@ def analyze_trial_results(study, baseline_metrics=None):
             print(f"  Baseline throughput: {baseline_throughput:.2f} tokens/s")
             print(f"  Best throughput: {best_throughput:.2f} tokens/s")
             print(f"  Improvement: {improvement:.2f}%")
-
-def get_optimization_recommendations(study):
-    """Get optimization recommendations for MLPerf results"""
-    print("\n" + "="*80)
-    print("MLPERF OPTIMIZATION RECOMMENDATIONS")
-    print("="*80)
-    
-    if not study.best_trial:
-        print("No best trial found")
-        return
-    
-    best_trial = study.best_trial
-    best_throughput = best_trial.value
-    
-    print(f"Best throughput achieved: {best_throughput:.2f} tokens/s")
-    print("\nOptimal vLLM parameters:")
-    for param, value in best_trial.params.items():
-        print(f"  --{param.replace('_', '-')}: {value}")
-    
-    print(f"\nTo use this configuration:")
-    print(f"vllm serve meta-llama/Llama-3.1-8B \\")
-    for param, value in best_trial.params.items():
-        print(f"  --{param.replace('_', '-')} {value} \\")
-    print(f"  --port 8000")
 
 
 def run_parallel_trial(trial, model, dataset, vllm_config, study_dir, study_id, gpu_id, port):
