@@ -187,7 +187,7 @@ Examples:
     
     if sampler_name == "botorch":
         sampler = BoTorchSampler(
-            n_startup_trials=20
+            n_startup_trials=60
         )
     elif sampler_name == "tpe":
         sampler = TPESampler()

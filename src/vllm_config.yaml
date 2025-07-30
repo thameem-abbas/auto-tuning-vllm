@@ -54,7 +54,7 @@ parameters:
     range:
       start: 8
       end: 16328
-      step: 64
+      step: 256
 
   long_prefill_token_threshold:
     name: "long-prefill-token-threshold"
@@ -82,7 +82,7 @@ optimization:
   # Choose between ["botorch", "nsga2", "tpe", "random", "grid"]
   # BoTorch is particularly effective for parallel optimization across multiple GPUs
   # as it can suggest multiple candidates simultaneously and learn from parallel trials
-  sampler: "botorch"
+  sampler: "tpe"
 
 settings:
   trial_interval: 30
