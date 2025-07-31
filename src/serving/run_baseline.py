@@ -3,7 +3,7 @@ import sys
 from src.serving.vllm_server import build_vllm_command, start_vllm_server, stop_vllm_server
 from src.serving.benchmarking import run_mlperf, parse_benchmarks
 
-def run_baseline_test(model=None, dataset=None, study_dir=None, study_id=None):
+def run_baseline_test(model=None, dataset=None, study_dir=None, study_id=None, gpu_id=0):
     """Run baseline MLPerf test with default vLLM parameters"""
     port = 8000
     
@@ -14,21 +14,23 @@ def run_baseline_test(model=None, dataset=None, study_dir=None, study_id=None):
     baseline_dir = os.path.join(study_dir, "baseline")
     os.makedirs(baseline_dir, exist_ok=True)
     
-    vllm_log_file = os.path.join(baseline_dir, "vllm_server.log")
+    vllm_log_file = os.path.join(baseline_dir, f"vllm_server_gpu_{gpu_id}.log")
     mlperf_log_file = os.path.join(baseline_dir, "mlperf_console.log")
     
     print(f"\nRunning MLPerf baseline test")
     print(f"Model: {model}")
     print(f"Dataset: {dataset}")
+    print(f"GPU: {gpu_id}")
     print(f"Baseline directory: {baseline_dir}")
     
     # Use default vLLM parameters (no optimization flags)
-    vllm_cmd = build_vllm_command(model_name=model, port=port, candidate_flags=[])
-    vllm_proc = start_vllm_server(vllm_cmd, log_file=vllm_log_file)
+    vllm_cmd = build_vllm_command(model_name=model, port=port, candidate_flags=[], gpu_id=gpu_id)
+    vllm_proc = start_vllm_server(vllm_cmd, log_file=vllm_log_file, gpu_id=gpu_id)
 
     try:
         print("Starting baseline MLPerf benchmark...")
-        summary_file = run_mlperf(model, dataset, baseline_dir, mlperf_log_file)
+        # FIXME: need to pass qps=0 if this is offline
+        summary_file = run_mlperf(model, dataset, baseline_dir, mlperf_log_file, qps=9)
         print("Baseline MLPerf benchmark completed successfully")
 
         metrics = parse_benchmarks(summary_file)

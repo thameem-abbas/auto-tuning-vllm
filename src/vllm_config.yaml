@@ -3,28 +3,18 @@ parameters:
   max_num_batched_tokens:
     name: "max-num-batched-tokens"
     enabled: true
-    options: [8192, 16384]
+    options: [512, 1024, 2048, 4096, 8192, 16384]
 
-  compilation_config:
-    name: "compilation-config"
-    enabled: true
-    level: [0, 3]
-    
   block_size:
     name: "block-size"
     enabled: true
-    options: [16, 32]
+    options: [1, 8, 16, 32, 64, 128]
 
   max_num_seqs:
     name: "max-num-seqs"
     enabled: true
-    options: [64, 128, 192, 256, 384, 512]
+    options: [64, 128, 192, 256, 384, 512, 1024, 2048, 4096, 8192, 16384]
 
-  kv_cache_dtype:
-    name: "kv-cache-dtype"
-    enabled: true
-    options: ["fp8"] # fp8_e5m2 kv-cache is not supported with fp8 checkpoint  
-    # "auto" 
 
   gpu_memory_utilization:
     name: "gpu-memory-utilization"
@@ -34,19 +24,7 @@ parameters:
       end: 0.95
       step: 0.01
 
-  preemption-mode:
-    name: "preemption-mode"
-    enabled: false
-    options: ["recompute", "swap"]
 
-  # Guidellm concurrency parameter
-  guidellm_concurrency:
-    name: "guidellm-concurrency"
-    enabled: false
-    range:
-      start: 10
-      end: 240
-      step: 10
 
   cuda_graph_sizes:
     name: "cuda-graph-sizes"
@@ -54,28 +32,38 @@ parameters:
     range:
       start: 8
       end: 16328
-      step: 256
+      step: 64
+
 
   long_prefill_token_threshold:
     name: "long-prefill-token-threshold"
     enabled: true
     options: [0, 256, 512, 1024, 2048]
 
-  max_seq_len_to_capture:
-    name: "max-seq-len-to-capture"
-    enabled: false
-    options: [4096, 8192, 16384]
-
   max_num_partial_prefills:
     name: "max-num-partial-prefills"
     enabled: true
     options: [1, 2, 4, 8]
 
+  max_seq_len_to_capture:
+    name: "max-seq-len-to-capture"
+    enabled: true
+    options: [256, 512, 1024, 2048, 4096, 8192, 16384]
+
+  qps:
+    name: "qps"
+    enabled: true
+    range:
+      start: 9
+      end: 12
+      step: 0.1
+
+
 optimization:
   # Available approaches:
   # - "single_objective": Maximize throughput only
   # - "multi_objective": Find Pareto-optimal throughput vs latency trade-offs
-  approach: "multi_objective"
+  approach: "single_objective"
   
   n_trials: 200
 

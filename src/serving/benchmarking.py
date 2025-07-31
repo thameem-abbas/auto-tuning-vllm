@@ -2,7 +2,7 @@ import subprocess
 import os
 from src.serving.utils import get_last_log_lines
 
-def run_mlperf(model_name, dataset_path, trial_dir, log_file, port=8000):
+def run_mlperf(model_name, dataset_path, trial_dir, log_file, port=8000, qps=0):
     """
     Run MLPerf benchmark with the SUT_VLLM_SingleReplica.py script
     
@@ -26,24 +26,31 @@ def run_mlperf(model_name, dataset_path, trial_dir, log_file, port=8000):
     metrics_csv_path = os.path.join(trial_dir, "mlperf_metrics.csv")
     
     # Build MLPerf command with output_log_dir
+    # If qps is 0 then this is an offline run
     cmd = [
-        "python3", "SUT_VLLM_SingleReplica.py",
-        "--model_name", model_name,
+        "python3", "SUT_VLLM_SingleReplica.py" if qps == 0 else "SUT_VLLM_SingleReplica_Server.py",
+        "--model-name", model_name,
         "--api-server-url", f"http://0.0.0.0:{port}",
         # "--print-timing",
-        "--batch_size", "5000",
+        "--batch-size", "5000", #This is only used for offline, ignored for server
         # "--print-histogram",
         # "--sort-by-token-contents",
         # "--enable-metrics-csv",
         # "--metrics-csv-path", metrics_csv_path,
-        "--output-log-dir", trial_dir
+        "--output-log-dir", trial_dir,
+        "--user-conf", "user.conf"
     ]
+    if qps != 0:
+        cmd.append("--scenario")
+        cmd.append("Server")
+        cmd.append("--target-qps")
+        cmd.append(str(qps))
     
     # Add dataset path (convert to absolute path)
     if dataset_path:
         # Convert to absolute path since MLPerf runs from a different directory
         abs_dataset_path = os.path.abspath(dataset_path)
-        cmd.extend(["--dataset_path", abs_dataset_path])
+        cmd.extend(["--dataset-path", abs_dataset_path])
         print(f"Using absolute dataset path: {abs_dataset_path}")
     
     print(f"Running MLPerf benchmark in directory: {mlperf_dir}")
@@ -71,7 +78,7 @@ def run_mlperf(model_name, dataset_path, trial_dir, log_file, port=8000):
 
     try:
         # MLPerf can take a long time, wait up to 40 minutes
-        proc.wait(timeout=2400)
+        proc.wait(timeout=900)
         print(f"MLPerf process completed with return code: {proc.returncode}")
     except subprocess.TimeoutExpired:
         proc.kill()
@@ -97,6 +104,57 @@ def run_mlperf(model_name, dataset_path, trial_dir, log_file, port=8000):
     
     return summary_file
 
+import re
+import optuna
+def parse_latency_values(file_path):
+    """
+    Parse MLPerf log file to extract 99.90 percentile latency values and throughput.
+    
+    Args:
+        file_path (str): Path to the log file to parse
+        
+    Returns:
+        tuple: (first_token_latency, output_token_latency, throughput)
+               Returns 0 for values that are not found
+    """
+    first_token_latency = 0
+    output_token_latency = 0
+    throughput = 0
+    
+    try:
+        with open(file_path, 'r') as file:
+            for line in file:
+                line = line.strip()
+                
+                # Look for first token latency line
+                if "99.90 percentile first token latency (ns)" in line:
+                    # Extract the number after the colon
+                    match = re.search(r'99\.90 percentile first token latency \(ns\)\s*:\s*(\d+)', line)
+                    if match:
+                        first_token_latency = int(match.group(1))
+                
+                # Look for output token latency line
+                elif "99.90 percentile time to output token (ns)" in line:
+                    # Extract the number after the colon
+                    match = re.search(r'99\.90 percentile time to output token \(ns\)\s*:\s*(\d+)', line)
+                    if match:
+                        output_token_latency = int(match.group(1))
+                # Look for throughput
+                elif "Completed tokens per second" in line:
+                    # Extract the floating point number after the colon
+                    match = re.search(r'Completed tokens per second\s*:\s*(\d+\.?\d*)', line)
+                    if match:
+                        throughput = float(match.group(1))
+    
+    except FileNotFoundError:
+        print(f"Error: File '{file_path}' not found")
+        return (0, 0, 0)
+    except Exception as e:
+        print(f"Error reading file '{file_path}': {e}")
+        return (0, 0, 0)
+    
+    return (first_token_latency, output_token_latency, throughput)
+
 def parse_benchmarks(summary_file):
     """
     Parse MLPerf summary file to extract throughput from line 8
@@ -110,6 +168,25 @@ def parse_benchmarks(summary_file):
             lines = f.readlines()
     except Exception as e:
         raise RuntimeError(f"Error reading MLPerf summary file {summary_file}: {str(e)}")
+
+    # Parse the summary file first to see if this is a server run
+    # If the file contains latency information, then prune the trial if the latency constraints are violated
+    lat = parse_latency_values(summary_file)
+    ttft = lat[0]
+    tpot = lat[1]
+    throughput = lat[2]
+    if ttft != 0:
+        # This is a server run
+        if ttft > 2000000000 or tpot > 200000000:
+            raise optuna.TrialPruned(f"Latency violated ttft: {str(ttft)} tpot: {str(tpot)}")
+        # Return simple metrics dict focused only on throughput
+        result = {
+            "tokens_per_second": throughput,
+            "output_tokens_per_second": throughput,  # Alias for compatibility
+        }
+        return result 
+
+    #If you are here then this was an offline run
     
     # Check if we have at least 8 lines
     if len(lines) < 8:

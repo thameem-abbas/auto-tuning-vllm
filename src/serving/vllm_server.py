@@ -11,7 +11,7 @@ def build_vllm_command(model_name, port, candidate_flags, gpu_id=0):
         "vllm",
         "serve",
         model_name,
-        "--max-model-len", "8192",
+        #"--max-model-len", "4096",
         "--port", str(port),
         "--disable-log-requests",
         "--tensor-parallel-size", "1"
