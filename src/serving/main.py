@@ -42,9 +42,41 @@ for d in study_dirs:
     if m:
         study_ids.append(int(m.group(1)))
 
-STUDY_ID = max(study_ids) + 1 if study_ids else 1
-STUDY_DIR = os.path.join(STUDIES_ROOT, f"study_{STUDY_ID}")
+# Ask user if they want to resume an existing study or start new one
+resume_study = False
+if study_ids:  # Only ask if there are existing studies
+    print(f"\nFound existing studies: {sorted(study_ids)}")
+    while True:
+        user_choice = input("Do you want to resume an existing study? (y/n): ").strip().lower()
+        if user_choice in ['y', 'yes']:
+            resume_study = True
+            break
+        elif user_choice in ['n', 'no']:
+            resume_study = False
+            break
+        else:
+            print("Please enter 'y' for yes or 'n' for no.")
 
+if resume_study:
+    # Ask for study number to resume
+    while True:
+        try:
+            study_input = input(f"Enter study number to resume {sorted(study_ids)}: ").strip()
+            requested_study_id = int(study_input)
+            if requested_study_id in study_ids:
+                STUDY_ID = requested_study_id
+                print(f"Resuming study {STUDY_ID}")
+                break
+            else:
+                print(f"Study {requested_study_id} does not exist. Available studies: {sorted(study_ids)}")
+        except ValueError:
+            print("Please enter a valid study number.")
+else:
+    # Create new study
+    STUDY_ID = max(study_ids) + 1 if study_ids else 1
+    print(f"Starting new study {STUDY_ID}")
+
+STUDY_DIR = os.path.join(STUDIES_ROOT, f"study_{STUDY_ID}")
 os.makedirs(STUDY_DIR, exist_ok=True)
 
 print(f"Logging this study's data to: {STUDY_DIR}")
@@ -152,23 +184,44 @@ Examples:
     # Clean up any zombie vLLM processes before starting
     cleanup_zombie_vllm_processes()
     
-    print("=" * 80)
-    print("RUNNING MLPERF BASELINE TEST")
-    print("=" * 80)
-    
-    baseline_metrics = run_baseline_test(
-        model, dataset, STUDY_DIR, STUDY_ID
-    )
-    
-    if baseline_metrics is not None:
-        print(f"Baseline Performance: {baseline_metrics['tokens_per_second']:.2f} tokens/second")
-        if baseline_metrics.get('mean_latency_ms'):
-            print(f"Baseline Mean Latency: {baseline_metrics['mean_latency_ms']:.2f} ms")
-        if baseline_metrics.get('p95_latency_ms'):
-            print(f"Baseline P95 Latency: {baseline_metrics['p95_latency_ms']:.2f} ms")
+    # Only run baseline test for new studies, not resumed ones
+    baseline_metrics = None
+    if not resume_study:
+        print("=" * 80)
+        print("RUNNING MLPERF BASELINE TEST")
+        print("=" * 80)
+        
+        baseline_metrics = run_baseline_test(
+            model, dataset, STUDY_DIR, STUDY_ID
+        )
+        
+        if baseline_metrics is not None:
+            print(f"Baseline Performance: {baseline_metrics['tokens_per_second']:.2f} tokens/second")
+            if baseline_metrics.get('mean_latency_ms'):
+                print(f"Baseline Mean Latency: {baseline_metrics['mean_latency_ms']:.2f} ms")
+            if baseline_metrics.get('p95_latency_ms'):
+                print(f"Baseline P95 Latency: {baseline_metrics['p95_latency_ms']:.2f} ms")
+        else:
+            print("Baseline test failed")
+        print("=" * 80)
     else:
-        print("Baseline test failed")
-    print("=" * 80)
+        print("=" * 80)
+        print("RESUMING STUDY - SKIPPING BASELINE TEST")
+        print("=" * 80)
+        # Try to load existing baseline metrics for comparison
+        try:
+            import json
+            baseline_file = os.path.join(STUDY_DIR, f"benchmarks_{STUDY_ID}.baseline.json")
+            if os.path.exists(baseline_file):
+                with open(baseline_file, 'r') as f:
+                    baseline_metrics = json.load(f)
+                print(f"Loaded existing baseline: {baseline_metrics['tokens_per_second']:.2f} tokens/second")
+            else:
+                print("No existing baseline found - will proceed without baseline comparison")
+        except Exception as e:
+            print(f"Could not load existing baseline: {e}")
+            print("Will proceed without baseline comparison")
+        print("=" * 80)
     
     db_path = os.path.join(STUDY_DIR, "optuna.db")
     storage_url = f"sqlite:///{db_path}"
