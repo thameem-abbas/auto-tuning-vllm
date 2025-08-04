@@ -28,8 +28,16 @@ import os
 import re
 import concurrent.futures
 import threading
+import logging
 from src.serving.vllm_server import build_vllm_command, start_vllm_server, stop_vllm_server, cleanup_zombie_vllm_processes_on_ports
 from src.serving.benchmarking import run_mlperf, parse_benchmarks
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 def generate_vllm_parameters(trial, config):
     """Generate vLLM parameters for MLPerf optimization (no concurrency parameters)"""
@@ -90,19 +98,19 @@ def run_single_trial(trial, model=None, dataset=None, vllm_config=None,
     vllm_log_file = os.path.join(trial_dir, "vllm_server.log")
     mlperf_log_file = os.path.join(trial_dir, "mlperf_console.log")
     
-    print(f"\nStarting MLPerf trial {trial_id}")
-    print(f"Model: {model}")
-    print(f"Dataset: {dataset}")
-    print(f"vLLM Parameters: {' '.join(candidate_flags)}")
-    print(f"Trial directory: {trial_dir}")
+    logger.info(f"\nStarting MLPerf trial {trial_id}")
+    logger.info(f"Model: {model}")
+    logger.info(f"Dataset: {dataset}")
+    logger.debug(f"vLLM Parameters: {' '.join(candidate_flags)}")
+    logger.info(f"Trial directory: {trial_dir}")
 
     vllm_cmd = build_vllm_command(model_name=model, port=port, candidate_flags=candidate_flags)
     vllm_proc = start_vllm_server(vllm_cmd, log_file=vllm_log_file)
 
     try:
-        print("Starting MLPerf benchmark...")
+        logger.info("Starting MLPerf benchmark...")
         summary_file = run_mlperf(model, dataset, trial_dir, mlperf_log_file)
-        print("MLPerf benchmark completed successfully")
+        logger.info("MLPerf benchmark completed successfully")
 
         metrics = parse_benchmarks(summary_file)
         
@@ -115,9 +123,9 @@ def run_single_trial(trial, model=None, dataset=None, vllm_config=None,
 
     finally:
         stop_vllm_server(vllm_proc)
-        print("vLLM server stopped.")
+        logger.info("vLLM server stopped.")
         interval = vllm_config["settings"].get("trial_interval", 30)
-        print(f"Waiting {interval} seconds before next trial...")
+        logger.info(f"Waiting {interval} seconds before next trial...")
         time.sleep(interval)
 
 def objective(trial, model=None, dataset=None, vllm_config=None, 
@@ -128,61 +136,17 @@ def objective(trial, model=None, dataset=None, vllm_config=None,
                                  study_dir, study_id)
         
         tokens_per_second = float(metrics["tokens_per_second"])
-        print(f"Trial {trial.number}: Tokens per second = {tokens_per_second:.2f}")
+        logger.info(f"Trial {trial.number}: Tokens per second = {tokens_per_second:.2f}")
         
         return tokens_per_second
 
     except Exception as e:
-        print(f"Error during MLPerf trial {trial.number}:", str(e), file=sys.stderr)
+        logger.error(f"Error during MLPerf trial {trial.number}: {str(e)}")
         import traceback
         traceback.print_exc()
         trial.set_user_attr("error", str(e))
         trial.set_user_attr("traceback", traceback.format_exc())
         raise optuna.TrialPruned(f"Trial failed: {str(e)}")
-
-def analyze_trial_results(study, baseline_metrics=None):
-    """Analyze MLPerf optimization results"""
-    
-    if len(study.trials) == 0:
-        print("No completed trials found.")
-        return
-    
-    completed_trials = [t for t in study.trials if t.state == optuna.trial.TrialState.COMPLETE]
-    
-    if not completed_trials:
-        print("No successfully completed trials found.")
-        return
-    
-    print(f"Completed trials: {len(completed_trials)}")
-    print(f"Failed trials: {len(study.trials) - len(completed_trials)}")
-    
-    # Collect throughput metrics
-    throughputs = []
-    
-    for trial in completed_trials:
-        if hasattr(trial, 'user_attrs'):
-            throughput = trial.user_attrs.get('tokens_per_second')
-            if throughput is not None:
-                throughputs.append(throughput)
-    
-    if throughputs:
-        print(f"\nTOKENS PER SECOND STATISTICS:")
-        print(f"  Min: {min(throughputs):.2f} tokens/s")
-        print(f"  Max: {max(throughputs):.2f} tokens/s")
-        print(f"  Mean: {sum(throughputs)/len(throughputs):.2f} tokens/s")
-        print(f"  Median: {sorted(throughputs)[len(throughputs)//2]:.2f} tokens/s")
-        
-    if baseline_metrics and throughputs:
-        baseline_throughput = baseline_metrics.get('tokens_per_second')
-        if baseline_throughput:
-            best_throughput = max(throughputs)
-            improvement = ((best_throughput - baseline_throughput) / baseline_throughput) * 100
-            
-            print(f"\nIMPROVEMENT OVER BASELINE:")
-            print(f"  Baseline throughput: {baseline_throughput:.2f} tokens/s")
-            print(f"  Best throughput: {best_throughput:.2f} tokens/s")
-            print(f"  Improvement: {improvement:.2f}%")
-
 
 def run_parallel_trial(trial, model, dataset, vllm_config, study_dir, study_id, gpu_id, port):
     """Run a single trial on a specific GPU with a specific port"""
@@ -197,20 +161,20 @@ def run_parallel_trial(trial, model, dataset, vllm_config, study_dir, study_id, 
     vllm_log_file = os.path.join(trial_dir, f"vllm_server_gpu_{gpu_id}.log")
     mlperf_log_file = os.path.join(trial_dir, "mlperf_console.log")
     
-    print(f"\nStarting MLPerf trial {trial_id} on GPU {gpu_id}, port {port}")
-    print(f"Model: {model}")
-    print(f"Dataset: {dataset}")
-    print(f"vLLM Parameters: {' '.join(candidate_flags)}")
-    print(f"Trial directory: {trial_dir}")
+    logger.info(f"\nStarting MLPerf trial {trial_id} on GPU {gpu_id}, port {port}")
+    logger.info(f"Model: {model}")
+    logger.info(f"Dataset: {dataset}")
+    logger.debug(f"vLLM Parameters: {' '.join(candidate_flags)}")
+    logger.info(f"Trial directory: {trial_dir}")
     if trial.params["max_num_batched_tokens"] < trial.params["max_num_seqs"]:
        raise optuna.TrialPruned("Invalid config: batched tokens < num_seqs")
     vllm_cmd = build_vllm_command(model_name=model, port=port, candidate_flags=candidate_flags, gpu_id=gpu_id)
     vllm_proc = start_vllm_server(vllm_cmd, log_file=vllm_log_file, gpu_id=gpu_id)
 
     try:
-        print(f"Starting MLPerf benchmark on GPU {gpu_id}...")
+        logger.info(f"Starting MLPerf benchmark on GPU {gpu_id}...")
         summary_file = run_mlperf(model, dataset, trial_dir, mlperf_log_file, port=port, qps=trial.params.get("qps", 0))
-        print(f"MLPerf benchmark completed successfully on GPU {gpu_id}")
+        logger.info(f"MLPerf benchmark completed successfully on GPU {gpu_id}")
 
         metrics = parse_benchmarks(summary_file)
         
@@ -223,7 +187,7 @@ def run_parallel_trial(trial, model, dataset, vllm_config, study_dir, study_id, 
 
     finally:
         stop_vllm_server(vllm_proc)
-        print(f"vLLM server stopped on GPU {gpu_id}.")
+        logger.info(f"vLLM server stopped on GPU {gpu_id}.")
         # Wait a bit for GPU memory to clear
         time.sleep(5)
 
@@ -239,12 +203,12 @@ def parallel_objective(trial, model, dataset, vllm_config, study_dir, study_id, 
                                    study_dir, study_id, gpu_id, port)
         
         tokens_per_second = float(metrics["tokens_per_second"])
-        print(f"Trial {trial.number}: Tokens per second = {tokens_per_second:.2f} on GPU {gpu_id}")
+        logger.info(f"Trial {trial.number}: Tokens per second = {tokens_per_second:.2f} on GPU {gpu_id}")
         
         return tokens_per_second
 
     except Exception as e:
-        print(f"Error during MLPerf trial {trial.number} on GPU {gpu_id}:", str(e), file=sys.stderr)
+        logger.error(f"Error during MLPerf trial {trial.number} on GPU {gpu_id}: {str(e)}")
         import traceback
         traceback.print_exc()
         trial.set_user_attr("error", str(e))
@@ -270,20 +234,20 @@ def run_parallel_trials(study, model, dataset, vllm_config, study_dir, study_id,
     Returns:
         Updated study object
     """
-    print(f"\n=== PARALLEL OPTIMIZATION ===")
-    print(f"GPUs: {gpu_ids}")
-    print(f"Total trials: {n_trials}")
-    print(f"Dynamic workers: {len(gpu_ids)}")
-    print("Note: Next trial starts immediately when any GPU becomes available")
-    print("=" * 60)
+    logger.info(f"\nParallel optimization")
+    logger.info(f"GPUs: {gpu_ids}")
+    logger.info(f"Total trials: {n_trials}")
+    logger.info(f"Dynamic workers: {len(gpu_ids)}")
+    logger.info("Note: Next trial starts immediately when any GPU becomes available")
+    logger.info("=" * 60)
     
     # Clean up any existing processes
     ports_to_clean = [8000 + i for i in range(len(gpu_ids) * 10)]
-    print("Cleaning up any existing vLLM processes...")
+    logger.info("Cleaning up any existing vLLM processes...")
     cleanup_zombie_vllm_processes_on_ports(ports_to_clean)
     
     # GPU state tracking
-    gpu_states = {gpu_id: {'status': 'idle', 'trial_id': None, 'port': 8000 + gpu_id, 'future': None} 
+    gpu_states = {gpu_id: {'status': 'idle', 'trial_id': None, 'trial_obj': None, 'port': 8000 + gpu_id, 'future': None} 
                   for gpu_id in gpu_ids}
     
     completed_trials = 0
@@ -296,7 +260,7 @@ def run_parallel_trials(study, model, dataset, vllm_config, study_dir, study_id,
         """Run a single trial on a specific GPU"""
         port = gpu_states[gpu_id]['port']
         
-        print(f"\n[GPU {gpu_id}] Starting trial {trial.number}")
+        logger.info(f"\n[GPU {gpu_id}] Starting trial {trial.number}")
         
         try:
             # Use existing parallel_trial logic but with explicit GPU assignment
@@ -309,11 +273,11 @@ def run_parallel_trials(study, model, dataset, vllm_config, study_dir, study_id,
             vllm_log_file = os.path.join(trial_dir, f"vllm_server_gpu_{gpu_id}.log")
             mlperf_log_file = os.path.join(trial_dir, "mlperf_console.log")
             
-            print(f"[GPU {gpu_id}] vLLM Parameters: {' '.join(candidate_flags)}")
+            logger.debug(f"[GPU {gpu_id}] vLLM Parameters: {' '.join(candidate_flags)}")
             
             # Check for invalid configs early
             if trial.params["max_num_batched_tokens"] < trial.params["max_num_seqs"]:
-                print(f"[GPU {gpu_id}] Invalid config - batched tokens < num_seqs")
+                logger.warning(f"[GPU {gpu_id}] Invalid config - batched tokens < num_seqs")
                 raise optuna.TrialPruned("Invalid config: batched tokens < num_seqs")
             
             # Start vLLM server
@@ -325,7 +289,7 @@ def run_parallel_trials(study, model, dataset, vllm_config, study_dir, study_id,
                 # Run MLPerf benchmark
                 summary_file = run_mlperf(model, dataset, trial_dir, mlperf_log_file, 
                                         port=port, qps=trial.params.get("qps", 0))
-                print(f"[GPU {gpu_id}] MLPerf completed successfully for trial {trial.number}")
+                logger.info(f"[GPU {gpu_id}] MLPerf completed successfully for trial {trial.number}")
 
                 # Parse results
                 metrics = parse_benchmarks(summary_file)
@@ -336,7 +300,7 @@ def run_parallel_trials(study, model, dataset, vllm_config, study_dir, study_id,
                         trial.set_user_attr(metric_name, value)
                 
                 tokens_per_second = float(metrics["tokens_per_second"])
-                print(f"[GPU {gpu_id}] Trial {trial.number}: {tokens_per_second:.2f} tokens/s")
+                logger.info(f"[GPU {gpu_id}] Trial {trial.number}: {tokens_per_second:.2f} tokens/s")
                 
                 with stats_lock:
                     nonlocal completed_trials
@@ -351,11 +315,11 @@ def run_parallel_trials(study, model, dataset, vllm_config, study_dir, study_id,
                 
         except Exception as e:
             error_msg = str(e)
-            print(f"[GPU {gpu_id}] Trial {trial.number} failed: {error_msg}")
+            logger.error(f"[GPU {gpu_id}] Trial {trial.number} failed: {error_msg}")
             
             # Check if it's an OOM error
             if "CUDA out of memory" in error_msg or "OutOfMemoryError" in error_msg:
-                print(f"[GPU {gpu_id}] OOM detected - GPU memory exhausted, moving to next trial")
+                logger.warning(f"[GPU {gpu_id}] OOM detected - GPU memory exhausted, moving to next trial")
             
             trial.set_user_attr("error", str(error_msg))
             
@@ -363,7 +327,8 @@ def run_parallel_trials(study, model, dataset, vllm_config, study_dir, study_id,
                 nonlocal failed_trials
                 failed_trials += 1
                 
-            raise optuna.TrialPruned(f"Trial failed: {str(e)}")
+            # Return None to indicate failure - the main loop will handle telling Optuna
+            raise Exception(f"Trial failed: {str(e)}")
     
     # Use ThreadPoolExecutor for dynamic scheduling
     with concurrent.futures.ThreadPoolExecutor(max_workers=len(gpu_ids)) as executor:
@@ -378,13 +343,23 @@ def run_parallel_trials(study, model, dataset, vllm_config, study_dir, study_id,
                     if gpu_state['future'].done():
                         try:
                             result = gpu_state['future'].result()
-                            print(f"[GPU {gpu_id}] Trial {gpu_state['trial_id']} completed successfully")
+                            # Report the result back to Optuna
+                            trial = gpu_state['trial_obj']
+                            study.tell(trial, result)
+                            logger.info(f"[GPU {gpu_id}] Trial {gpu_state['trial_id']} completed successfully, value: {result:.2f}")
                         except Exception as e:
-                            print(f"[GPU {gpu_id}] Trial {gpu_state['trial_id']} failed: {e}")
+                            logger.error(f"[GPU {gpu_id}] Trial {gpu_state['trial_id']} failed: {e}")
+                            # Mark trial as failed in Optuna
+                            if 'trial_obj' in gpu_state and gpu_state['trial_obj']:
+                                try:
+                                    study.tell(gpu_state['trial_obj'], state=optuna.trial.TrialState.FAIL)
+                                except:
+                                    pass  # Don't fail if we can't mark it as failed
                         
                         gpu_state['status'] = 'idle'
                         gpu_state['future'] = None
                         gpu_state['trial_id'] = None
+                        gpu_state['trial_obj'] = None
                 
                 # If GPU is idle and we have more trials to run, start the next one
                 if (gpu_state['status'] == 'idle' and 
@@ -398,32 +373,43 @@ def run_parallel_trials(study, model, dataset, vllm_config, study_dir, study_id,
                         gpu_state['future'] = future
                         gpu_state['status'] = 'running'
                         gpu_state['trial_id'] = trial.number
+                        gpu_state['trial_obj'] = trial
                         
-                        print(f"[GPU {gpu_id}] Assigned trial {trial.number} (Progress: {completed_trials + failed_trials}/{n_trials})")
+                        logger.info(f"[GPU {gpu_id}] Assigned trial {trial.number} (Progress: {completed_trials + failed_trials}/{n_trials})")
                         
                     except Exception as e:
-                        print(f"Error getting next trial: {e}")
+                        logger.error(f"Error getting next trial: {e}")
                         break
             
             # Brief sleep to avoid busy waiting
             time.sleep(0.5)
         
-        # Wait for any remaining trials to complete
-        print("Waiting for remaining trials to complete...")
+        # Wait for any remaining trials to complete and report results
+        logger.info("Waiting for remaining trials to complete...")
         for gpu_id in gpu_ids:
             if gpu_states[gpu_id]['future']:
                 try:
-                    gpu_states[gpu_id]['future'].result()
+                    result = gpu_states[gpu_id]['future'].result()
+                    # Report the result back to Optuna
+                    if gpu_states[gpu_id]['trial_obj']:
+                        study.tell(gpu_states[gpu_id]['trial_obj'], result)
+                        logger.info(f"[GPU {gpu_id}] Final trial {gpu_states[gpu_id]['trial_id']} completed, value: {result:.2f}")
                 except Exception as e:
-                    print(f"Final trial on GPU {gpu_id} failed: {e}")
+                    logger.error(f"Final trial on GPU {gpu_id} failed: {e}")
+                    # Mark trial as failed in Optuna
+                    if gpu_states[gpu_id]['trial_obj']:
+                        try:
+                            study.tell(gpu_states[gpu_id]['trial_obj'], state=optuna.trial.TrialState.FAIL)
+                        except:
+                            pass
     
-    print(f"\nParallel optimization complete!")
-    print(f"Completed trials: {completed_trials}")
-    print(f"Failed trials: {failed_trials}")
-    print(f"Total trials: {completed_trials + failed_trials}")
+    logger.info(f"\nParallel optimization complete!")
+    logger.info(f"Completed trials: {completed_trials}")
+    logger.info(f"Failed trials: {failed_trials}")
+    logger.info(f"Total trials: {completed_trials + failed_trials}")
     
     if study.best_trial:
-        print(f"Best trial: {study.best_trial.value:.2f} tokens/s")
-        print(f"Best parameters: {study.best_trial.params}")
+        logger.info(f"Best trial: {study.best_trial.value:.2f} tokens/s")
+        logger.info(f"Best parameters: {study.best_trial.params}")
     
     return study 

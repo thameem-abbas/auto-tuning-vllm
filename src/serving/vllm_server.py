@@ -4,7 +4,15 @@ import requests
 import os
 import signal
 import json
+import logging
 from src.serving.utils import check_port_available, get_last_log_lines
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 def build_vllm_command(model_name, port, candidate_flags, gpu_id=0):
     cmd = [
@@ -53,7 +61,7 @@ def start_vllm_server(cmd, ready_pattern="Application startup complete", timeout
     if not check_port_available(int(cmd[cmd.index('--port') + 1])):
         raise RuntimeError(f"Port {cmd[cmd.index('--port') + 1]} is already in use")
 
-    print(f"Launching vLLM server on GPU {gpu_id}: {' '.join(cmd)}")
+    logger.info(f"Launching vLLM server on GPU {gpu_id}: {' '.join(cmd)}")
     
     # Set environment variables to help prevent CUDA out of memory issues
     env = os.environ.copy()
@@ -116,73 +124,73 @@ def start_vllm_server(cmd, ready_pattern="Application startup complete", timeout
 
 def stop_vllm_server(proc, grace_period=15):
     if proc is None:
-        print("No vLLM process to stop")
+        logger.info("No vLLM process to stop")
         return
 
-    print(f"Stopping vLLM process {proc.pid}...")
+    logger.info(f"Stopping vLLM process {proc.pid}...")
     killed = False
 
     try:
         os.killpg(os.getpgid(proc.pid), signal.SIGINT)
-        print("Sent SIGINT to process group")
+        logger.debug("Sent SIGINT to process group")
     except ProcessLookupError:
-        print("Process already terminated")
+        logger.info("Process already terminated")
         return
     except Exception as e:
-        print(f"Warning: SIGINT failed: {str(e)}")
+        logger.warning(f"SIGINT failed: {str(e)}")
     
-    print(f"Waiting up to {grace_period}s for graceful shutdown...")
+    logger.info(f"Waiting up to {grace_period}s for graceful shutdown...")
     deadline = time.time() + grace_period
     while time.time() < deadline:
         if proc.poll() is not None:
-            print("vLLM process exited cleanly")
+            logger.info("vLLM process exited cleanly")
             return
         time.sleep(0.5)
 
     if proc.poll() is None:
-        print(f"Process {proc.pid} still alive after {grace_period}s; sending SIGTERM")
+        logger.info(f"Process {proc.pid} still alive after {grace_period}s; sending SIGTERM")
         try:
             os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
-            print("Sent SIGTERM to process group")
+            logger.debug("Sent SIGTERM to process group")
             
             # Wait another 5 seconds for SIGTERM
             deadline = time.time() + 5
             while time.time() < deadline:
                 if proc.poll() is not None:
-                    print("vLLM process exited after SIGTERM")
+                    logger.info("vLLM process exited after SIGTERM")
                     return
                 time.sleep(0.5)
                 
         except ProcessLookupError:
-            print("Process already terminated")
+            logger.info("Process already terminated")
             return
         except Exception as e:
-            print(f"Warning: SIGTERM failed: {str(e)}")
+            logger.warning(f"SIGTERM failed: {str(e)}")
     
     if proc.poll() is None:
-        print(f"Process {proc.pid} still alive after SIGTERM; sending SIGKILL")
+        logger.warning(f"Process {proc.pid} still alive after SIGTERM; sending SIGKILL")
         try:
             os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
-            print("Sent SIGKILL to process group")
+            logger.debug("Sent SIGKILL to process group")
             proc.wait(timeout=10)
             killed = True
         except ProcessLookupError:
-            print("Process already terminated")
+            logger.info("Process already terminated")
             return
         except Exception as e:
-            print(f"Warning: SIGKILL failed: {str(e)}")
+            logger.warning(f"SIGKILL failed: {str(e)}")
     
     if not killed and proc.poll() is None:
-        print(f"ERROR: Process {proc.pid} could not be terminated - manual cleanup may be required")
+        logger.error(f"Process {proc.pid} could not be terminated - manual cleanup may be required")
         # Try to kill any remaining vllm processes on the port
         try:
             import subprocess
             subprocess.run(["pkill", "-f", "vllm.*serve"], check=False)
-            print("Attempted to kill any remaining vLLM processes")
+            logger.info("Attempted to kill any remaining vLLM processes")
         except Exception as e:
-            print(f"Warning: pkill failed: {str(e)}")
+            logger.warning(f"pkill failed: {str(e)}")
     else:
-        print("vLLM process terminated")
+        logger.info("vLLM process terminated")
 
 def query_vllm_server(port, prompt, max_retries=3, retry_delay=1):
     url = f"http://localhost:{port}/v1/completions"
@@ -214,22 +222,22 @@ def query_vllm_server(port, prompt, max_retries=3, retry_delay=1):
             last_error = f"Unexpected error: {str(e)}"
             
         if attempt < max_retries - 1:
-            print(f"Attempt {attempt + 1} failed: {last_error}. Retrying in {retry_delay}s...")
+            logger.warning(f"Attempt {attempt + 1} failed: {last_error}. Retrying in {retry_delay}s...")
             time.sleep(retry_delay)
         
     raise RuntimeError(f"Failed to query vLLM server after {max_retries} attempts. Last error: {last_error}")
 
 def cleanup_zombie_vllm_processes():
     """Clean up any zombie vLLM processes that might be blocking the port."""
-    print("Checking for zombie vLLM processes...")
+    logger.info("Checking for zombie vLLM processes...")
     
     try:
         # Check if port 8000 is in use
         if check_port_available(8000):
-            print("Port 8000 is available - no cleanup needed")
+            logger.info("Port 8000 is available - no cleanup needed")
             return
             
-        print("Port 8000 is in use - attempting cleanup...")
+        logger.info("Port 8000 is in use - attempting cleanup...")
         
         # Try to find and kill vLLM processes
         result = subprocess.run(
@@ -240,13 +248,13 @@ def cleanup_zombie_vllm_processes():
         
         if result.returncode == 0:
             pids = result.stdout.strip().split('\n')
-            print(f"Found {len(pids)} vLLM processes: {pids}")
+            logger.info(f"Found {len(pids)} vLLM processes: {pids}")
             
             # Kill each process
             for pid in pids:
                 if pid:
                     try:
-                        print(f"Killing process {pid}...")
+                        logger.info(f"Killing process {pid}...")
                         os.kill(int(pid), signal.SIGTERM)
                         time.sleep(1)
                         # Force kill if still running
@@ -262,29 +270,29 @@ def cleanup_zombie_vllm_processes():
             
             # Check if port is now available
             if check_port_available(8000):
-                print("✓ Port 8000 is now available after cleanup")
+                logger.info("✓ Port 8000 is now available after cleanup")
             else:
-                print("⚠ Port 8000 is still in use after cleanup")
+                logger.warning("⚠ Port 8000 is still in use after cleanup")
                 
         else:
-            print("No vLLM processes found")
+            logger.info("No vLLM processes found")
             
     except Exception as e:
-        print(f"Warning: Cleanup failed: {str(e)}")
+        logger.warning(f"Cleanup failed: {str(e)}")
         
-    print("Cleanup complete")
+    logger.info("Cleanup complete")
 
 def cleanup_zombie_vllm_processes_on_ports(ports):
     """Clean up any zombie vLLM processes that might be blocking the specified ports."""
-    print(f"Checking for zombie vLLM processes on ports: {ports}")
+    logger.info(f"Checking for zombie vLLM processes on ports: {ports}")
     
     for port in ports:
         try:
             if check_port_available(port):
-                print(f"Port {port} is available - no cleanup needed")
+                logger.info(f"Port {port} is available - no cleanup needed")
                 continue
                 
-            print(f"Port {port} is in use - attempting cleanup...")
+            logger.info(f"Port {port} is in use - attempting cleanup...")
             
             # Try to find processes using this port
             result = subprocess.run(
@@ -295,13 +303,13 @@ def cleanup_zombie_vllm_processes_on_ports(ports):
             
             if result.returncode == 0:
                 pids = result.stdout.strip().split('\n')
-                print(f"Found {len(pids)} processes using port {port}: {pids}")
+                logger.info(f"Found {len(pids)} processes using port {port}: {pids}")
                 
                 # Kill each process
                 for pid in pids:
                     if pid:
                         try:
-                            print(f"Killing process {pid} using port {port}...")
+                            logger.info(f"Killing process {pid} using port {port}...")
                             os.kill(int(pid), signal.SIGTERM)
                             time.sleep(1)
                             # Force kill if still running
@@ -313,11 +321,11 @@ def cleanup_zombie_vllm_processes_on_ports(ports):
                             pass  # Process already terminated or invalid PID
                             
         except Exception as e:
-            print(f"Warning: Cleanup failed for port {port}: {str(e)}")
+            logger.warning(f"Cleanup failed for port {port}: {str(e)}")
     
     # Wait a bit for processes to clean up
     time.sleep(3)
-    print("Cleanup complete for all ports")
+    logger.info("Cleanup complete for all ports")
 
 def start_parallel_vllm_servers(model_name, base_port=8000, gpu_ids=[0, 1], candidate_flags=[], log_dir="logs"):
     """
@@ -348,7 +356,7 @@ def start_parallel_vllm_servers(model_name, base_port=8000, gpu_ids=[0, 1], cand
         port = base_port + i
         log_file = os.path.join(log_dir, f"vllm_gpu_{gpu_id}_port_{port}.log")
         
-        print(f"Starting vLLM server on GPU {gpu_id}, port {port}")
+        logger.info(f"Starting vLLM server on GPU {gpu_id}, port {port}")
         
         try:
             # Build command for this GPU
@@ -358,16 +366,16 @@ def start_parallel_vllm_servers(model_name, base_port=8000, gpu_ids=[0, 1], cand
             proc = start_vllm_server(cmd, log_file=log_file, gpu_id=gpu_id)
             
             servers.append((proc, port, gpu_id))
-            print(f"✓ vLLM server started on GPU {gpu_id}, port {port}")
+            logger.info(f"✓ vLLM server started on GPU {gpu_id}, port {port}")
             
         except Exception as e:
-            print(f"✗ Failed to start vLLM server on GPU {gpu_id}: {str(e)}")
+            logger.error(f"✗ Failed to start vLLM server on GPU {gpu_id}: {str(e)}")
             # Clean up any successfully started servers
             for proc, _, _ in servers:
                 stop_vllm_server(proc)
             raise
     
-    print(f"Successfully started {len(servers)} vLLM servers")
+    logger.info(f"Successfully started {len(servers)} vLLM servers")
     return servers
 
 def stop_parallel_vllm_servers(servers):
@@ -377,10 +385,10 @@ def stop_parallel_vllm_servers(servers):
     Args:
         servers: List of tuples from start_parallel_vllm_servers()
     """
-    print(f"Stopping {len(servers)} vLLM servers...")
+    logger.info(f"Stopping {len(servers)} vLLM servers...")
     
     for proc, port, gpu_id in servers:
-        print(f"Stopping server on GPU {gpu_id}, port {port}")
+        logger.info(f"Stopping server on GPU {gpu_id}, port {port}")
         stop_vllm_server(proc)
     
-    print("All servers stopped") 
+    logger.info("All servers stopped") 

@@ -1,25 +1,33 @@
 import socket
 import os
+import logging
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 try:
     from huggingface_hub import HfApi
     HF_AVAILABLE = True
 except ImportError:
     HF_AVAILABLE = False
-    print("Warning: huggingface_hub not available. Install with: pip install huggingface_hub")
+    logger.warning("huggingface_hub not available. Install with: pip install huggingface_hub")
 
 def validate_huggingface_model(model_name):
     if not HF_AVAILABLE:
-        print(f"Warning: Cannot validate HuggingFace model '{model_name}' - huggingface_hub not installed")
+        logger.warning(f"Cannot validate HuggingFace model '{model_name}' - huggingface_hub not installed")
         return True
     
     try:
         api = HfApi()
         api.model_info(model_name)
-        print(f"✓ Validated HuggingFace model: {model_name}")
+        logger.info(f"Validated HuggingFace model: {model_name}")
         return True
     except Exception as e:
-        print(f"✗ Invalid HuggingFace model '{model_name}': {str(e)}")
+        logger.error(f"Invalid HuggingFace model '{model_name}': {str(e)}")
         return False
 
 def log_stream(stream, log_file, prefix):
@@ -28,7 +36,7 @@ def log_stream(stream, log_file, prefix):
             line = stream.readline()
             if not line:
                 break
-            print(f"[{prefix}] {line.strip()}")
+            logger.info(f"[{prefix}] {line.strip()}")
             f.write(line)
             f.flush()
 

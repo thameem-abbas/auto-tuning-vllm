@@ -1,6 +1,14 @@
 import subprocess
 import os
+import logging
 from src.serving.utils import get_last_log_lines
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 def run_mlperf(model_name, dataset_path, trial_dir, log_file, port=8000, qps=0):
     """
@@ -51,12 +59,12 @@ def run_mlperf(model_name, dataset_path, trial_dir, log_file, port=8000, qps=0):
         # Convert to absolute path since MLPerf runs from a different directory
         abs_dataset_path = os.path.abspath(dataset_path)
         cmd.extend(["--dataset-path", abs_dataset_path])
-        print(f"Using absolute dataset path: {abs_dataset_path}")
+        logger.info(f"Using absolute dataset path: {abs_dataset_path}")
     
-    print(f"Running MLPerf benchmark in directory: {mlperf_dir}")
-    print(f"MLPerf command: {' '.join(cmd)}")
-    print(f"MLPerf logs will be saved to: {trial_dir}")
-    print(f"Metrics CSV will be saved to: {metrics_csv_path}")
+    logger.info(f"Running MLPerf benchmark in directory: {mlperf_dir}")
+    logger.debug(f"MLPerf command: {' '.join(cmd)}")
+    logger.info(f"MLPerf logs will be saved to: {trial_dir}")
+    logger.info(f"Metrics CSV will be saved to: {metrics_csv_path}")
     
     try:
         with open(log_file, 'w') as f:
@@ -79,7 +87,7 @@ def run_mlperf(model_name, dataset_path, trial_dir, log_file, port=8000, qps=0):
     try:
         # MLPerf can take a long time, wait up to 40 minutes
         proc.wait(timeout=900)
-        print(f"MLPerf process completed with return code: {proc.returncode}")
+        logger.info(f"MLPerf process completed with return code: {proc.returncode}")
     except subprocess.TimeoutExpired:
         proc.kill()
         raise RuntimeError("MLPerf process timed out after 40 minutes")
@@ -100,7 +108,7 @@ def run_mlperf(model_name, dataset_path, trial_dir, log_file, port=8000, qps=0):
     if not os.path.exists(summary_file):
         raise RuntimeError(f"MLPerf summary file not found: {summary_file}")
     
-    print(f"MLPerf summary file available at: {summary_file}")
+    logger.info(f"MLPerf summary file available at: {summary_file}")
     
     return summary_file
 
@@ -147,10 +155,10 @@ def parse_latency_values(file_path):
                         throughput = float(match.group(1))
     
     except FileNotFoundError:
-        print(f"Error: File '{file_path}' not found")
+        logger.error(f"File '{file_path}' not found")
         return (0, 0, 0)
     except Exception as e:
-        print(f"Error reading file '{file_path}': {e}")
+        logger.error(f"Error reading file '{file_path}': {e}")
         return (0, 0, 0)
     
     return (first_token_latency, output_token_latency, throughput)
@@ -192,22 +200,22 @@ def parse_benchmarks(summary_file):
     if len(lines) < 8:
         raise RuntimeError(f"MLPerf summary file has fewer than 8 lines: {summary_file}")
     
-    # Read line 8 (index 7) for tokens per second
+    # Read line 8 (index 7) for completed tokens per second
     line_8 = lines[7].strip()
-    print(f"Parsing MLPerf summary: {summary_file}")
-    print(f"Reading line 8: {line_8}")
+    logger.debug(f"Parsing MLPerf summary: {summary_file}")
+    logger.debug(f"Reading line 8: {line_8}")
     
     # Extract tokens per second value using simple string parsing
-    if "Tokens per second:" in line_8:
+    if "Completed tokens per second:" in line_8:
         try:
             # Split by ":" and get the number part
             tokens_per_second = float(line_8.split(":")[-1].strip())
         except (ValueError, IndexError):
-            raise RuntimeError(f"Could not parse tokens per second from line 8: {line_8}")
+            raise RuntimeError(f"Could not parse completed tokens per second from line 8: {line_8}")
     else:
-        raise RuntimeError(f"Line 8 does not contain 'Tokens per second:': {line_8}")
+        raise RuntimeError(f"Line 8 does not contain 'Completed tokens per second:': {line_8}")
     
-    print(f"Extracted throughput: {tokens_per_second} tokens/s")
+    logger.info(f"Extracted completed tokens per second: {tokens_per_second}")
     
     # Return simple metrics dict focused only on throughput
     result = {
