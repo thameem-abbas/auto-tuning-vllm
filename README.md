@@ -13,12 +13,40 @@ Auto-tuning is important because it helps us make LLMs work better and faster. B
 - Understanding of [GuideLLM](https://github.com/vllm-project/guidellm)
 - Understanding of [Optuna](https://optuna.readthedocs.io/en/stable/)
 
-## Requirements for Running
+## Installation
+
+### Prerequisites
 - Python 3.10+ (**Tested with python 3.12**)
-- vLLM server (**Launching LLM models**)
-- guidellm (**Benchmarking suite**)
-- HuggingFace Hub access (**Model validation**)
 - NVIDIA GPU with CUDA support (**System tested on dual L40S**)
+- HuggingFace Hub access (**Model validation**)
+
+### Setup Instructions
+
+1. **Clone the repository:**
+```bash
+git clone https://github.com/Rehan164/auto-tuning-vllm.git
+cd auto-tuning-vllm
+```
+
+2. **Create and activate virtual environment:**
+```bash
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+```
+
+3. **Install dependencies:**
+```bash
+pip install -r requirements.txt
+```
+
+### Dependencies
+- **vllm**: LLM serving framework
+- **optuna**: Hyperparameter optimization framework
+- **torch**: PyTorch for ML operations
+- **huggingface_hub**: Model downloading and validation
+- **guidellm**: Benchmarking and load testing suite
+- **pyyaml**: Configuration file parsing
+- **requests**: HTTP client for API calls
 
 ## How does the System Run
 The project operates by serving a Large Language Model with vLLM and evaluating their performance using GuideLLM. This entire process is repeated for **N** number of trials which is manage through an Optuna study, with all the data getting saved into a SQLite database located at `src/studies/study_n/optuna.db`. The parameters for vLLM are defined in the `vllm_config.yaml` file, which allows users to easily add new parameters or change existing values without neeting to modify the code.
@@ -188,4 +216,130 @@ The system supports multiple optimization samplers, each with different strength
   - Number of trials = product of all parameter options
   - Can be computationally expensive for large spaces
 
+## Project Structure
 
+```
+auto-tuning-vllm/
+├── src/
+│   ├── serving/           # Core optimization logic
+│   │   ├── main.py       # Entry point and CLI handling
+│   │   ├── optimization.py  # Objective functions and trial execution
+│   │   ├── vllm_server.py   # vLLM server management
+│   │   ├── benchmarking.py  # GuideLLM integration
+│   │   ├── run_baseline.py  # Baseline testing
+│   │   └── utils.py      # Utility functions
+│   ├── visualization/     # Results visualization
+│   │   └── main_visualization.py  # Plot generation and analysis
+│   ├── studies/          # Optimization results (auto-generated)
+│   │   └── study_N/      # Individual study directories
+│   └── vllm_config.yaml  # Parameter configuration
+├── docs/                 # Documentation and assets
+├── requirements.txt      # Python dependencies
+└── README.md            # This file
+```
+
+## Results and Output
+
+### Study Directory Structure
+Each optimization run creates a unique study directory under `src/studies/study_N/`:
+
+```
+study_N/
+├── optuna.db                    # SQLite database with all trial data
+├── vllm_logs/                  # vLLM server logs for each trial
+│   └── vllm_server_logs_N.{trial_id}.log
+├── guidellm_logs/              # GuideLLM benchmark logs
+│   └── guidellm_logs_N.{trial_id}.log
+├── benchmarks_N.{trial_id}.json   # Individual trial results
+├── benchmarks_N.baseline.concurrency_X.json  # Baseline results
+└── visualizations/             # Generated plots (after running visualization)
+    ├── optimization_history_N.html
+    ├── pareto_front_N.html
+    └── parameter_importance_N.html
+```
+
+### Key Metrics Tracked
+- **Throughput**: Output tokens per second
+- **Latency**: Request latency (mean, P95, P99)
+- **Error Rates**: Failed requests and error statistics
+- **Resource Utilization**: GPU memory usage and efficiency
+
+### Accessing Results
+Results are automatically saved and can be accessed via:
+1. **Console Output**: Real-time trial progress and summary
+2. **Optuna Database**: Complete trial history and parameters
+3. **JSON Files**: Individual trial benchmark results
+4. **Visualizations**: Interactive plots and analysis
+
+## Visualization
+
+The system includes comprehensive visualization capabilities through the `src/visualization/main_visualization.py` script.
+
+### Generating Visualizations
+
+After completing an optimization run, generate visualizations:
+
+```bash
+python -m src.visualization.main_visualization --study-dir src/studies/study_N --study-id N
+```
+
+### Available Visualizations
+
+#### Single Objective Optimization
+- **Optimization History**: Trial progress over time with baseline comparison
+- **Parameter Importance**: Which parameters most affect performance
+- **Parameter Relationships**: How parameter combinations impact results
+
+#### Multi Objective Optimization
+- **throughput and latency**: 2D Graph with throughput and latency
+- **Optimization History**: Trial progress over time with baseline comparison
+
+### Visualization Features
+- **Interactive Plots**: Hover for detailed trial information
+- **Baseline Comparisons**: Visual comparison with baseline performance
+- **Export Options**: Save plots as HTML
+
+## Examples
+
+### Example 1: Quick Single-Objective Optimization
+```bash
+# Optimize for maximum throughput with a small model
+python -m src.serving.main \
+    --mode config \
+    --model "Qwen/Qwen1.5-7B" \
+    --max-seconds 120 \
+    --n-trials 50
+```
+
+### Example 2: Multi-Objective Production Optimization
+```bash
+# Find optimal throughput/latency trade-offs for production use
+python -m src.serving.main \
+    --mode config \
+    --model "Qwen/Qwen3-30B-A3B-FP8" \
+    --max-seconds 600 \
+    --prompt-tokens 8000 \
+    --output-tokens 2000 \
+    --n-trials 300
+```
+
+### Example 3: Custom Dataset Optimization
+```bash
+# Use your own dataset for realistic workload optimization
+python -m src.serving.main \
+    --mode config \
+    --model "meta-llama/Llama-3.1-8B" \
+    --dataset "./my_dataset.jsonl" \
+    --max-seconds 300 \
+    --n-trials 200
+```
+
+### Example 4: P95 Latency Optimization
+```bash
+# Minimize P95 latency for latency-critical applications
+python -m src.serving.main \
+    --mode p95_latency \
+    --model "Qwen/Qwen3-30B-A3B-FP8" \
+    --max-seconds 400 \
+    --n-trials 150
+```
