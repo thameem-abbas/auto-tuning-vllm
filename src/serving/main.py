@@ -9,8 +9,7 @@ from optuna.samplers import TPESampler, RandomSampler, NSGAIISampler, GridSample
 from optuna.integration import BoTorchSampler
 from src.serving.utils import validate_huggingface_model
 from src.serving.optimization import (
-    multi_objective_function, objective, p95_latency_objective_function,
-    analyze_trial_results, get_optimization_recommendations
+    multi_objective_function, objective, p95_latency_objective_function
 )
 from src.serving.run_baseline import run_baseline_test
 from src.serving.vllm_server import cleanup_zombie_vllm_processes
@@ -298,7 +297,6 @@ def main():
             )
         
         print(f"Using multi-objective optimization (throughput vs latency) with {sampler_name} sampler")
-        print("Result: Multiple Pareto-optimal solutions showing trade-offs")
         
     else:
         study = optuna.create_study(
@@ -331,18 +329,11 @@ def main():
     if optimization_approach == "multi_objective":
         print("Multi-objective results:")
         print(f"Number of Pareto-optimal solutions: {len(study.best_trials)}")
-        print("\nTop solutions (showing trade-offs):")
+        print("\nTop solutions:")
         for i, trial in enumerate(study.best_trials[:5]):
             throughput, latency = trial.values
-            print(f"  Solution {i+1}: {throughput:.2f} tokens/s, {latency:.2f} ms latency")
-            print(f"    Use case: {'High throughput' if throughput > 50 else 'Low latency'}")
             print(f"    Parameters: {trial.params}")
-            print()
-        
-        print("INTERPRETATION:")
-        print("- Each solution represents a different throughput/latency trade-off")
-        print("- Choose based on your use case (high throughput vs low latency)")
-        print("- All solutions are mathematically optimal (Pareto-efficient)")
+    
         
     else:
         print(f"Best trial value: {study.best_trial.value}")
@@ -350,9 +341,6 @@ def main():
         if baseline_metrics is not None:
             improvement = ((study.best_trial.value - baseline_metrics["output_tokens_per_second"]) / baseline_metrics["output_tokens_per_second"]) * 100
             print(f"Improvement over baseline: {improvement:.2f}%")
-
-    analyze_trial_results(study, baseline_metrics)
-    get_optimization_recommendations(study, optimization_config)
 
 if __name__ == "__main__":
     main()
