@@ -1,3 +1,6 @@
 venv/
 src/studies
 throw_away_tests/
+src/mlperf_studies/
+datasets/
+mlperf-inference-5.1-redhat/
