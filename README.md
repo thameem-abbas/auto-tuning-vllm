@@ -172,31 +172,15 @@ The system supports multiple optimization samplers, each with different strength
 
 #### 1. **BoTorch** (`"botorch"`)
 - **Algorithm**: Bayesian Optimization using Gaussian Processes
-- **Best For**: Complex optimization landscapes with expensive evaluations
-- **Characteristics**:
-  - Uses machine learning to model the objective function
-  - Balances exploration vs exploitation intelligently
-  - Requires 20 startup trials for initial model training
-  - Excellent for finding global optima with fewer trials
+- **Recommended For**: Multi-objective optimization (throughput vs latency)
 
 #### 2. **NSGA-II** (`"nsga2"`)
 - **Algorithm**: Non-dominated Sorting Genetic Algorithm II
 - **Best For**: Multi-objective optimization problems
-- **Characteristics**:
-  - Finds Pareto-optimal solutions efficiently
-  - Handles multiple conflicting objectives naturally
-  - Good exploration of trade-off frontiers
-- **Recommended For**: Multi-objective optimization (throughput vs latency)
 
 #### 3. **TPE** (`"tpe"`) - *Default*
 - **Algorithm**: Tree-structured Parzen Estimator
-- **Best For**: General-purpose optimization with moderate trial budgets
-- **Characteristics**:
-  - Probabilistic model-based optimization
-  - Good balance of exploration and exploitation
-  - Reliable performance across various problem types
-  - Lower computational overhead than BoTorch
-- **Recommended For**: Standard optimization tasks, single objective
+- **Recommended For**: single objective
 
 #### 4. **Random** (`"random"`)
 - **Algorithm**: Uniform random sampling
@@ -209,12 +193,7 @@ The system supports multiple optimization samplers, each with different strength
 
 #### 5. **Grid** (`"grid"`)
 - **Algorithm**: Exhaustive grid search
-- **Best For**: Small search spaces requiring complete coverage
-- **Characteristics**:
-  - Tests all possible parameter combinations
-  - Guarantees finding the optimal solution in discrete spaces
-  - Number of trials = product of all parameter options
-  - Can be computationally expensive for large spaces
+- **Best For**: complete coverage
 
 ## Project Structure
 
@@ -258,12 +237,6 @@ study_N/
     └── parameter_importance_N.html
 ```
 
-### Key Metrics Tracked
-- **Throughput**: Output tokens per second
-- **Latency**: Request latency (mean, P95, P99)
-- **Error Rates**: Failed requests and error statistics
-- **Resource Utilization**: GPU memory usage and efficiency
-
 ### Accessing Results
 Results are automatically saved and can be accessed via:
 1. **Console Output**: Real-time trial progress and summary
@@ -280,7 +253,7 @@ The system includes comprehensive visualization capabilities through the `src/vi
 After completing an optimization run, generate visualizations:
 
 ```bash
-python -m src.visualization.main_visualization --study-dir src/studies/study_N --study-id N
+python3 src/visualization/main_visualization.py
 ```
 
 ### Available Visualizations

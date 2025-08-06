@@ -1,5 +1,5 @@
 venv/
-src/studies
+src/studies/
 throw_away_tests/
 src/mlperf_studies/
 datasets/
