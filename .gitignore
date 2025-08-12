@@ -5,3 +5,4 @@ src/mlperf_studies/
 datasets/
 mlperf-inference-5.1-redhat/
 *.pyc
+__pycache__/
