@@ -1,5 +1,6 @@
 import subprocess
 import json
+import time
 import os
 from src.serving.utils import get_last_log_lines
 
@@ -9,6 +10,10 @@ def run_guidellm(guidellm_args, log_file):
 
     try:
         with open(log_file, 'w') as f:
+            f.write(f"Command: {' '.join(cmd)}\n")
+            f.write(f"{'='*50}\n\n")
+            f.flush()
+            
             proc = subprocess.Popen(
                 cmd,
                 stdout=f,
@@ -17,6 +22,8 @@ def run_guidellm(guidellm_args, log_file):
                 text=True,
                 bufsize=1,
             )
+
+            print(f"guidellm launched successfully at {time.time()}")
     except FileNotFoundError:
         raise RuntimeError("guidellm binary not found. Is guidellm installed and in PATH?")
     except OSError as e:
@@ -34,6 +41,7 @@ def run_guidellm(guidellm_args, log_file):
         proc.kill()
         raise RuntimeError(f"Error waiting for guidellm: {str(e)}")
     
+    print(f"guidellm completed with return code: {proc.returncode} at {time.time()}")
     if proc.returncode != 0:
         last_logs = get_last_log_lines(log_file)
         raise RuntimeError(
@@ -41,6 +49,8 @@ def run_guidellm(guidellm_args, log_file):
             f"Last log lines:\n{last_logs}\n"
             f"Check the full log file for details: {log_file}"
         )
+    
+    print(f"guidellm completed successfully at {time.time()}")
 
     return proc.returncode
 
@@ -89,7 +99,7 @@ def parse_benchmarks(bench_file):
             result[f"{metric}_p90"] = percentiles.get("p90") 
             result[f"{metric}_p99"] = percentiles.get("p99")
             
-        except KeyError as e:
+        except KeyError:
             raise RuntimeError(f"Missing required metric in {bench_file}: {metric}")
     
     return result 

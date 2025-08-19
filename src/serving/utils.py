@@ -42,10 +42,52 @@ def check_port_available(port):
     finally:
         sock.close()
 
+def get_port_for_gpu(gpu_id, start_port):
+    """Get port number for a specific GPU ID from prescribed range."""
+    return start_port + gpu_id
+
+def check_all_ports_available_for_study(gpu_ids, start_port):
+    """
+    Check if ALL required ports are available for parallel study.
+    This must be called before study starts.
+    
+    Args:
+        gpu_ids: List of GPU IDs that will be used
+        start_port: Starting port number from user
+        
+    Returns:
+        Tuple of (all_available: bool, unavailable_ports: List[int])
+    """
+    unavailable_ports = []
+    required_ports = []
+    
+    for gpu_id in gpu_ids:
+        port = get_port_for_gpu(gpu_id, start_port)
+        required_ports.append(port)
+        if not check_port_available(port):
+            unavailable_ports.append(port)
+    
+    return len(unavailable_ports) == 0, unavailable_ports, required_ports
+
 def get_last_log_lines(log_file, n=20):
     try:
         with open(log_file, 'r') as f:
             lines = f.readlines()
             return ''.join(lines[-n:]) if lines else ''
     except Exception as e:
-        return f"Could not read log file: {str(e)}" 
+        return f"Could not read log file: {str(e)}"
+
+def save_config_to_study(config_path, study_dir, study_id):
+    """Save the configuration file to the study directory."""
+    import shutil
+    
+    config_filename = f"vllm_config_study_{study_id}.yaml"
+    dest_path = os.path.join(study_dir, config_filename)
+    
+    try:
+        shutil.copy2(config_path, dest_path)
+        print(f"✓ Configuration saved to: {dest_path}")
+        return dest_path
+    except Exception as e:
+        print(f"✗ Failed to save configuration: {e}")
+        return None 
