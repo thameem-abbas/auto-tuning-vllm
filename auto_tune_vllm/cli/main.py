@@ -1,6 +1,5 @@
 """Command-line interface for auto-tune-vllm."""
 
-import asyncio
 import logging
 import sys
 from pathlib import Path
@@ -75,12 +74,12 @@ def optimize_command(
             raise typer.Exit(1)
         
         # Run optimization
-        asyncio.run(run_optimization_async(
+        run_optimization_sync(
             execution_backend, 
             study_config, 
             n_trials, 
             max_concurrent
-        ))
+        )
         
     except Exception as e:
         console.print(f"[bold red]Optimization failed: {e}[/bold red]")
@@ -89,13 +88,13 @@ def optimize_command(
         raise typer.Exit(1)
 
 
-async def run_optimization_async(
+def run_optimization_sync(
     backend, 
     config: StudyConfig, 
     n_trials: Optional[int], 
     max_concurrent: Optional[int]
 ):
-    """Async optimization runner with progress display."""
+    """Synchronous optimization runner with progress display."""
     # Create study controller
     controller = StudyController.create_from_config(backend, config)
     
@@ -114,7 +113,7 @@ async def run_optimization_async(
         )
         
         # Run optimization
-        await controller.run_optimization(n_trials, max_concurrent)
+        controller.run_optimization(n_trials, max_concurrent)
         progress.update(task, completed=total_trials)
     
     # Display results
@@ -185,6 +184,8 @@ def logs_command(
     try:
         streamer = LogStreamer(study_id, database_url)
         
+        # TODO: Make log streaming synchronous too
+        import asyncio
         if trial_number is not None:
             asyncio.run(streamer.stream_trial_logs(trial_number, component, follow))
         else:
@@ -219,7 +220,7 @@ def resume_command(
             execution_backend = LocalExecutionBackend(max_concurrent=2)
         
         # Resume study
-        asyncio.run(resume_study_async(execution_backend, study_config, n_additional_trials))
+        resume_study_sync(execution_backend, study_config, n_additional_trials)
         
     except Exception as e:
         console.print(f"[bold red]Resume failed: {e}[/bold red]")
@@ -228,18 +229,18 @@ def resume_command(
         raise typer.Exit(1)
 
 
-async def resume_study_async(
+def resume_study_sync(
     backend, 
     config: StudyConfig, 
     n_additional_trials: Optional[int]
 ):
     """Resume study execution."""
     controller = StudyController.create_from_config(backend, config)
-    await controller.resume_study()
+    controller.resume_study()
     
     if n_additional_trials:
         console.print(f"Running {n_additional_trials} additional trials...")
-        await controller.run_optimization(n_additional_trials)
+        controller.run_optimization(n_additional_trials)
     else:
         console.print("Study resumed. Use --additional-trials to run more trials.")
 

@@ -6,7 +6,6 @@ This example shows how to set up and run a vLLM optimization study
 using the Python API instead of the CLI.
 """
 
-import asyncio
 import optuna
 from auto_tune_vllm import (
     StudyController,
@@ -14,7 +13,7 @@ from auto_tune_vllm import (
     RayExecutionBackend
 )
 
-async def main():
+def main():
     # Create study configuration
     config = StudyConfig.from_file("study_config.yaml")
     
@@ -38,11 +37,11 @@ async def main():
     
     # Run optimization
     print("Starting vLLM optimization study...")
-    await controller.run_optimization(n_trials=100)
+    controller.run_optimization(n_trials=100)
     
     # Print results
     print(f"Best trial: {study.best_trial.value}")
     print(f"Best params: {study.best_trial.params}")
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()

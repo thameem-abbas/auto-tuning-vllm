@@ -304,8 +304,8 @@ try:
     class RayTrialController(_RayTrialControllerBase):
         """Ray remote actor for distributed trial execution."""
         
-        async def run_trial(self, trial_config: TrialConfig) -> TrialResult:
-            """Async wrapper for Ray remote execution."""
+        def run_trial(self, trial_config: TrialConfig) -> TrialResult:
+            """Run trial on Ray worker."""
             return super().run_trial(trial_config)
         
         def __del__(self):

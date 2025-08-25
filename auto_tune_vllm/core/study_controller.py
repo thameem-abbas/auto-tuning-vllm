@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-import asyncio
 import logging
-from typing import Dict, Optional
+import time
+from typing import Dict, List, Optional
 
 import optuna
 from optuna.samplers import (
@@ -15,7 +15,7 @@ from optuna.samplers import (
 )
 import optuna.integration
 
-from ..execution.backends import ExecutionBackend, TrialFuture
+from ..execution.backends import ExecutionBackend, JobHandle
 from .config import StudyConfig
 from .trial import TrialConfig
 
@@ -34,7 +34,7 @@ class StudyController:
         self.backend = backend
         self.study = study
         self.config = config
-        self.active_trials: Dict[int, TrialFuture] = {}
+        self.active_trials: Dict[int, JobHandle] = {}
         self.completed_trials = 0
         
     @classmethod
@@ -114,10 +114,11 @@ class StudyController:
             size *= len(values)
         return size
     
-    async def run_optimization(
+    def run_optimization(
         self, 
         n_trials: Optional[int] = None,
-        max_concurrent: Optional[int] = None
+        max_concurrent: Optional[int] = None,
+        poll_interval: float = 5.0
     ) -> optuna.Study:
         """
         Run optimization study.
@@ -125,6 +126,7 @@ class StudyController:
         Args:
             n_trials: Number of trials to run (overrides config)
             max_concurrent: Maximum concurrent trials (None = unlimited)
+            poll_interval: How often to poll for completed trials (seconds)
             
         Returns:
             Completed Optuna study
@@ -138,30 +140,34 @@ class StudyController:
         try:
             while self.completed_trials < total_trials:
                 # Submit new trials up to concurrency limit
-                await self._submit_available_trials(
+                self._submit_available_trials(
                     remaining_trials=total_trials - self.completed_trials - len(self.active_trials),
                     max_concurrent=max_concurrent
                 )
                 
-                # Collect completed trials
+                # Poll for completed trials
                 if self.active_trials:
-                    newly_completed = await self._collect_completed_trials()
+                    newly_completed = self._collect_completed_trials()
                     self.completed_trials += newly_completed
                     
-                    logger.info(f"Progress: {self.completed_trials}/{total_trials} trials completed")
+                    if newly_completed > 0:
+                        logger.info(f"Progress: {self.completed_trials}/{total_trials} trials completed")
                 
-                # Brief sleep to prevent tight loop
-                await asyncio.sleep(1)
+                # Sleep before next poll cycle
+                time.sleep(poll_interval)
             
             # Wait for any remaining trials
             while self.active_trials:
-                newly_completed = await self._collect_completed_trials()
+                newly_completed = self._collect_completed_trials()
                 self.completed_trials += newly_completed
-                logger.info(f"Final cleanup: {self.completed_trials} trials completed")
+                
+                if newly_completed > 0:
+                    logger.info(f"Final cleanup: {self.completed_trials} trials completed")
                 
                 if not self.active_trials:
                     break
-                await asyncio.sleep(1)
+                    
+                time.sleep(poll_interval)
             
             logger.info(f"Optimization completed: {self.completed_trials} trials")
             return self.study
@@ -170,9 +176,9 @@ class StudyController:
             logger.error(f"Optimization failed: {e}")
             raise
         finally:
-            await self.backend.shutdown()
+            self.backend.shutdown()
     
-    async def _submit_available_trials(self, remaining_trials: int, max_concurrent: float):
+    def _submit_available_trials(self, remaining_trials: int, max_concurrent: float):
         """Submit new trials up to limits."""
         while (remaining_trials > 0 and 
                len(self.active_trials) < max_concurrent):
@@ -189,8 +195,8 @@ class StudyController:
             
             # Submit to execution backend
             try:
-                future = await self.backend.submit_trial(trial_config)
-                self.active_trials[trial.number] = future
+                job_handle = self.backend.submit_trial(trial_config)
+                self.active_trials[trial.number] = job_handle
                 
                 logger.info(f"Submitted trial {trial.number} with parameters: {trial.params}")
                 remaining_trials -= 1
@@ -201,16 +207,14 @@ class StudyController:
                 self.study.tell(trial.number, None)  # Failed trial
                 break
     
-    async def _collect_completed_trials(self) -> int:
+    def _collect_completed_trials(self) -> int:
         """Collect completed trials and report results to Optuna."""
         if not self.active_trials:
             return 0
         
-        # Wait for any trials to complete
-        futures_list = list(self.active_trials.values())
-        completed_results, remaining_futures = await self.backend.wait_for_any(
-            futures_list, timeout=2.0
-        )
+        # Poll for completed trials
+        job_handles = list(self.active_trials.values())
+        completed_results, remaining_handles = self.backend.poll_trials(job_handles)
         
         completed_count = 0
         
@@ -279,7 +283,7 @@ class StudyController:
                 "best_trial_number": best_trial.number
             }
     
-    async def resume_study(self) -> StudyController:
+    def resume_study(self) -> StudyController:
         """Resume an existing study from the database."""
         logger.info(f"Resuming study: {self.config.study_name}")
         
