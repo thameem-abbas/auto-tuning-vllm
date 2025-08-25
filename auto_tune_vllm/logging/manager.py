@@ -1,0 +1,239 @@
+"""Centralized logging management."""
+
+from __future__ import annotations
+
+import asyncio
+import logging
+from typing import Optional
+
+from .handlers import PostgreSQLLogHandler, NFSLogHandler
+
+logger = logging.getLogger(__name__)
+
+
+class CentralizedLogger:
+    """Central logging manager with PostgreSQL and optional NFS support."""
+    
+    def __init__(
+        self, 
+        study_id: int, 
+        pg_url: str, 
+        nfs_path: Optional[str] = None, 
+        log_level: str = "INFO"
+    ):
+        self.study_id = study_id
+        self.pg_url = pg_url
+        self.nfs_path = nfs_path
+        self.log_level = getattr(logging, log_level.upper())
+        
+        # Setup database schema if needed
+        self._setup_log_tables()
+    
+    def _setup_log_tables(self):
+        """Create log tables if they don't exist."""
+        try:
+            import psycopg2
+            
+            with psycopg2.connect(self.pg_url) as conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        CREATE TABLE IF NOT EXISTS trial_logs (
+                            id SERIAL PRIMARY KEY,
+                            study_id INTEGER NOT NULL,
+                            trial_number INTEGER NOT NULL,
+                            component VARCHAR(50) NOT NULL,
+                            timestamp TIMESTAMP NOT NULL,
+                            level VARCHAR(10) NOT NULL,
+                            message TEXT NOT NULL,
+                            worker_node VARCHAR(100) NOT NULL
+                        )
+                    """)
+                    
+                    # Create indexes for efficient querying
+                    cur.execute("""
+                        CREATE INDEX IF NOT EXISTS idx_trial_logs_study_trial 
+                        ON trial_logs (study_id, trial_number, id)
+                    """)
+                    
+                    cur.execute("""
+                        CREATE INDEX IF NOT EXISTS idx_trial_logs_study_trial_component
+                        ON trial_logs (study_id, trial_number, component)
+                    """)
+            
+            logger.info(f"Log tables ready for study {self.study_id}")
+            
+        except Exception as e:
+            logger.warning(f"Failed to setup log tables: {e}")
+    
+    def get_trial_logger(self, trial_number: int, component: str) -> logging.Logger:
+        """Get logger for specific trial and component."""
+        logger_name = f"study_{self.study_id}.trial_{trial_number}.{component}"
+        trial_logger = logging.getLogger(logger_name)
+        
+        # Only add handlers if not already configured
+        if not trial_logger.handlers:
+            # Primary handler: PostgreSQL
+            pg_handler = PostgreSQLLogHandler(
+                self.study_id, trial_number, component, self.pg_url
+            )
+            trial_logger.addHandler(pg_handler)
+            
+            # Optional handler: NFS
+            if self.nfs_path:
+                nfs_handler = NFSLogHandler(
+                    self.study_id, trial_number, component, self.nfs_path
+                )
+                trial_logger.addHandler(nfs_handler)
+            
+            trial_logger.setLevel(self.log_level)
+            trial_logger.propagate = False  # Don't propagate to root logger
+        
+        return trial_logger
+    
+    def cleanup_old_logs(self, days_to_keep: int = 30):
+        """Clean up old log entries (optional maintenance)."""
+        try:
+            import psycopg2
+            
+            with psycopg2.connect(self.pg_url) as conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        DELETE FROM trial_logs 
+                        WHERE study_id = %s 
+                        AND timestamp < NOW() - INTERVAL '%s days'
+                    """, (self.study_id, days_to_keep))
+                    
+                    deleted_count = cur.rowcount
+                    if deleted_count > 0:
+                        logger.info(f"Cleaned up {deleted_count} old log entries")
+            
+        except Exception as e:
+            logger.warning(f"Failed to cleanup old logs: {e}")
+
+
+class LogStreamer:
+    """Live log streaming from PostgreSQL."""
+    
+    def __init__(self, study_id: int, pg_url: str):
+        self.study_id = study_id
+        self.pg_url = pg_url
+    
+    async def stream_trial_logs(
+        self, 
+        trial_number: int, 
+        component: Optional[str] = None,
+        follow: bool = True
+    ):
+        """Stream logs for a specific trial."""
+        last_seen_id = 0
+        
+        logger.info(f"Streaming logs for study {self.study_id}, trial {trial_number}" +
+                   (f", component {component}" if component else ""))
+        
+        try:
+            while True:
+                new_logs = self._fetch_new_logs(trial_number, component, last_seen_id)
+                
+                for log_entry in new_logs:
+                    log_id, timestamp, level, comp, message, worker = log_entry
+                    
+                    # Format log entry for display
+                    formatted_log = (
+                        f"[{timestamp}] [{worker[:8]}] {comp}.{level}: {message}"
+                    )
+                    print(formatted_log)
+                    
+                    last_seen_id = max(last_seen_id, log_id)
+                
+                if not follow and not new_logs:
+                    break
+                
+                # Poll every 2 seconds
+                await asyncio.sleep(2)
+                
+        except KeyboardInterrupt:
+            logger.info("Log streaming stopped by user")
+        except Exception as e:
+            logger.error(f"Log streaming failed: {e}")
+    
+    def _fetch_new_logs(
+        self, 
+        trial_number: int, 
+        component: Optional[str], 
+        last_seen_id: int
+    ) -> list:
+        """Fetch new log entries from database."""
+        try:
+            import psycopg2
+            
+            with psycopg2.connect(self.pg_url) as conn:
+                with conn.cursor() as cur:
+                    query = """
+                        SELECT id, timestamp, level, component, message, worker_node
+                        FROM trial_logs 
+                        WHERE study_id = %s AND trial_number = %s AND id > %s
+                    """
+                    params = [self.study_id, trial_number, last_seen_id]
+                    
+                    if component:
+                        query += " AND component = %s"
+                        params.append(component)
+                    
+                    query += " ORDER BY id ASC LIMIT 100"  # Batch fetch
+                    
+                    cur.execute(query, params)
+                    return cur.fetchall()
+                    
+        except Exception as e:
+            logger.error(f"Failed to fetch logs: {e}")
+            return []
+    
+    async def stream_study_logs(self, follow: bool = True):
+        """Stream all logs for the entire study."""
+        last_seen_id = 0
+        
+        logger.info(f"Streaming all logs for study {self.study_id}")
+        
+        try:
+            while True:
+                new_logs = self._fetch_study_logs(last_seen_id)
+                
+                for log_entry in new_logs:
+                    log_id, timestamp, level, trial_num, comp, message, worker = log_entry
+                    
+                    formatted_log = (
+                        f"[{timestamp}] [T{trial_num}] [{worker[:8]}] {comp}.{level}: {message}"
+                    )
+                    print(formatted_log)
+                    
+                    last_seen_id = max(last_seen_id, log_id)
+                
+                if not follow and not new_logs:
+                    break
+                
+                await asyncio.sleep(2)
+                
+        except KeyboardInterrupt:
+            logger.info("Study log streaming stopped by user")
+        except Exception as e:
+            logger.error(f"Study log streaming failed: {e}")
+    
+    def _fetch_study_logs(self, last_seen_id: int) -> list:
+        """Fetch new log entries for entire study."""
+        try:
+            import psycopg2
+            
+            with psycopg2.connect(self.pg_url) as conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        SELECT id, timestamp, level, trial_number, component, message, worker_node
+                        FROM trial_logs 
+                        WHERE study_id = %s AND id > %s
+                        ORDER BY id ASC LIMIT 100
+                    """, (self.study_id, last_seen_id))
+                    
+                    return cur.fetchall()
+                    
+        except Exception as e:
+            logger.error(f"Failed to fetch study logs: {e}")
+            return []
