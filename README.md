@@ -45,7 +45,7 @@ from auto_tune_vllm import StudyController, StudyConfig, RayExecutionBackend
 
 async def main():
     config = StudyConfig.from_file("study_config.yaml") 
-    backend = RayExecutionBackend({"GPU": 1, "CPU": 4})
+    backend = RayExecutionBackend({"num_gpus": 1, "num_cpus": 4})
     
     controller = StudyController(backend, study, config)
     await controller.run_optimization(n_trials=100)

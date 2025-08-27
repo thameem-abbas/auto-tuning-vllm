@@ -10,6 +10,9 @@ from typing import Any, Dict, List, Optional, Union
 import yaml
 from pydantic import BaseModel, Field
 
+# Import BenchmarkConfig from the benchmarks module
+from ..benchmarks.config import BenchmarkConfig
+
 
 class ParameterConfig(BaseModel, ABC):
     """Base class for parameter configurations."""
@@ -69,19 +72,6 @@ class BooleanParameter(ParameterConfig):
     def generate_optuna_suggest(self, trial) -> bool:
         """Generate Optuna boolean suggestion."""
         return trial.suggest_categorical(self.name, [True, False])
-
-
-@dataclass
-class BenchmarkConfig:
-    """Benchmark configuration."""
-    
-    benchmark_type: str = "guidellm"  # "guidellm" or custom provider name
-    model: str = "Qwen/Qwen3-30B-A3B-FP8"
-    max_seconds: int = 300
-    dataset: Optional[str] = None  # HF dataset or file path
-    prompt_tokens: int = 1000  # For synthetic data
-    output_tokens: int = 1000  # For synthetic data
-    concurrency: int = 50  # Benchmark concurrency level
 
 
 @dataclass 

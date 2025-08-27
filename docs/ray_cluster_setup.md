@@ -6,6 +6,8 @@ This guide explains how to set up a Ray cluster for distributed vLLM optimizatio
 
 Ray **does NOT automatically install dependencies** on worker nodes. Each node in your Ray cluster must have the same Python environment with `auto-tune-vllm` installed.
 
+**New**: auto-tune-vllm now supports configuring Python environments for Ray workers! This solves the common issue where Ray workers use different Python installations than the head node.
+
 ## Prerequisites
 
 ### Hardware Requirements
@@ -66,10 +68,52 @@ auto-tune-vllm check-env --ray-cluster
 
 ### 4. Run Distributed Optimization
 
+#### Basic Usage
 ```bash
 # Run optimization with Ray backend
 auto-tune-vllm optimize --config study.yaml --backend ray
 ```
+
+#### Python Environment Configuration
+
+To ensure Ray workers use the correct Python environment, use one of these options:
+
+##### Option 1: Virtual Environment Path
+```bash
+# Specify virtual environment directory
+auto-tune-vllm optimize --config study.yaml --backend ray --venv-path /path/to/your/venv
+
+# Example with common venv locations
+auto-tune-vllm optimize --config study.yaml --backend ray --venv-path ./venv
+auto-tune-vllm optimize --config study.yaml --backend ray --venv-path ~/.venvs/myproject
+```
+
+##### Option 2: Explicit Python Executable
+```bash
+# Specify exact Python executable
+auto-tune-vllm optimize --config study.yaml --backend ray --python-executable /path/to/python
+
+# Examples
+auto-tune-vllm optimize --config study.yaml --backend ray --python-executable ./venv/bin/python
+auto-tune-vllm optimize --config study.yaml --backend ray --python-executable /usr/bin/python3.11
+```
+
+##### Option 3: Conda Environment
+```bash
+# Specify conda environment name
+auto-tune-vllm optimize --config study.yaml --backend ray --conda-env myenv
+
+# Example with conda environment
+auto-tune-vllm optimize --config study.yaml --backend ray --conda-env auto-tune-vllm
+```
+
+##### Option 4: Auto-Detection (Default)
+```bash
+# No options - auto-detects current virtual environment
+auto-tune-vllm optimize --config study.yaml --backend ray
+```
+
+**Note**: Only specify one Python environment option at a time. The system will validate this and show an error if multiple options are provided.
 
 ## Common Issues and Solutions
 
@@ -85,6 +129,58 @@ pip install auto-tune-vllm
 # Restart the worker
 ray stop
 ray start --address=<head_node_ip>:10001
+```
+
+### Issue: Ray workers using wrong Python installation
+
+**Symptoms**: 
+- ImportError for packages that are installed in your environment
+- Workers can't find vLLM or other dependencies
+- Different Python versions on workers vs head node
+
+**Solution**: Use Python environment configuration options
+
+```bash
+# If you're using a virtual environment
+auto-tune-vllm optimize --config study.yaml --backend ray --venv-path ./venv
+
+# If you have a specific Python executable
+auto-tune-vllm optimize --config study.yaml --backend ray --python-executable /path/to/python
+
+# If you're using conda
+auto-tune-vllm optimize --config study.yaml --backend ray --conda-env myenv
+```
+
+### Issue: "No Python executable found in venv"
+
+**Cause**: Invalid virtual environment path or corrupted venv
+
+**Solution**:
+```bash
+# Verify the venv exists and has Python
+ls /path/to/venv/bin/python*
+
+# If missing, recreate the virtual environment
+python -m venv /path/to/venv
+source /path/to/venv/bin/activate
+pip install auto-tune-vllm
+
+# Use explicit Python path instead
+auto-tune-vllm optimize --config study.yaml --backend ray --python-executable /path/to/venv/bin/python
+```
+
+### Issue: Auto-detection not working
+
+**Symptoms**: Warning about "not in a virtual environment"
+
+**Solution**: Explicitly specify your Python environment
+```bash
+# Check current Python
+which python
+python --version
+
+# Use explicit path
+auto-tune-vllm optimize --config study.yaml --backend ray --python-executable $(which python)
 ```
 
 ### Issue: "No CUDA GPUs detected on Ray worker"
@@ -139,8 +235,8 @@ Configure Ray to properly utilize GPUs:
 ```python
 # In your study config or when creating backend
 backend = RayExecutionBackend({
-    "GPU": 1,        # 1 GPU per trial
-    "CPU": 4,        # 4 CPUs per trial  
+    "num_gpus": 1,        # 1 GPU per trial
+    "num_cpus": 4,        # 4 CPUs per trial  
     "memory": 8_000_000_000  # 8GB RAM per trial
 })
 ```

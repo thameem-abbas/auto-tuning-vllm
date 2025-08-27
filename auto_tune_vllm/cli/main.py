@@ -14,7 +14,8 @@ from rich.table import Table
 from ..core.config import StudyConfig
 from ..core.study_controller import StudyController
 from ..execution.backends import RayExecutionBackend, LocalExecutionBackend
-from ..logging.manager import LogStreamer
+from ..logging.manager import LogStreamer, CentralizedLogger
+from ..core.db_utils import verify_database_connection, clear_study_data
 
 # Setup rich console and app
 console = Console()
@@ -44,13 +45,36 @@ def optimize_command(
     n_trials: Optional[int] = typer.Option(None, "--trials", "-n", help="Number of trials (overrides config)"),
     max_concurrent: Optional[int] = typer.Option(None, "--max-concurrent", help="Max concurrent trials"),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose logging"),
+    create_db: bool = typer.Option(False, "--create-db", help="Create database if it doesn't exist"),
+    start_ray_head: bool = typer.Option(False, "--start-ray-head", help="Start Ray head if no cluster is found"),
+    python_executable: Optional[str] = typer.Option(None, "--python-executable", help="Explicit Python executable path for Ray workers"),
+    venv_path: Optional[str] = typer.Option(None, "--venv-path", help="Virtual environment path for Ray workers"),
+    conda_env: Optional[str] = typer.Option(None, "--conda-env", help="Conda environment name for Ray workers"),
 ):
     """Run optimization study."""
     setup_logging(verbose)
     
+    # Validate Python environment options (only one should be specified)
+    python_env_options = [python_executable, venv_path, conda_env]
+    specified_options = [opt for opt in python_env_options if opt is not None]
+    if len(specified_options) > 1:
+        console.print("[bold red]Error: Only one Python environment option can be specified at a time[/bold red]")
+        console.print("Choose one of: --python-executable, --venv-path, or --conda-env")
+        raise typer.Exit(1)
+    
     console.print("[bold green]Starting auto-tune-vllm optimization[/bold green]")
     console.print(f"Configuration: {config}")
     console.print(f"Backend: {backend}")
+    
+    # Display Python environment configuration
+    if python_executable:
+        console.print(f"Python executable: {python_executable}")
+    elif venv_path:
+        console.print(f"Virtual environment: {venv_path}")
+    elif conda_env:
+        console.print(f"Conda environment: {conda_env}")
+    elif backend.lower() == "ray":
+        console.print("[yellow]No Python environment specified, using auto-detection[/yellow]")
     
     try:
         # Load configuration
@@ -64,8 +88,16 @@ def optimize_command(
         
         # Create execution backend
         if backend.lower() == "ray":
-            execution_backend = RayExecutionBackend({"GPU": 1, "CPU": 4})
+            execution_backend = RayExecutionBackend(
+                resource_requirements={"num_gpus": 1, "num_cpus": 4},
+                start_ray_head=start_ray_head,
+                python_executable=python_executable,
+                venv_path=venv_path,
+                conda_env=conda_env
+            )
             console.print("[blue]Using Ray distributed execution[/blue]")
+            if start_ray_head:
+                console.print("[blue]Will start Ray head if no cluster found[/blue]")
         elif backend.lower() == "local":
             execution_backend = LocalExecutionBackend(max_concurrent or 2)
             console.print("[yellow]Using local execution[/yellow]")
@@ -78,7 +110,8 @@ def optimize_command(
             execution_backend, 
             study_config, 
             n_trials, 
-            max_concurrent
+            max_concurrent,
+            create_db
         )
         
     except Exception as e:
@@ -88,15 +121,82 @@ def optimize_command(
         raise typer.Exit(1)
 
 
+@app.command("clear-study")
+def clear_study_command(
+    study_name: str = typer.Option(..., "--study-name", "-s", help="Name of the study to clear"),
+    database_url: str = typer.Option(..., "--database-url", "-d", help="Database URL for Optuna study data"),
+    clear_logs: bool = typer.Option(False, "--clear-logs", help="Also clear trial logs"),
+    logs_database_url: Optional[str] = typer.Option(None, "--logs-database-url", help="Logs database URL (if different from study database)"),
+    force: bool = typer.Option(False, "--force", "-f", help="Skip confirmation prompts"),
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose logging"),
+):
+    """Clear study data (trials, parameters, and optionally logs)."""
+    setup_logging(verbose)
+    
+    console.print(f"[bold yellow]Preparing to clear study: {study_name}[/bold yellow]")
+    
+    try:
+        # Verify database connections
+        if not verify_database_connection(database_url):
+            console.print(f"[bold red]Error: Cannot connect to database: {database_url}[/bold red]")
+            raise typer.Exit(1)
+        
+        logs_db_url = logs_database_url or database_url
+        if clear_logs and not verify_database_connection(logs_db_url):
+            console.print(f"[bold red]Error: Cannot connect to logs database: {logs_db_url}[/bold red]")
+            raise typer.Exit(1)
+        
+        # Show what will be deleted
+        console.print("\n[bold]The following data will be deleted:[/bold]")
+        console.print(f"  • Optuna study data for '{study_name}' from {database_url}")
+        if clear_logs:
+            console.print(f"  • Trial logs for '{study_name}' from {logs_db_url}")
+        
+        # Confirmation prompt
+        if not force:
+            confirm = typer.confirm(
+                f"\nAre you sure you want to permanently delete this data?",
+                default=False
+            )
+            if not confirm:
+                console.print("[yellow]Operation cancelled[/yellow]")
+                raise typer.Exit(0)
+        
+        # Perform the clearing
+        result = clear_study_data(study_name, database_url, clear_logs, logs_db_url)
+        
+        if result["success"]:
+            console.print(f"[bold green]✅ Successfully cleared study '{study_name}'[/bold green]")
+            console.print(f"  • Deleted {result['trials_deleted']} trials")
+            if clear_logs:
+                console.print(f"  • Deleted {result['logs_deleted']} log entries")
+        else:
+            console.print(f"[bold red]❌ Failed to clear study: {result['error']}[/bold red]")
+            raise typer.Exit(1)
+            
+    except Exception as e:
+        console.print(f"[bold red]Error clearing study: {e}[/bold red]")
+        if verbose:
+            console.print_exception()
+        raise typer.Exit(1)
+
+
 def run_optimization_sync(
     backend, 
     config: StudyConfig, 
     n_trials: Optional[int], 
-    max_concurrent: Optional[int]
+    max_concurrent: Optional[int],
+    create_db: bool = False
 ):
     """Synchronous optimization runner with progress display."""
     # Create study controller
-    controller = StudyController.create_from_config(backend, config)
+    controller = StudyController.create_from_config(backend, config, create_db=create_db)
+    
+    # Display study ID prominently in the CLI
+    study_id = StudyController.get_study_id(config.study_name)
+    console.print(f"[bold cyan]🔍 Study ID: {study_id}[/bold cyan]")
+    console.print(f"[blue]📋 View logs with: auto-tune-vllm logs --study-id {study_id} --database-url {config.database_url}[/blue]")
+    console.print()  # Add blank line for better readability
     
     total_trials = n_trials or config.optimization.n_trials
     
@@ -198,15 +298,94 @@ def logs_command(
         raise typer.Exit(1)
 
 
+@app.command("view-file-logs")
+def view_file_logs_command(
+    study_id: int = typer.Option(..., "--study-id", help="Study ID"),
+    log_path: str = typer.Option(..., "--log-path", help="Base log directory path"),
+    trial_number: Optional[int] = typer.Option(None, "--trial", help="Specific trial number"),
+    component: Optional[str] = typer.Option(None, "--component", help="Component (vllm, benchmark, controller)"),
+    follow: bool = typer.Option(False, "--follow", help="Follow logs in real-time"),
+    lines: Optional[int] = typer.Option(50, "--lines", "-n", help="Number of recent lines to show"),
+):
+    """View logs from local files."""
+    console.print(f"[blue]Viewing file logs for study {study_id}[/blue]")
+    
+    try:
+        from pathlib import Path
+        
+        study_dir = Path(log_path) / f"study_{study_id}"
+        
+        if not study_dir.exists():
+            console.print(f"[yellow]No logs found for study {study_id} in {log_path}[/yellow]")
+            console.print(f"Expected directory: {study_dir}")
+            return
+        
+        # Find log files
+        if trial_number is not None:
+            trial_dir = study_dir / f"trial_{trial_number}"
+            if not trial_dir.exists():
+                console.print(f"[yellow]No logs found for trial {trial_number}[/yellow]")
+                return
+                
+            log_files = list(trial_dir.glob("*.log"))
+            if component:
+                log_files = [f for f in log_files if f.stem == component]
+        else:
+            log_files = list(study_dir.glob("*/*.log"))
+            if component:
+                log_files = [f for f in log_files if f.stem == component]
+        
+        if not log_files:
+            console.print("[yellow]No log files found matching criteria[/yellow]")
+            return
+        
+        # Sort files by modification time
+        log_files.sort(key=lambda f: f.stat().st_mtime, reverse=True)
+        
+        for log_file in log_files:
+            trial_name = log_file.parent.name
+            component_name = log_file.stem
+            
+            console.print(f"\n[bold cyan]===== {trial_name}/{component_name}.log =====[/bold cyan]")
+            
+            try:
+                if follow:
+                    # Simple file following
+                    _follow_file(log_file)
+                else:
+                    # Show recent lines
+                    _show_recent_lines(log_file, lines)
+                    
+            except Exception as e:
+                console.print(f"[red]Error reading {log_file}: {e}[/red]")
+                
+    except KeyboardInterrupt:
+        console.print("\n[yellow]Log viewing stopped by user[/yellow]")
+    except Exception as e:
+        console.print(f"[bold red]Failed to view file logs: {e}[/bold red]")
+        raise typer.Exit(1)
+
+
 @app.command("resume")
 def resume_command(
     config: str = typer.Option(..., "--config", "-c", help="Study configuration file"),
     backend: str = typer.Option("ray", "--backend", "-b", help="Execution backend"),
     n_additional_trials: Optional[int] = typer.Option(None, "--additional-trials", help="Additional trials to run"),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose logging"),
+    python_executable: Optional[str] = typer.Option(None, "--python-executable", help="Explicit Python executable path for Ray workers"),
+    venv_path: Optional[str] = typer.Option(None, "--venv-path", help="Virtual environment path for Ray workers"),
+    conda_env: Optional[str] = typer.Option(None, "--conda-env", help="Conda environment name for Ray workers"),
 ):
     """Resume an existing optimization study."""
     setup_logging(verbose)
+    
+    # Validate Python environment options (only one should be specified)
+    python_env_options = [python_executable, venv_path, conda_env]
+    specified_options = [opt for opt in python_env_options if opt is not None]
+    if len(specified_options) > 1:
+        console.print("[bold red]Error: Only one Python environment option can be specified at a time[/bold red]")
+        console.print("Choose one of: --python-executable, --venv-path, or --conda-env")
+        raise typer.Exit(1)
     
     console.print("[bold blue]Resuming auto-tune-vllm study[/bold blue]")
     
@@ -215,7 +394,12 @@ def resume_command(
         
         # Create backend
         if backend.lower() == "ray":
-            execution_backend = RayExecutionBackend({"GPU": 1, "CPU": 4})
+            execution_backend = RayExecutionBackend(
+                resource_requirements={"num_gpus": 1, "num_cpus": 4},
+                python_executable=python_executable,
+                venv_path=venv_path,
+                conda_env=conda_env
+            )
         else:
             execution_backend = LocalExecutionBackend(max_concurrent=2)
         
@@ -236,6 +420,13 @@ def resume_study_sync(
 ):
     """Resume study execution."""
     controller = StudyController.create_from_config(backend, config)
+    
+    # Display study ID prominently in the CLI
+    study_id = StudyController.get_study_id(config.study_name)
+    console.print(f"[bold cyan]🔍 Study ID: {study_id}[/bold cyan]")
+    console.print(f"[blue]📋 View logs with: auto-tune-vllm logs --study-id {study_id} --database-url {config.database_url}[/blue]")
+    console.print()  # Add blank line for better readability
+    
     controller.resume_study()
     
     if n_additional_trials:
@@ -278,6 +469,84 @@ def validate_command(
         
     except Exception as e:
         console.print(f"[bold red]Validation failed: {e}[/bold red]")
+        raise typer.Exit(1)
+
+
+@app.command("setup-logging")
+def setup_logging_command(
+    database_url: Optional[str] = typer.Option(None, "--database-url", help="PostgreSQL database URL for logs"),
+    file_path: Optional[str] = typer.Option(None, "--file-path", help="File path for local logging"),
+    study_id: Optional[int] = typer.Option(None, "--study-id", help="Study ID (optional)"),
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose logging"),
+):
+    """Setup logging infrastructure (PostgreSQL database tables or file directory).
+    
+    Note: File logging setup is optional - directories are created automatically during optimization.
+    This command is mainly useful for testing permissions and setting up PostgreSQL tables.
+    """
+    setup_logging(verbose)
+    
+    if not database_url and not file_path:
+        console.print("[bold red]Error: Must specify either --database-url or --file-path[/bold red]")
+        console.print("[yellow]Note: For file logging, you can just add 'file_path' to your study config - no setup required![/yellow]")
+        raise typer.Exit(1)
+    
+    console.print("[blue]Setting up logging infrastructure[/blue]")
+    
+    try:
+        if database_url:
+            # Setup PostgreSQL logging
+            if not verify_database_connection(database_url):
+                console.print(f"[bold red]Error: Cannot connect to database: {database_url}[/bold red]")
+                raise typer.Exit(1)
+            
+            # Use dummy study ID if not provided
+            dummy_study_id = study_id or 0
+            
+            # Initialize CentralizedLogger to create tables
+            centralized_logger = CentralizedLogger(
+                study_id=dummy_study_id,
+                pg_url=database_url,
+                log_level="INFO"
+            )
+            
+            console.print(f"[bold green]✅ PostgreSQL logging tables created successfully[/bold green]")
+            console.print(f"Database: {database_url}")
+            console.print(f"Tables: trial_logs (with indexes)")
+            
+            if study_id:
+                console.print(f"\n[blue]You can now view logs for study {study_id}:[/blue]")
+                console.print(f"auto-tune-vllm logs --study-id {study_id} --database-url {database_url}")
+        
+        if file_path:
+            # Setup file logging
+            from pathlib import Path
+            log_dir = Path(file_path)
+            log_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Test write permissions
+            test_file = log_dir / "test_write.log"
+            try:
+                with open(test_file, 'w') as f:
+                    f.write("test\n")
+                test_file.unlink()  # Delete test file
+            except Exception as e:
+                console.print(f"[bold red]Error: Cannot write to {file_path}: {e}[/bold red]")
+                raise typer.Exit(1)
+            
+            console.print(f"[bold green]✅ File logging directory ready[/bold green]")
+            console.print(f"Log path: {file_path}")
+            console.print(f"Structure: {file_path}/study_<ID>/trial_<NUM>/<component>.log")
+            console.print("[dim]Note: This setup is optional - just add 'file_path' to your study config instead![/dim]")
+            
+            if study_id:
+                console.print(f"\n[blue]You can view logs for study {study_id} with:[/blue]")
+                console.print(f"auto-tune-vllm view-file-logs --study-id {study_id} --log-path {file_path}")
+        
+    except Exception as e:
+        console.print(f"[bold red]Failed to setup logging: {e}[/bold red]")
+        if verbose:
+            console.print_exception()
         raise typer.Exit(1)
 
 
@@ -343,7 +612,7 @@ def _check_ray_cluster_environment():
         
         # Run environment check on multiple workers (if available)
         console.print("Checking worker nodes...")
-        num_workers = min(4, int(cluster_resources.get("CPU", 1)) // 2)  # Don't overwhelm cluster
+        num_workers = min(4, int(cluster_resources.get("num_cpus", 1)) // 2)  # Don't overwhelm cluster
         
         if num_workers > 1:
             futures = [check_worker_environment.remote() for _ in range(num_workers)]
@@ -360,6 +629,58 @@ def _check_ray_cluster_environment():
         raise RuntimeError(f"Ray cluster environment check failed: {str(e)}")
 
 
+def _show_recent_lines(log_file: Path, lines: int):
+    """Show recent lines from a log file."""
+    try:
+        import subprocess
+        result = subprocess.run(
+            ["tail", "-n", str(lines), str(log_file)],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        if result.stdout:
+            console.print(result.stdout)
+        else:
+            console.print("[dim]File is empty[/dim]")
+    except subprocess.CalledProcessError:
+        # Fallback to Python implementation
+        try:
+            with open(log_file, 'r') as f:
+                file_lines = f.readlines()
+                recent_lines = file_lines[-lines:] if len(file_lines) > lines else file_lines
+                for line in recent_lines:
+                    console.print(line.rstrip())
+        except Exception as e:
+            console.print(f"[red]Error reading file: {e}[/red]")
+
+
+def _follow_file(log_file: Path):
+    """Follow a log file in real-time."""
+    console.print(f"[blue]Following {log_file} (Press Ctrl+C to stop)[/blue]")
+    
+    try:
+        import subprocess
+        process = subprocess.Popen(
+            ["tail", "-f", str(log_file)],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            bufsize=1,
+            universal_newlines=True
+        )
+        
+        for line in iter(process.stdout.readline, ''):
+            console.print(line.rstrip())
+            
+    except KeyboardInterrupt:
+        console.print("\n[yellow]Stopped following file[/yellow]")
+        if 'process' in locals():
+            process.terminate()
+    except Exception as e:
+        console.print(f"[red]Error following file: {e}[/red]")
+
+
 def main():
     """Main CLI entry point."""
     # Handle no arguments case
@@ -369,6 +690,9 @@ def main():
         console.print("\nQuick start:")
         console.print("  auto-tune-vllm optimize --config study.yaml")
         console.print("  auto-tune-vllm logs --study-id 42 --database-url postgresql://...")
+        console.print("  auto-tune-vllm view-file-logs --study-id 42 --log-path /path/to/logs")
+        console.print("  auto-tune-vllm setup-logging --database-url postgresql://...")
+        console.print("  auto-tune-vllm clear-study --study-name my_study --database-url postgresql://...")
         sys.exit(0)
     
     app()

@@ -18,7 +18,8 @@ class TrialConfig:
     trial_number: int
     parameters: Dict[str, Any]  # vLLM parameters from Optuna
     benchmark_config: BenchmarkConfig
-    resource_requirements: Dict[str, float] = field(default_factory=lambda: {"GPU": 1, "CPU": 4})
+    resource_requirements: Dict[str, float] = field(default_factory=lambda: {"num_gpus": 1, "num_cpus": 4})
+    logging_config: Optional[Dict[str, Any]] = None  # Logging configuration from study
     
     @property
     def vllm_args(self) -> List[str]:

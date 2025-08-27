@@ -223,17 +223,15 @@ Description-Content-Type: text/markdown
 License-File: LICENSE
 Requires-Dist: optuna>=3.0.0
 Requires-Dist: optuna-integration[botorch]>=4.0.0
+Requires-Dist: ray[default]>=2.0.0
+Requires-Dist: vllm>=0.2.0
+Requires-Dist: guidellm>=0.1.0
 Requires-Dist: psycopg2-binary>=2.9.0
 Requires-Dist: pyyaml>=6.0
 Requires-Dist: pydantic>=2.0.0
 Requires-Dist: typer>=0.9.0
 Requires-Dist: rich>=13.0.0
 Requires-Dist: requests>=2.28.0
-Provides-Extra: ml
-Requires-Dist: ray[default]>=2.0.0; extra == "ml"
-Requires-Dist: vllm>=0.2.0; extra == "ml"
-Requires-Dist: guidellm>=0.1.0; extra == "ml"
-Requires-Dist: torch>=2.0.0; extra == "ml"
 Provides-Extra: dev
 Requires-Dist: pytest>=7.0.0; extra == "dev"
 Requires-Dist: black>=23.0.0; extra == "dev"
@@ -292,7 +290,7 @@ from auto_tune_vllm import StudyController, StudyConfig, RayExecutionBackend
 
 async def main():
     config = StudyConfig.from_file("study_config.yaml") 
-    backend = RayExecutionBackend({"GPU": 1, "CPU": 4})
+    backend = RayExecutionBackend({"num_gpus": 1, "num_cpus": 4})
     
     controller = StudyController(backend, study, config)
     await controller.run_optimization(n_trials=100)
@@ -302,7 +300,7 @@ asyncio.run(main())
 
 ## Documentation
 
-- [Installation Guide](docs/installation.md)
+- [Ray Cluster Setup](docs/ray_cluster_setup.md) - **Important for distributed optimization**
 - [Configuration Reference](docs/configuration.md) 
 - [API Documentation](docs/api.md)
 - [Custom Benchmarks](docs/custom_benchmarks.md)
@@ -312,8 +310,8 @@ asyncio.run(main())
 - Python 3.10+
 - NVIDIA GPU with CUDA support
 - PostgreSQL database
-- vLLM >= 0.2.0
-- Ray >= 2.0.0 (for distributed execution)
+
+All ML dependencies (vLLM, Ray, GuideLLM, BoTorch) are included automatically.
 
 ## License
 

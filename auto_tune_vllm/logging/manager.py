@@ -6,28 +6,29 @@ import asyncio
 import logging
 from typing import Optional
 
-from .handlers import PostgreSQLLogHandler, NFSLogHandler
+from .handlers import PostgreSQLLogHandler, LocalFileHandler, NFSLogHandler
 
 logger = logging.getLogger(__name__)
 
 
 class CentralizedLogger:
-    """Central logging manager with PostgreSQL and optional NFS support."""
+    """Central logging manager with PostgreSQL and optional file support."""
     
     def __init__(
         self, 
         study_id: int, 
-        pg_url: str, 
-        nfs_path: Optional[str] = None, 
+        pg_url: Optional[str] = None, 
+        file_path: Optional[str] = None, 
         log_level: str = "INFO"
     ):
         self.study_id = study_id
         self.pg_url = pg_url
-        self.nfs_path = nfs_path
+        self.file_path = file_path
         self.log_level = getattr(logging, log_level.upper())
         
-        # Setup database schema if needed
-        self._setup_log_tables()
+        # Setup database schema if PostgreSQL is configured
+        if self.pg_url:
+            self._setup_log_tables()
     
     def _setup_log_tables(self):
         """Create log tables if they don't exist."""
@@ -72,18 +73,27 @@ class CentralizedLogger:
         
         # Only add handlers if not already configured
         if not trial_logger.handlers:
-            # Primary handler: PostgreSQL
-            pg_handler = PostgreSQLLogHandler(
-                self.study_id, trial_number, component, self.pg_url
-            )
-            trial_logger.addHandler(pg_handler)
-            
-            # Optional handler: NFS
-            if self.nfs_path:
-                nfs_handler = NFSLogHandler(
-                    self.study_id, trial_number, component, self.nfs_path
+            # PostgreSQL handler (if configured)
+            if self.pg_url:
+                pg_handler = PostgreSQLLogHandler(
+                    self.study_id, trial_number, component, self.pg_url
                 )
-                trial_logger.addHandler(nfs_handler)
+                trial_logger.addHandler(pg_handler)
+            
+            # File handler (if configured)
+            if self.file_path:
+                file_handler = LocalFileHandler(
+                    self.study_id, trial_number, component, self.file_path
+                )
+                trial_logger.addHandler(file_handler)
+            
+            # Fallback to console if no handlers configured
+            if not self.pg_url and not self.file_path:
+                console_handler = logging.StreamHandler()
+                console_handler.setFormatter(logging.Formatter(
+                    '[%(asctime)s] [%(name)s] %(levelname)s: %(message)s'
+                ))
+                trial_logger.addHandler(console_handler)
             
             trial_logger.setLevel(self.log_level)
             trial_logger.propagate = False  # Don't propagate to root logger
@@ -117,6 +127,57 @@ class LogStreamer:
     def __init__(self, study_id: int, pg_url: str):
         self.study_id = study_id
         self.pg_url = pg_url
+        self._ensure_log_tables_exist()
+    
+    def _ensure_log_tables_exist(self):
+        """Ensure log tables exist, create them if they don't."""
+        try:
+            import psycopg2
+            
+            with psycopg2.connect(self.pg_url) as conn:
+                with conn.cursor() as cur:
+                    # Check if table exists
+                    cur.execute("""
+                        SELECT EXISTS (
+                            SELECT FROM information_schema.tables 
+                            WHERE table_name = 'trial_logs'
+                        )
+                    """)
+                    
+                    table_exists = cur.fetchone()[0]
+                    
+                    if not table_exists:
+                        logger.info("Log tables don't exist, creating them...")
+                        
+                        # Create table using the same logic as CentralizedLogger
+                        cur.execute("""
+                            CREATE TABLE trial_logs (
+                                id SERIAL PRIMARY KEY,
+                                study_id INTEGER NOT NULL,
+                                trial_number INTEGER NOT NULL,
+                                component VARCHAR(50) NOT NULL,
+                                timestamp TIMESTAMP NOT NULL,
+                                level VARCHAR(10) NOT NULL,
+                                message TEXT NOT NULL,
+                                worker_node VARCHAR(100) NOT NULL
+                            )
+                        """)
+                        
+                        # Create indexes for efficient querying
+                        cur.execute("""
+                            CREATE INDEX idx_trial_logs_study_trial 
+                            ON trial_logs (study_id, trial_number, id)
+                        """)
+                        
+                        cur.execute("""
+                            CREATE INDEX idx_trial_logs_study_trial_component
+                            ON trial_logs (study_id, trial_number, component)
+                        """)
+                        
+                        logger.info("Log tables created successfully")
+                        
+        except Exception as e:
+            logger.warning(f"Failed to ensure log tables exist: {e}")
     
     async def stream_trial_logs(
         self, 

@@ -18,6 +18,8 @@ import optuna.integration
 from ..execution.backends import ExecutionBackend, JobHandle
 from .config import StudyConfig
 from .trial import TrialConfig
+from .db_utils import create_database_if_not_exists, verify_database_connection
+from ..logging.manager import CentralizedLogger
 
 logger = logging.getLogger(__name__)
 
@@ -37,13 +39,47 @@ class StudyController:
         self.active_trials: Dict[int, JobHandle] = {}
         self.completed_trials = 0
         
+    @staticmethod
+    def get_study_id(study_name: str) -> int:
+        """Get consistent study ID from study name."""
+        # Use a safe hash that fits within PostgreSQL INTEGER range (-2^31 to 2^31-1)
+        # Take absolute value and constrain to positive range (0 to 2^31-1)
+        return abs(hash(study_name)) % 2147483647
+    
     @classmethod
     def create_from_config(
         cls, 
         backend: ExecutionBackend, 
-        config: StudyConfig
+        config: StudyConfig,
+        create_db: bool = False
     ) -> StudyController:
         """Create study controller with Optuna study from configuration."""
+        # Handle database creation if requested
+        if create_db and config.database_url:
+            try:
+                logger.info("Checking database existence and creating if necessary...")
+                db_created = create_database_if_not_exists(config.database_url)
+                if db_created:
+                    logger.info("Database created successfully")
+                else:
+                    logger.info("Database already exists")
+            except Exception as e:
+                logger.error(f"Failed to create database: {e}")
+                raise RuntimeError(f"Database creation failed: {e}")
+        
+        # Verify database connection before proceeding
+        if config.database_url and not verify_database_connection(config.database_url):
+            if create_db:
+                raise RuntimeError(
+                    f"Cannot connect to database after creation attempt. "
+                    f"Please check your database URL: {config.database_url}"
+                )
+            else:
+                raise RuntimeError(
+                    f"Cannot connect to database: {config.database_url}. "
+                    f"Database may not exist. Use --create-db flag to create it automatically."
+                )
+        
         # Create sampler based on config
         sampler = cls._create_sampler(config)
         
@@ -54,15 +90,61 @@ class StudyController:
             directions = config.optimization.objective
         
         # Create Optuna study
-        study = optuna.create_study(
-            storage=config.database_url,
-            study_name=config.study_name,
-            direction=directions,  # "maximize", "minimize", or ["maximize", "minimize"] 
-            sampler=sampler,
-            load_if_exists=True
-        )
+        try:
+            study = optuna.create_study(
+                storage=config.database_url,
+                study_name=config.study_name,
+                direction=directions,  # "maximize", "minimize", or ["maximize", "minimize"] 
+                sampler=sampler,
+                load_if_exists=True
+            )
+        except Exception as e:
+            if "does not exist" in str(e).lower() or "database" in str(e).lower():
+                raise RuntimeError(
+                    f"Failed to create Optuna study. Database connection error: {e}. "
+                    f"Use --create-db flag to create the database automatically."
+                )
+            raise
         
+        # Generate and prominently log study ID
+        study_id = cls.get_study_id(config.study_name)
         logger.info(f"Created study: {config.study_name} with {config.optimization.sampler} sampler")
+        logger.info(f"🔍 STUDY ID: {study_id} (use this ID for log viewing)")
+        
+        # Initialize logging infrastructure if configured
+        log_database_url = None
+        log_file_path = None
+        
+        if config.logging_config:
+            log_database_url = config.logging_config.get("database_url")
+            log_file_path = config.logging_config.get("file_path")
+            
+        # Default to main database if no specific logging config
+        if not log_database_url and not log_file_path:
+            log_database_url = config.database_url
+        
+        try:
+            # Initialize CentralizedLogger
+            centralized_logger = CentralizedLogger(
+                study_id=study_id,
+                pg_url=log_database_url,
+                file_path=log_file_path,
+                log_level=config.logging_config.get("log_level", "INFO") if config.logging_config else "INFO"
+            )
+            
+            # Provide appropriate log viewing instructions
+            if log_file_path:
+                logger.info(f"📋 File logging enabled. Logs will be written to: {log_file_path}/study_{study_id}/")
+                logger.info(f"📋 View logs with: auto-tune-vllm view-file-logs --study-id {study_id} --log-path {log_file_path}")
+            elif log_database_url:
+                logger.info(f"📋 Database logging ready. View logs with: auto-tune-vllm logs --study-id {study_id} --database-url {log_database_url}")
+                
+        except Exception as e:
+            logger.warning(f"Failed to initialize logging infrastructure: {e}")
+            if log_file_path:
+                logger.info(f"📋 To view file logs: auto-tune-vllm view-file-logs --study-id {study_id} --log-path {log_file_path}")
+            elif log_database_url:
+                logger.info(f"📋 To view logs: auto-tune-vllm logs --study-id {study_id} --database-url {log_database_url}")
         
         return cls(backend, study, config)
     
@@ -253,10 +335,11 @@ class StudyController:
                 parameters[param_name] = value
         
         return TrialConfig(
-            study_id=hash(self.config.study_name),  # Simple study ID derivation
+            study_id=self.get_study_id(self.config.study_name),
             trial_number=trial.number,
             parameters=parameters,
-            benchmark_config=self.config.benchmark
+            benchmark_config=self.config.benchmark,
+            logging_config=self.config.logging_config
         )
     
     def get_optimization_results(self) -> Dict:
@@ -285,7 +368,16 @@ class StudyController:
     
     def resume_study(self) -> StudyController:
         """Resume an existing study from the database."""
+        study_id = self.get_study_id(self.config.study_name)
         logger.info(f"Resuming study: {self.config.study_name}")
+        logger.info(f"🔍 STUDY ID: {study_id} (use this ID for log viewing)")
+        
+        # Provide appropriate log viewing instructions based on config
+        if self.config.logging_config and self.config.logging_config.get("file_path"):
+            log_file_path = self.config.logging_config["file_path"]
+            logger.info(f"📋 View file logs with: auto-tune-vllm view-file-logs --study-id {study_id} --log-path {log_file_path}")
+        else:
+            logger.info(f"📋 View logs with: auto-tune-vllm logs --study-id {study_id} --database-url {self.config.database_url}")
         
         # Count existing trials
         n_existing = len(self.study.trials)

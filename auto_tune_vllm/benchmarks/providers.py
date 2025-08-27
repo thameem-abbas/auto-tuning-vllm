@@ -18,6 +18,13 @@ logger = logging.getLogger(__name__)
 class BenchmarkProvider(ABC):
     """Abstract benchmark provider interface."""
     
+    def __init__(self):
+        self._logger = logger  # Default to module logger
+    
+    def set_logger(self, custom_logger):
+        """Set a custom logger for this benchmark provider."""
+        self._logger = custom_logger
+    
     @abstractmethod
     def run_benchmark(self, model_url: str, config: BenchmarkConfig) -> Dict[str, Any]:
         """
@@ -39,7 +46,7 @@ class GuideLLMBenchmark(BenchmarkProvider):
     
     def run_benchmark(self, model_url: str, config: BenchmarkConfig) -> Dict[str, Any]:
         """Run GuideLLM benchmark."""
-        logger.info(f"Starting GuideLLM benchmark for {config.model}")
+        self._logger.info(f"Starting GuideLLM benchmark for {config.model}")
         
         # Create temporary file for results
         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
@@ -50,7 +57,7 @@ class GuideLLMBenchmark(BenchmarkProvider):
             cmd = self._build_guidellm_command(model_url, config, results_file)
             
             # Run GuideLLM
-            logger.info(f"Running: {' '.join(cmd)}")
+            self._logger.info(f"Running: {' '.join(cmd)}")
             process = subprocess.run(
                 cmd,
                 timeout=config.max_seconds + 120,  # Add buffer for setup/teardown
@@ -61,13 +68,13 @@ class GuideLLMBenchmark(BenchmarkProvider):
             
             # Log GuideLLM output for debugging
             if process.stdout:
-                logger.info(f"GuideLLM stdout:\n{process.stdout}")
+                self._logger.info(f"GuideLLM stdout:\n{process.stdout}")
             if process.stderr:
-                logger.warning(f"GuideLLM stderr:\n{process.stderr}")
+                self._logger.warning(f"GuideLLM stderr:\n{process.stderr}")
             
-            logger.debug(f"GuideLLM process completed with return code: {process.returncode}")
+            self._logger.debug(f"GuideLLM process completed with return code: {process.returncode}")
             
-            logger.info("GuideLLM completed successfully")
+            self._logger.info("GuideLLM completed successfully")
             
             # Parse results
             return self._parse_guidellm_results(results_file)
@@ -90,21 +97,36 @@ class GuideLLMBenchmark(BenchmarkProvider):
         results_file: str
     ) -> list[str]:
         """Build GuideLLM command arguments."""
+        # Use processor if specified, otherwise default to model
+        processor = config.processor if config.processor is not None else config.model
+        
         cmd = [
-            "guidellm",
-            "--url", model_url,
+            "guidellm", "benchmark",
+            "--target", model_url,
             "--model", config.model,
+            "--processor", processor,
+            "--rate-type", "concurrent",
             "--max-seconds", str(config.max_seconds),
-            "--concurrency", str(config.concurrency),
-            "--output", results_file
+            "--rate", str(config.rate),
+            "--output-path", results_file
         ]
         
         # Add dataset or synthetic data configuration
         if config.use_synthetic_data:
+            # Build complex data JSON object with statistics
+            data_config = {
+                "prompt_tokens": config.prompt_tokens,
+                "prompt_tokens_stdev": config.prompt_tokens_stdev,
+                "prompt_tokens_min": config.prompt_tokens_min,
+                "prompt_tokens_max": config.prompt_tokens_max,
+                "output_tokens": config.output_tokens,
+                "output_tokens_stdev": config.output_tokens_stdev,
+                "output_tokens_min": config.output_tokens_min,
+                "output_tokens_max": config.output_tokens_max
+            }
+            
             cmd.extend([
-                "--data-type", "synthetic",
-                "--prompt-tokens", str(config.prompt_tokens),
-                "--output-tokens", str(config.output_tokens)
+                "--data", json.dumps(data_config)
             ])
         else:
             if config.dataset.startswith("hf://"):
@@ -151,7 +173,7 @@ class GuideLLMBenchmark(BenchmarkProvider):
             
             for metric_name in required_metrics:
                 if metric_name not in metrics:
-                    logger.warning(f"Missing metric: {metric_name}")
+                    self._logger.warning(f"Missing metric: {metric_name}")
                     continue
                 
                 metric_data = metrics[metric_name]["successful"]

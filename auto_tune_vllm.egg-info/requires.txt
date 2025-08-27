@@ -1,5 +1,8 @@
 optuna>=3.0.0
 optuna-integration[botorch]>=4.0.0
+ray[default]>=2.0.0
+vllm>=0.2.0
+guidellm>=0.1.0
 psycopg2-binary>=2.9.0
 pyyaml>=6.0
 pydantic>=2.0.0
@@ -13,12 +16,6 @@ black>=23.0.0
 isort>=5.0.0
 mypy>=1.0.0
 pre-commit>=3.0.0
-
-[ml]
-ray[default]>=2.0.0
-vllm>=0.2.0
-guidellm>=0.1.0
-torch>=2.0.0
 
 [viz]
 plotly>=5.0.0

@@ -55,7 +55,7 @@ class PostgreSQLLogHandler(logging.Handler):
         try:
             import ray
             if ray.is_initialized():
-                return ray.get_runtime_context().node_id.hex()
+                return ray.get_runtime_context().get_node_id()
         except ImportError:
             pass
         
@@ -64,17 +64,17 @@ class PostgreSQLLogHandler(logging.Handler):
         return f"local_{socket.gethostname()}"
 
 
-class NFSLogHandler(logging.Handler):
-    """Log handler that writes to shared filesystem (NFS mount)."""
+class LocalFileHandler(logging.Handler):
+    """Log handler that writes to local files."""
     
-    def __init__(self, study_id: int, trial_number: int, component: str, nfs_path: str):
+    def __init__(self, study_id: int, trial_number: int, component: str, log_path: str):
         super().__init__()
         self.study_id = study_id
         self.trial_number = trial_number
         self.component = component
         
         # Create log file path
-        self.log_file = Path(nfs_path) / f"study_{study_id}" / f"trial_{trial_number}" / f"{component}.log"
+        self.log_file = Path(log_path) / f"study_{study_id}" / f"trial_{trial_number}" / f"{component}.log"
         self.log_file.parent.mkdir(parents=True, exist_ok=True)
         
         # Setup formatter with timestamp and worker info
@@ -85,7 +85,7 @@ class NFSLogHandler(logging.Handler):
         self.setFormatter(formatter)
     
     def emit(self, record: logging.LogRecord):
-        """Write log record to NFS file."""
+        """Write log record to local file."""
         try:
             # Add worker ID to record
             record.worker_id = self._get_worker_id()
@@ -107,7 +107,7 @@ class NFSLogHandler(logging.Handler):
         try:
             import ray
             if ray.is_initialized():
-                node_id = ray.get_runtime_context().node_id.hex()
+                node_id = ray.get_runtime_context().get_node_id()
                 return node_id[:8]  # Shortened for readability
         except ImportError:
             pass
@@ -116,6 +116,9 @@ class NFSLogHandler(logging.Handler):
         import socket
         return socket.gethostname()[:8]
 
+
+# Backwards compatibility alias
+NFSLogHandler = LocalFileHandler
 
 class BufferedLogHandler(logging.Handler):
     """Buffered log handler for better performance with high-volume logging."""
