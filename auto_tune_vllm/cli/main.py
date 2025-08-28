@@ -89,7 +89,6 @@ def optimize_command(
         # Create execution backend
         if backend.lower() == "ray":
             execution_backend = RayExecutionBackend(
-                resource_requirements={"num_gpus": 1, "num_cpus": 4},
                 start_ray_head=start_ray_head,
                 python_executable=python_executable,
                 venv_path=venv_path,
@@ -155,7 +154,7 @@ def clear_study_command(
         # Confirmation prompt
         if not force:
             confirm = typer.confirm(
-                f"\nAre you sure you want to permanently delete this data?",
+                "\nAre you sure you want to permanently delete this data?",
                 default=False
             )
             if not confirm:
@@ -395,7 +394,6 @@ def resume_command(
         # Create backend
         if backend.lower() == "ray":
             execution_backend = RayExecutionBackend(
-                resource_requirements={"num_gpus": 1, "num_cpus": 4},
                 python_executable=python_executable,
                 venv_path=venv_path,
                 conda_env=conda_env
@@ -504,15 +502,15 @@ def setup_logging_command(
             dummy_study_id = study_id or 0
             
             # Initialize CentralizedLogger to create tables
-            centralized_logger = CentralizedLogger(
+            CentralizedLogger(
                 study_id=dummy_study_id,
                 pg_url=database_url,
                 log_level="INFO"
             )
             
-            console.print(f"[bold green]✅ PostgreSQL logging tables created successfully[/bold green]")
+            console.print("[bold green]✅ PostgreSQL logging tables created successfully[/bold green]")
             console.print(f"Database: {database_url}")
-            console.print(f"Tables: trial_logs (with indexes)")
+            console.print("Tables: trial_logs (with indexes)")
             
             if study_id:
                 console.print(f"\n[blue]You can now view logs for study {study_id}:[/blue]")
@@ -534,7 +532,7 @@ def setup_logging_command(
                 console.print(f"[bold red]Error: Cannot write to {file_path}: {e}[/bold red]")
                 raise typer.Exit(1)
             
-            console.print(f"[bold green]✅ File logging directory ready[/bold green]")
+            console.print("[bold green]✅ File logging directory ready[/bold green]")
             console.print(f"Log path: {file_path}")
             console.print(f"Structure: {file_path}/study_<ID>/trial_<NUM>/<component>.log")
             console.print("[dim]Note: This setup is optional - just add 'file_path' to your study config instead![/dim]")

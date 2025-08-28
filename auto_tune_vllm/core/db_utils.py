@@ -1,7 +1,7 @@
 """Database utilities for PostgreSQL database management."""
 
 import logging
-from typing import Optional, Tuple
+from typing import Tuple
 from urllib.parse import urlparse
 
 logger = logging.getLogger(__name__)

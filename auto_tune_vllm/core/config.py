@@ -95,23 +95,39 @@ class StudyConfig:
     logging_config: Optional[Dict[str, Any]] = None
     
     @classmethod
-    def from_file(cls, config_path: str, schema_path: Optional[str] = None) -> StudyConfig:
+    def from_file(cls, config_path: str, schema_path: Optional[str] = None, 
+                 defaults_path: Optional[str] = None, vllm_version: Optional[str] = None) -> StudyConfig:
         """Load and validate configuration from YAML file."""
-        config_validator = ConfigValidator(schema_path)
+        config_validator = ConfigValidator(schema_path, defaults_path, vllm_version)
         return config_validator.load_and_validate(config_path)
 
 
 class ConfigValidator:
     """Validates study configurations against parameter schema."""
     
-    def __init__(self, schema_path: Optional[str] = None):
-        """Initialize with parameter schema."""
+    def __init__(self, schema_path: Optional[str] = None, defaults_path: Optional[str] = None, 
+                 vllm_version: Optional[str] = None):
+        """Initialize with parameter schema and optional defaults."""
         if schema_path is None:
             # Use default schema shipped with package
             schema_path = Path(__file__).parent.parent / "schemas" / "parameter_schema.yaml"
         
         self.schema_path = Path(schema_path)
         self.schema = self._load_schema()
+        
+        # Load defaults - support versioned defaults
+        self.defaults = {}
+        self.vllm_version = vllm_version
+        
+        if defaults_path is not None:
+            self.defaults_path = Path(defaults_path)
+            self.defaults = self._load_defaults()
+        elif vllm_version is not None:
+            # Load version-specific defaults
+            self._load_version_defaults(vllm_version)
+        else:
+            # Try to load latest defaults
+            self._load_latest_defaults()
     
     def _load_schema(self) -> Dict[str, Any]:
         """Load parameter schema from YAML."""
@@ -120,6 +136,50 @@ class ConfigValidator:
         
         with open(self.schema_path) as f:
             return yaml.safe_load(f)
+    
+    def _load_defaults(self) -> Dict[str, Any]:
+        """Load defaults from YAML file."""
+        if not self.defaults_path.exists():
+            raise FileNotFoundError(f"Defaults file not found: {self.defaults_path}")
+        
+        with open(self.defaults_path) as f:
+            defaults_data = yaml.safe_load(f)
+        
+        return self._flatten_defaults(defaults_data)
+    
+    def _load_version_defaults(self, version: str):
+        """Load version-specific defaults."""
+        try:
+            from ..utils.version_manager import VLLMVersionManager
+            manager = VLLMVersionManager()
+            defaults_data = manager.load_defaults(version)
+            self.defaults = self._flatten_defaults(defaults_data)
+            self.defaults_path = manager.get_defaults_path(version)
+        except Exception as e:
+            print(f"Warning: Could not load vLLM defaults for version {version}: {e}")
+            self.defaults = {}
+            self.defaults_path = None
+    
+    def _load_latest_defaults(self):
+        """Try to load the latest available defaults."""
+        try:
+            from ..utils.version_manager import VLLMVersionManager
+            manager = VLLMVersionManager()
+            defaults_data = manager.load_defaults()  # Load latest
+            self.defaults = self._flatten_defaults(defaults_data)
+            self.defaults_path = manager.get_defaults_path()
+        except Exception:
+            # No versioned defaults available, use empty defaults
+            self.defaults = {}
+            self.defaults_path = None
+    
+    def _flatten_defaults(self, defaults_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Flatten the nested defaults structure for easy lookup."""
+        flat_defaults = {}
+        for section, section_defaults in defaults_data.get("defaults", {}).items():
+            for param_name, default_value in section_defaults.items():
+                flat_defaults[param_name] = default_value
+        return flat_defaults
     
     def load_and_validate(self, config_path: str) -> StudyConfig:
         """Load and validate study configuration."""
@@ -170,7 +230,7 @@ class ConfigValidator:
         user_config: Dict[str, Any], 
         schema_def: Dict[str, Any]
     ) -> ParameterConfig:
-        """Build parameter config from user config and schema."""
+        """Build parameter config from user config, defaults, and schema."""
         param_type = schema_def["type"]
         description = schema_def.get("description")
         
@@ -180,12 +240,22 @@ class ConfigValidator:
             "description": description
         }
         
+        def get_value(key: str, schema_fallback=None):
+            """Get value with priority: user_config > defaults > schema > schema_fallback."""
+            if key in user_config:
+                return user_config[key]
+            if name in self.defaults:
+                return self.defaults[name]
+            if key in schema_def:
+                return schema_def[key]
+            return schema_fallback
+        
         if param_type == "range":
             return RangeParameter(
                 **base_config,
-                min=user_config.get("min", schema_def["min"]),
-                max=user_config.get("max", schema_def["max"]),
-                step=user_config.get("step", schema_def.get("step")),
+                min=get_value("min", schema_def["min"]),
+                max=get_value("max", schema_def["max"]),
+                step=get_value("step", schema_def.get("step")),
                 data_type=schema_def["data_type"]
             )
         elif param_type == "list":

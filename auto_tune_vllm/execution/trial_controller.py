@@ -9,6 +9,8 @@ import time
 from abc import ABC, abstractmethod
 from typing import Optional
 
+import ray
+
 from ..benchmarks.providers import BenchmarkProvider, GuideLLMBenchmark
 from ..core.trial import ExecutionInfo, TrialConfig, TrialResult
 from ..logging.manager import CentralizedLogger
@@ -89,16 +91,31 @@ class BaseTrialController(TrialController):
                 f"Ensure all dependencies are properly installed and available in PATH."
             )
         
-        # Check GPU availability if CUDA is expected
+        # Check GPU availability using Ray cluster resources
         try:
-            import torch
-            if torch.cuda.is_available():
-                gpu_count = torch.cuda.device_count()
-                logger.info(f"Ray worker has {gpu_count} CUDA GPU(s) available")
+            if ray.is_initialized():
+                cluster_resources = ray.cluster_resources()
+                available_resources = ray.available_resources()
+                
+                gpu_count = cluster_resources.get("GPU", 0)
+                available_gpus = available_resources.get("GPU", 0)
+                
+                if gpu_count > 0:
+                    logger.info(f"Ray cluster has {gpu_count} GPU(s) total, {available_gpus} available")
+                    
+                    # Log accelerator types if available
+                    accelerator_types = [k for k in cluster_resources.keys() if k.startswith("accelerator_type:")]
+                    if accelerator_types:
+                        for acc_type in accelerator_types:
+                            acc_name = acc_type.replace("accelerator_type:", "")
+                            acc_count = cluster_resources[acc_type]
+                            logger.info(f"GPU type: {acc_name} (count: {acc_count})")
+                else:
+                    logger.warning("No GPUs detected in Ray cluster. vLLM may fail to start.")
             else:
-                logger.warning("No CUDA GPUs detected on Ray worker. vLLM may fail to start.")
+                logger.warning("Ray not initialized. Cannot check GPU availability.")
         except Exception as e:
-            logger.warning(f"Could not check GPU availability: {e}")
+            logger.warning(f"Could not check GPU availability from Ray: {e}")
         
         self._environment_validated = True
         logger.info("Environment validation passed on Ray worker")
@@ -266,26 +283,60 @@ class BaseTrialController(TrialController):
             value = os.environ.get(var, 'Not set')
             logger.info(f"{var}: {value}")
         
-        # Key package versions
+        # Ray GPU resources and accelerator information
         try:
-            import torch
-            logger.info(f"PyTorch version: {torch.__version__}")
-            logger.info(f"CUDA available: {torch.cuda.is_available()}")
-            if torch.cuda.is_available():
-                logger.info(f"CUDA version: {torch.version.cuda}")
-                logger.info(f"GPU count: {torch.cuda.device_count()}")
-        except ImportError:
-            logger.info("PyTorch: Not installed")
+            if ray.is_initialized():
+                cluster_resources = ray.cluster_resources()
+                available_resources = ray.available_resources()
+                
+                # Log GPU resources
+                gpu_count = cluster_resources.get("GPU", 0)
+                available_gpus = available_resources.get("GPU", 0)
+                logger.info(f"Ray GPU resources: {gpu_count} total, {available_gpus} available")
+                
+                # Log accelerator types (GPU models)
+                accelerator_types = [k for k in cluster_resources.keys() if k.startswith("accelerator_type:")]
+                if accelerator_types:
+                    logger.info("GPU accelerator types:")
+                    for acc_type in accelerator_types:
+                        acc_name = acc_type.replace("accelerator_type:", "")
+                        acc_count = cluster_resources[acc_type]
+                        logger.info(f"  - {acc_name}: {acc_count}")
+                else:
+                    logger.info("No accelerator type information available")
+                    
+                # Log assigned GPUs for this worker (from environment)
+                cuda_visible = os.environ.get("CUDA_VISIBLE_DEVICES")
+                if cuda_visible:
+                    logger.info(f"CUDA_VISIBLE_DEVICES: {cuda_visible}")
+                else:
+                    logger.info("CUDA_VISIBLE_DEVICES: Not set")
+            else:
+                logger.info("Ray: Not initialized - cannot get GPU resource information")
+        except Exception as e:
+            logger.info(f"Ray GPU detection error: {e}")
         
+        # Get vLLM version from CLI command
         try:
-            import vllm
-            logger.info(f"vLLM version: {vllm.__version__}")
-        except ImportError:
-            logger.info("vLLM: Not installed")
+            result = subprocess.run(
+                ["vllm", "--version"], 
+                capture_output=True, 
+                text=True, 
+                timeout=10
+            )
+            if result.returncode == 0:
+                # vLLM CLI returns just the version number (e.g., "0.10.1.1")
+                version_output = result.stdout.strip()
+                logger.info(f"vLLM version: {version_output}")
+            else:
+                logger.info(f"vLLM: Error getting version (exit code {result.returncode})")
+        except (subprocess.TimeoutExpired, FileNotFoundError):
+            logger.info("vLLM: Not installed or not in PATH")
+        except Exception as e:
+            logger.info(f"vLLM: Error checking version: {e}")
         
         # Ray worker info (if available)
         try:
-            import ray
             if ray.is_initialized():
                 runtime_ctx = ray.get_runtime_context()
                 logger.info(f"Ray node ID: {runtime_ctx.get_node_id()}")
@@ -423,7 +474,6 @@ class RayTrialController(BaseTrialController):
     def _get_worker_id(self) -> str:
         """Get Ray worker node ID."""
         try:
-            import ray
             return ray.get_runtime_context().node_id.hex()
         except Exception:
             return "ray_worker_unknown"
@@ -440,7 +490,6 @@ class RayTrialController(BaseTrialController):
         
         # Log Ray worker context information
         try:
-            import ray
             if ray.is_initialized():
                 runtime_ctx = ray.get_runtime_context()
                 vllm_logger.info(f"Ray worker node: {runtime_ctx.node_id.hex()[:8]}")
@@ -453,24 +502,16 @@ class RayTrialController(BaseTrialController):
 
 
 # Ray remote wrapper for RayTrialController
-try:
-    import ray
-    
-    # Only create Ray remote class if Ray is available
-    _RayTrialControllerBase = RayTrialController
-    
-    @ray.remote
-    class RayTrialController(_RayTrialControllerBase):
-        """Ray remote actor for distributed trial execution."""
-        
-        def run_trial(self, trial_config: TrialConfig) -> TrialResult:
-            """Run trial on Ray worker."""
-            return super().run_trial(trial_config)
-        
-        def __del__(self):
-            """Ensure cleanup on actor destruction."""
-            self.cleanup_resources()
+_RayTrialControllerBase = RayTrialController
 
-except ImportError:
-    # This should not happen since Ray is a required dependency
-    raise ImportError("Ray is required but not installed. This should not happen with proper installation.")
+@ray.remote
+class RayTrialController(_RayTrialControllerBase):
+    """Ray remote actor for distributed trial execution."""
+    
+    def run_trial(self, trial_config: TrialConfig) -> TrialResult:
+        """Run trial on Ray worker."""
+        return super().run_trial(trial_config)
+    
+    def __del__(self):
+        """Ensure cleanup on actor destruction."""
+        self.cleanup_resources()

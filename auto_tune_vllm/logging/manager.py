@@ -6,7 +6,7 @@ import asyncio
 import logging
 from typing import Optional
 
-from .handlers import PostgreSQLLogHandler, LocalFileHandler, NFSLogHandler
+from .handlers import PostgreSQLLogHandler, LocalFileHandler
 
 logger = logging.getLogger(__name__)
 

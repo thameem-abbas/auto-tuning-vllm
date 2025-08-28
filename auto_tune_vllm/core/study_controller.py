@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 import time
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 import optuna
 from optuna.samplers import (
@@ -125,7 +125,7 @@ class StudyController:
         
         try:
             # Initialize CentralizedLogger
-            centralized_logger = CentralizedLogger(
+            CentralizedLogger(
                 study_id=study_id,
                 pg_url=log_database_url,
                 file_path=log_file_path,

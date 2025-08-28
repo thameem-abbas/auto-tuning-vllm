@@ -10,6 +10,26 @@ from typing import Any, Dict, List, Optional
 from ..benchmarks.config import BenchmarkConfig
 
 
+def calculate_gpu_requirements(parameters: Dict[str, Any]) -> int:
+    """Calculate GPU requirements based on parallelism parameters.
+    
+    Args:
+        parameters: Trial parameters dictionary
+        
+    Returns:
+        Number of GPUs required (product of parallelism settings)
+    """
+    # Extract parallelism parameters with defaults
+    tensor_parallel = parameters.get("tensor_parallel_size", 1)
+    pipeline_parallel = parameters.get("pipeline_parallel_size", 1) 
+    data_parallel = parameters.get("data_parallel_size", 1)
+    
+    # Calculate total GPU requirement
+    total_gpus = tensor_parallel * pipeline_parallel * data_parallel
+    
+    return max(1, total_gpus)  # Ensure at least 1 GPU
+
+
 @dataclass
 class TrialConfig:
     """Configuration for a single optimization trial."""
@@ -18,8 +38,18 @@ class TrialConfig:
     trial_number: int
     parameters: Dict[str, Any]  # vLLM parameters from Optuna
     benchmark_config: BenchmarkConfig
-    resource_requirements: Dict[str, float] = field(default_factory=lambda: {"num_gpus": 1, "num_cpus": 4})
+    resource_requirements: Dict[str, float] = field(default_factory=dict)
     logging_config: Optional[Dict[str, Any]] = None  # Logging configuration from study
+    
+    def __post_init__(self):
+        """Calculate resource requirements after initialization."""
+        if not self.resource_requirements:
+            # Calculate GPU requirements based on parallelism parameters
+            num_gpus = calculate_gpu_requirements(self.parameters)
+            self.resource_requirements = {
+                "num_gpus": num_gpus,
+                "num_cpus": 4  # Default CPU count, could be made configurable
+            }
     
     @property
     def vllm_args(self) -> List[str]:

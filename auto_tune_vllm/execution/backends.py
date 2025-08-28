@@ -9,6 +9,7 @@ import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
+import sys
 from typing import Dict, List, Optional, Tuple
 
 from ..core.trial import TrialConfig, TrialResult
@@ -55,13 +56,14 @@ class RayExecutionBackend(ExecutionBackend):
     
     def __init__(
         self, 
-        resource_requirements: Dict[str, float], 
+        resource_requirements: Optional[Dict[str, float]] = None, 
         start_ray_head: bool = False,
         python_executable: Optional[str] = None,
         venv_path: Optional[str] = None,
         conda_env: Optional[str] = None
     ):
-        self.resource_requirements = resource_requirements
+        # Legacy: resource_requirements per backend (now calculated per trial)
+        self.resource_requirements = resource_requirements or {"num_gpus": 1, "num_cpus": 4}
         self.active_jobs: Dict[str, object] = {}  # job_id -> ray_ref
         self.start_ray_head = start_ray_head
         self._started_ray_head = False  # Track if we started Ray head for cleanup
@@ -145,7 +147,6 @@ class RayExecutionBackend(ExecutionBackend):
     
     def _start_ray_head(self):
         """Start a Ray head node."""
-        import subprocess
         import time
         import ray
         
@@ -190,13 +191,13 @@ class RayExecutionBackend(ExecutionBackend):
         """Submit trial to Ray cluster."""
         from .trial_controller import RayTrialController
         
-        # Create Ray actor with resource requirements
-        # Extract num_gpus and num_cpus from resource_requirements
-        num_gpus = self.resource_requirements.get("num_gpus", 0)
-        num_cpus = self.resource_requirements.get("num_cpus", 1)
+        # Create Ray actor with resource requirements from trial config
+        # Extract num_gpus and num_cpus from trial's resource_requirements
+        num_gpus = trial_config.resource_requirements.get("num_gpus", 1)
+        num_cpus = trial_config.resource_requirements.get("num_cpus", 1)
         
-        # Filter out any other custom resources
-        custom_resources = {k: v for k, v in self.resource_requirements.items() 
+        # Filter out any other custom resources from trial config
+        custom_resources = {k: v for k, v in trial_config.resource_requirements.items() 
                           if k not in ["num_gpus", "num_cpus"]}
         
         # Build runtime environment for Python configuration
@@ -287,7 +288,6 @@ class RayExecutionBackend(ExecutionBackend):
     def shutdown(self):
         """Shutdown Ray cluster connection."""
         import ray
-        import subprocess
         
         if ray.is_initialized():
             ray.shutdown()

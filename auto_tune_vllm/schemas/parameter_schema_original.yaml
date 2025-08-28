@@ -79,22 +79,3 @@ parameters:
     max: 500
     step: 10
     description: "Number of concurrent requests for benchmarking"
-    
-  # Parallelism parameters
-  tensor_parallel_size:
-    type: "list"
-    data_type: "int"
-    options: [1, 2, 4, 8]
-    description: "Number of tensor parallel groups (GPUs for tensor parallelism)"
-    
-  pipeline_parallel_size:
-    type: "list" 
-    data_type: "int"
-    options: [1, 2, 4]
-    description: "Number of pipeline parallel stages"
-    
-  data_parallel_size:
-    type: "list"
-    data_type: "int" 
-    options: [1, 2, 4]
-    description: "Number of data parallel replicas"
