@@ -183,15 +183,31 @@ class LogStreamer:
         self, 
         trial_number: int, 
         component: Optional[str] = None,
-        follow: bool = True
+        follow: bool = True,
+        tail_lines: int = 100
     ):
         """Stream logs for a specific trial."""
-        last_seen_id = 0
-        
         logger.info(f"Streaming logs for study {self.study_id}, trial {trial_number}" +
                    (f", component {component}" if component else ""))
         
         try:
+            # First, fetch and display the last N lines (tail behavior)
+            if follow:
+                recent_logs = self._fetch_recent_logs(trial_number, component, tail_lines)
+                for log_entry in recent_logs:
+                    log_id, timestamp, level, comp, message, worker = log_entry
+                    formatted_log = (
+                        f"[{timestamp}] [{worker[:8]}] {comp}.{level}: {message}"
+                    )
+                    print(formatted_log)
+                
+                # Set last_seen_id to the highest ID from recent logs
+                last_seen_id = max((log[0] for log in recent_logs), default=0)
+            else:
+                # For non-follow mode, start from beginning
+                last_seen_id = 0
+            
+            # Now start the follow loop
             while True:
                 new_logs = self._fetch_new_logs(trial_number, component, last_seen_id)
                 
@@ -217,6 +233,40 @@ class LogStreamer:
         except Exception as e:
             logger.error(f"Log streaming failed: {e}")
     
+    def _fetch_recent_logs(
+        self,
+        trial_number: int,
+        component: Optional[str],
+        limit: int = 100
+    ) -> list:
+        """Fetch the most recent logs for a trial (tail behavior)."""
+        try:
+            import psycopg2
+            
+            with psycopg2.connect(self.pg_url) as conn:
+                with conn.cursor() as cur:
+                    query = """
+                        SELECT id, timestamp, level, component, message, worker_node
+                        FROM trial_logs 
+                        WHERE study_id = %s AND trial_number = %s
+                    """
+                    params = [self.study_id, trial_number]
+                    
+                    if component:
+                        query += " AND component = %s"
+                        params.append(component)
+                    
+                    query += " ORDER BY id DESC LIMIT %s"
+                    params.append(limit)
+                    
+                    cur.execute(query, params)
+                    # Reverse to get chronological order (oldest to newest)
+                    return list(reversed(cur.fetchall()))
+                    
+        except Exception as e:
+            logger.error(f"Failed to fetch recent logs: {e}")
+            return []
+
     def _fetch_new_logs(
         self, 
         trial_number: int, 
@@ -249,13 +299,28 @@ class LogStreamer:
             logger.error(f"Failed to fetch logs: {e}")
             return []
     
-    async def stream_study_logs(self, follow: bool = True):
+    async def stream_study_logs(self, follow: bool = True, tail_lines: int = 100):
         """Stream all logs for the entire study."""
-        last_seen_id = 0
-        
         logger.info(f"Streaming all logs for study {self.study_id}")
         
         try:
+            # First, fetch and display the last N lines (tail behavior)
+            if follow:
+                recent_logs = self._fetch_recent_study_logs(tail_lines)
+                for log_entry in recent_logs:
+                    log_id, timestamp, level, trial_num, comp, message, worker = log_entry
+                    formatted_log = (
+                        f"[{timestamp}] [T{trial_num}] [{worker[:8]}] {comp}.{level}: {message}"
+                    )
+                    print(formatted_log)
+                
+                # Set last_seen_id to the highest ID from recent logs
+                last_seen_id = max((log[0] for log in recent_logs), default=0)
+            else:
+                # For non-follow mode, start from beginning
+                last_seen_id = 0
+            
+            # Now start the follow loop
             while True:
                 new_logs = self._fetch_study_logs(last_seen_id)
                 
@@ -279,6 +344,27 @@ class LogStreamer:
         except Exception as e:
             logger.error(f"Study log streaming failed: {e}")
     
+    def _fetch_recent_study_logs(self, limit: int = 100) -> list:
+        """Fetch the most recent logs for the entire study (tail behavior)."""
+        try:
+            import psycopg2
+            
+            with psycopg2.connect(self.pg_url) as conn:
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        SELECT id, timestamp, level, trial_number, component, message, worker_node
+                        FROM trial_logs 
+                        WHERE study_id = %s
+                        ORDER BY id DESC LIMIT %s
+                    """, (self.study_id, limit))
+                    
+                    # Reverse to get chronological order (oldest to newest)
+                    return list(reversed(cur.fetchall()))
+                    
+        except Exception as e:
+            logger.error(f"Failed to fetch recent study logs: {e}")
+            return []
+
     def _fetch_study_logs(self, last_seen_id: int) -> list:
         """Fetch new log entries for entire study."""
         try:

@@ -276,9 +276,12 @@ def logs_command(
     trial_number: Optional[int] = typer.Option(None, "--trial", help="Specific trial number"),
     component: Optional[str] = typer.Option(None, "--component", help="Component (vllm, benchmark, controller)"),
     follow: bool = typer.Option(True, "--follow/--no-follow", help="Follow logs in real-time"),
+    tail_lines: int = typer.Option(100, "--tail", "-n", help="Number of recent lines to show when starting follow mode"),
 ):
     """Stream logs from PostgreSQL database."""
     console.print(f"[blue]Streaming logs for study {study_id}[/blue]")
+    if follow:
+        console.print(f"[dim]Showing last {tail_lines} lines, then following new logs...[/dim]")
     
     try:
         streamer = LogStreamer(study_id, database_url)
@@ -286,9 +289,9 @@ def logs_command(
         # TODO: Make log streaming synchronous too
         import asyncio
         if trial_number is not None:
-            asyncio.run(streamer.stream_trial_logs(trial_number, component, follow))
+            asyncio.run(streamer.stream_trial_logs(trial_number, component, follow, tail_lines))
         else:
-            asyncio.run(streamer.stream_study_logs(follow))
+            asyncio.run(streamer.stream_study_logs(follow, tail_lines))
             
     except KeyboardInterrupt:
         console.print("\n[yellow]Log streaming stopped by user[/yellow]")
