@@ -88,11 +88,12 @@ class StudyConfig:
     """Complete study configuration."""
     
     study_name: str
-    database_url: str
+    database_url: Optional[str]
     optimization: OptimizationConfig
     benchmark: BenchmarkConfig
     parameters: Dict[str, ParameterConfig] = field(default_factory=dict)
     logging_config: Optional[Dict[str, Any]] = None
+    storage_file: Optional[str] = None  # Alternative to database_url for file-based storage
     
     @classmethod
     def from_file(cls, config_path: str, schema_path: Optional[str] = None, 
@@ -215,13 +216,26 @@ class ConfigValidator:
         optimization = OptimizationConfig(**raw_config["optimization"])
         benchmark = BenchmarkConfig(**raw_config["benchmark"])
         
+        # Handle optional database_url and storage_file
+        database_url = study_info.get("database_url")
+        storage_file = study_info.get("storage_file")
+        
+        # Validate storage configuration
+        if not database_url and not storage_file:
+            # Default to file-based storage using study name
+            storage_file = f"./optuna_studies/{study_info['name']}/study.db"
+        
+        if database_url and storage_file:
+            raise ValueError("Cannot specify both database_url and storage_file. Choose one storage method.")
+        
         return StudyConfig(
             study_name=study_info["name"],
-            database_url=study_info["database_url"],
+            database_url=database_url,
             optimization=optimization,
             benchmark=benchmark, 
             parameters=validated_params,
-            logging_config=raw_config.get("logging")
+            logging_config=raw_config.get("logging"),
+            storage_file=storage_file
         )
     
     def _build_parameter_config(

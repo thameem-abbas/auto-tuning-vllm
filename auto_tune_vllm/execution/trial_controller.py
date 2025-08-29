@@ -41,7 +41,7 @@ class BaseTrialController(TrialController):
         self._environment_validated = False
         self.trial_loggers = {}  # Dict to hold trial-specific loggers
     
-    def _validate_environment(self) -> None:
+    def _validate_environment(self, trial_config: Optional[TrialConfig] = None) -> None:
         """Validate that all required packages are available on this worker."""
         if self._environment_validated:
             return
@@ -51,8 +51,15 @@ class BaseTrialController(TrialController):
             'guidellm': 'GuideLLM benchmarking tool', 
             'optuna': 'Optuna optimization framework',
             'ray': 'Ray distributed computing',
-            'psycopg2': 'PostgreSQL client',
         }
+        
+        # Only require psycopg2 if using PostgreSQL
+        using_postgresql = False
+        if trial_config and trial_config.logging_config:
+            using_postgresql = trial_config.logging_config.get("database_url") is not None
+        
+        if using_postgresql:
+            required_packages['psycopg2'] = 'PostgreSQL client'
         
         missing_packages = []
         
@@ -171,8 +178,8 @@ class BaseTrialController(TrialController):
             # Setup trial-specific logging first
             self._setup_trial_logging(trial_config)
             
-            # Validate environment first
-            self._validate_environment()
+            # Validate environment first (with trial config for conditional psycopg2 check)
+            self._validate_environment(trial_config)
             
             # Setup benchmark provider
             self.benchmark_provider = self._create_benchmark_provider(trial_config)

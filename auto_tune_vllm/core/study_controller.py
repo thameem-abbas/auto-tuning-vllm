@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import time
+from pathlib import Path
 from typing import Dict, Optional
 
 import optuna
@@ -54,7 +55,7 @@ class StudyController:
         create_db: bool = False
     ) -> StudyController:
         """Create study controller with Optuna study from configuration."""
-        # Handle database creation if requested
+        # Handle database creation if requested and using PostgreSQL
         if create_db and config.database_url:
             try:
                 logger.info("Checking database existence and creating if necessary...")
@@ -67,7 +68,7 @@ class StudyController:
                 logger.error(f"Failed to create database: {e}")
                 raise RuntimeError(f"Database creation failed: {e}")
         
-        # Verify database connection before proceeding
+        # Verify database connection before proceeding (only if using PostgreSQL)
         if config.database_url and not verify_database_connection(config.database_url):
             if create_db:
                 raise RuntimeError(
@@ -89,22 +90,42 @@ class StudyController:
         else:
             directions = config.optimization.objective
         
+        # Determine storage backend for Optuna study
+        if config.database_url:
+            storage = config.database_url
+            storage_type = "PostgreSQL"
+        elif config.storage_file:
+            # Ensure directory exists for file-based storage
+            storage_path = Path(config.storage_file)
+            storage_path.parent.mkdir(parents=True, exist_ok=True)
+            storage = f"sqlite:///{config.storage_file}"
+            storage_type = "SQLite file"
+        else:
+            # This should not happen due to validation in config.py, but fallback to in-memory
+            storage = None
+            storage_type = "in-memory"
+        
+        logger.info(f"Using {storage_type} storage for Optuna study")
+        if storage:
+            logger.info(f"Storage location: {storage}")
+        
         # Create Optuna study
         try:
             study = optuna.create_study(
-                storage=config.database_url,
+                storage=storage,
                 study_name=config.study_name,
                 direction=directions,  # "maximize", "minimize", or ["maximize", "minimize"] 
                 sampler=sampler,
                 load_if_exists=True
             )
         except Exception as e:
-            if "does not exist" in str(e).lower() or "database" in str(e).lower():
+            if config.database_url and ("does not exist" in str(e).lower() or "database" in str(e).lower()):
                 raise RuntimeError(
                     f"Failed to create Optuna study. Database connection error: {e}. "
                     f"Use --create-db flag to create the database automatically."
                 )
-            raise
+            else:
+                raise RuntimeError(f"Failed to create Optuna study: {e}")
         
         # Generate and prominently log study ID
         study_id = cls.get_study_id(config.study_name)
@@ -119,9 +140,13 @@ class StudyController:
             log_database_url = config.logging_config.get("database_url")
             log_file_path = config.logging_config.get("file_path")
             
-        # Default to main database if no specific logging config
-        if not log_database_url and not log_file_path:
+        # Default to main database if no specific logging config and database is available
+        if not log_database_url and not log_file_path and config.database_url:
             log_database_url = config.database_url
+        elif not log_database_url and not log_file_path and not config.database_url:
+            # No PostgreSQL available - enforce file logging mode
+            log_file_path = f"./logs/study_{study_id}"
+            logger.info(f"No PostgreSQL available - using file logging: {log_file_path}")
         
         try:
             # Initialize CentralizedLogger
@@ -134,7 +159,7 @@ class StudyController:
             
             # Provide appropriate log viewing instructions
             if log_file_path:
-                logger.info(f"📋 File logging enabled. Logs will be written to: {log_file_path}/study_{study_id}/")
+                logger.info(f"📋 File logging enabled. Logs will be written to: {log_file_path}")
                 logger.info(f"📋 View logs with: auto-tune-vllm view-file-logs --study-id {study_id} --log-path {log_file_path}")
             elif log_database_url:
                 logger.info(f"📋 Database logging ready. View logs with: auto-tune-vllm logs --study-id {study_id} --database-url {log_database_url}")
@@ -145,6 +170,8 @@ class StudyController:
                 logger.info(f"📋 To view file logs: auto-tune-vllm view-file-logs --study-id {study_id} --log-path {log_file_path}")
             elif log_database_url:
                 logger.info(f"📋 To view logs: auto-tune-vllm logs --study-id {study_id} --database-url {log_database_url}")
+            else:
+                logger.info("📋 Console logging only - no file or database logging configured")
         
         return cls(backend, study, config)
     
@@ -376,8 +403,10 @@ class StudyController:
         if self.config.logging_config and self.config.logging_config.get("file_path"):
             log_file_path = self.config.logging_config["file_path"]
             logger.info(f"📋 View file logs with: auto-tune-vllm view-file-logs --study-id {study_id} --log-path {log_file_path}")
-        else:
+        elif self.config.database_url:
             logger.info(f"📋 View logs with: auto-tune-vllm logs --study-id {study_id} --database-url {self.config.database_url}")
+        else:
+            logger.info(f"📋 Using file-based storage. View logs with: auto-tune-vllm view-file-logs --study-id {study_id} --log-path ./logs/study_{study_id}")
         
         # Count existing trials
         n_existing = len(self.study.trials)
