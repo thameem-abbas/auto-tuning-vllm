@@ -207,8 +207,8 @@ class BaseTrialController(TrialController):
                 config=trial_config.benchmark_config
             )
             
-            # Extract objectives for Optuna
-            objective_values = self._extract_objectives(benchmark_result)
+            # Extract objectives for Optuna using optimization configuration
+            objective_values = self._extract_objectives(benchmark_result, trial_config.optimization_config)
             controller_logger.info(f"Trial completed with objectives: {objective_values}")
             
             execution_info.mark_completed()
@@ -441,11 +441,43 @@ class BaseTrialController(TrialController):
         vllm_logger.error(f"vLLM server failed to start within {timeout} seconds")
         raise RuntimeError(f"vLLM server failed to start within {timeout} seconds")
     
-    def _extract_objectives(self, benchmark_result: dict) -> list[float]:
-        """Extract objective values for Optuna from benchmark results."""
-        # Default: single objective (maximize throughput)
-        throughput = benchmark_result.get("output_tokens_per_second", 0.0)
-        return [throughput]
+    def _extract_objectives(self, benchmark_result: dict, optimization_config=None) -> list[float]:
+        """Extract objective values for Optuna from benchmark results based on optimization config."""
+        if optimization_config is None:
+            # Fallback to default behavior
+            throughput = benchmark_result.get("output_tokens_per_second", 0.0)
+            return [throughput]
+        
+        objective_values = []
+        
+        for objective in optimization_config.objectives:
+            # Get the metric key with percentile if specified
+            metric_key = optimization_config.get_metric_key(len(objective_values))
+            
+            # Extract the value from benchmark results
+            value = benchmark_result.get(metric_key)
+            
+            # Handle missing metrics gracefully
+            if value is None:
+                # Try fallback to base metric without percentile
+                fallback_key = objective.metric
+                value = benchmark_result.get(fallback_key, 0.0)
+                
+                logger.warning(
+                    f"Metric '{metric_key}' not found in benchmark results, "
+                    f"using fallback '{fallback_key}' = {value}"
+                )
+            
+            # Convert to float and handle potential conversion errors
+            try:
+                value = float(value)
+            except (ValueError, TypeError):
+                logger.error(f"Failed to convert metric '{metric_key}' value '{value}' to float, using 0.0")
+                value = 0.0
+            
+            objective_values.append(value)
+        
+        return objective_values
     
     def cleanup_resources(self):
         """Clean up vLLM server process."""

@@ -38,6 +38,7 @@ class TrialConfig:
     trial_number: int
     parameters: Dict[str, Any]  # vLLM parameters from Optuna
     benchmark_config: BenchmarkConfig
+    optimization_config: Optional[Any] = None  # Optimization configuration from study
     resource_requirements: Dict[str, float] = field(default_factory=dict)
     logging_config: Optional[Dict[str, Any]] = None  # Logging configuration from study
     

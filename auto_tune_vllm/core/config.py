@@ -74,13 +74,180 @@ class BooleanParameter(ParameterConfig):
         return trial.suggest_categorical(self.name, [True, False])
 
 
+@dataclass
+class ObjectiveConfig:
+    """Configuration for a single optimization objective."""
+    
+    metric: str  # "output_tokens_per_second", "request_latency", etc.
+    direction: str  # "maximize" or "minimize"
+    percentile: str = "median"  # "median", "p50", "p95", "p90", "p99"
+    
+    def __post_init__(self):
+        """Validate objective configuration."""
+        valid_metrics = {
+            "output_tokens_per_second", "request_latency", "time_to_first_token_ms",
+            "inter_token_latency_ms", "requests_per_second"
+        }
+        valid_directions = {"maximize", "minimize"}
+        valid_percentiles = {"median", "p50", "p95", "p90", "p99"}
+        
+        if self.metric not in valid_metrics:
+            raise ValueError(f"Invalid metric '{self.metric}'. Valid options: {valid_metrics}")
+        if self.direction not in valid_directions:
+            raise ValueError(f"Invalid direction '{self.direction}'. Valid options: {valid_directions}")
+        if self.percentile not in valid_percentiles:
+            raise ValueError(f"Invalid percentile '{self.percentile}'. Valid options: {valid_percentiles}")
+
+
 @dataclass 
 class OptimizationConfig:
-    """Optimization configuration."""
+    """Optimization configuration with support for new structured format and backward compatibility."""
     
-    objective: Union[str, List[str]] = "maximize"  # "maximize", "minimize", or list for multi-objective
+    # Backward compatibility fields
+    objective: Union[str, List[str]] = None  # Old format: "maximize", "minimize", or list
     sampler: str = "tpe"  # "tpe", "random", "botorch", "nsga2", "grid" 
     n_trials: int = 100
+    n_startup_trials: Optional[int] = None  # Number of startup trials for samplers that support it
+    
+    # New structured format fields
+    approach: Optional[str] = None  # "single_objective" or "multi_objective"
+    objectives: Optional[List[ObjectiveConfig]] = None  # For multi-objective
+    preset: Optional[str] = None  # "high_throughput", "low_latency", "balanced"
+    
+    def __post_init__(self):
+        """Process and validate optimization configuration."""
+        # Handle preset configurations
+        if self.preset:
+            self._apply_preset()
+            return
+        
+        # Handle new structured format
+        if self.approach:
+            self._validate_structured_format()
+            return
+        
+        # Handle backward compatibility (old format)
+        if self.objective:
+            self._convert_old_format()
+            return
+        
+        # Default fallback
+        self._apply_default_config()
+    
+    def _apply_preset(self):
+        """Apply preset optimization configurations."""
+        if self.preset == "high_throughput":
+            self.approach = "single_objective"
+            self.objectives = [ObjectiveConfig(
+                metric="output_tokens_per_second",
+                direction="maximize",
+                percentile="median"
+            )]
+        elif self.preset == "low_latency":
+            self.approach = "single_objective"
+            self.objectives = [ObjectiveConfig(
+                metric="request_latency",
+                direction="minimize",
+                percentile="p95"
+            )]
+        elif self.preset == "balanced":
+            self.approach = "multi_objective"
+            self.objectives = [
+                ObjectiveConfig(
+                    metric="output_tokens_per_second",
+                    direction="maximize",
+                    percentile="median"
+                ),
+                ObjectiveConfig(
+                    metric="request_latency",
+                    direction="minimize",
+                    percentile="median"
+                )
+            ]
+        else:
+            raise ValueError(f"Unknown preset '{self.preset}'. Valid options: high_throughput, low_latency, balanced")
+    
+    def _validate_structured_format(self):
+        """Validate new structured format."""
+        if self.approach not in ["single_objective", "multi_objective"]:
+            raise ValueError(f"Invalid approach '{self.approach}'. Valid options: single_objective, multi_objective")
+        
+        if not self.objectives:
+            raise ValueError("Objectives must be specified for structured format")
+        
+        if self.approach == "single_objective" and len(self.objectives) != 1:
+            raise ValueError("Single objective optimization requires exactly one objective")
+        
+        if self.approach == "multi_objective" and len(self.objectives) < 2:
+            raise ValueError("Multi-objective optimization requires at least two objectives")
+    
+    def _convert_old_format(self):
+        """Convert old format to new structured format for backward compatibility."""
+        if isinstance(self.objective, str):
+            # Single objective
+            self.approach = "single_objective"
+            if self.objective == "maximize":
+                # Default to maximizing throughput
+                self.objectives = [ObjectiveConfig(
+                    metric="output_tokens_per_second",
+                    direction="maximize",
+                    percentile="median"
+                )]
+            elif self.objective == "minimize":
+                # Default to minimizing latency
+                self.objectives = [ObjectiveConfig(
+                    metric="request_latency",
+                    direction="minimize",
+                    percentile="median"
+                )]
+            else:
+                raise ValueError(f"Invalid objective '{self.objective}'. Use 'maximize' or 'minimize'")
+        elif isinstance(self.objective, list):
+            # Multi-objective (legacy format)
+            self.approach = "multi_objective"
+            # Default to throughput vs latency
+            self.objectives = [
+                ObjectiveConfig(
+                    metric="output_tokens_per_second",
+                    direction="maximize",
+                    percentile="median"
+                ),
+                ObjectiveConfig(
+                    metric="request_latency",
+                    direction="minimize",
+                    percentile="median"
+                )
+            ]
+    
+    def _apply_default_config(self):
+        """Apply default configuration when none is specified."""
+        self.approach = "single_objective"
+        self.objectives = [ObjectiveConfig(
+            metric="output_tokens_per_second",
+            direction="maximize",
+            percentile="median"
+        )]
+    
+    @property
+    def is_multi_objective(self) -> bool:
+        """Check if this is multi-objective optimization."""
+        return self.approach == "multi_objective"
+    
+    @property
+    def optuna_directions(self) -> List[str]:
+        """Get Optuna directions for study creation."""
+        return [obj.direction for obj in self.objectives]
+    
+    def get_metric_key(self, objective_index: int = 0) -> str:
+        """Get the metric key for extracting values from benchmark results."""
+        if objective_index >= len(self.objectives):
+            raise IndexError(f"Objective index {objective_index} out of range")
+        
+        obj = self.objectives[objective_index]
+        if obj.percentile == "median":
+            return obj.metric
+        else:
+            return f"{obj.metric}_{obj.percentile}"
 
 
 @dataclass
@@ -213,7 +380,22 @@ class ConfigValidator:
         
         # Build other configs
         study_info = raw_config["study"]
-        optimization = OptimizationConfig(**raw_config["optimization"])
+        
+        # Handle optimization config with validation
+        opt_config_data = raw_config["optimization"]
+        
+        # Convert objective config if using new structured format
+        if "objective" in opt_config_data and isinstance(opt_config_data["objective"], dict):
+            # Single objective structured format
+            obj_data = opt_config_data["objective"]
+            opt_config_data["objectives"] = [ObjectiveConfig(**obj_data)]
+            del opt_config_data["objective"]
+        elif "objectives" in opt_config_data:
+            # Multi-objective structured format
+            objectives_data = opt_config_data["objectives"]
+            opt_config_data["objectives"] = [ObjectiveConfig(**obj) for obj in objectives_data]
+        
+        optimization = OptimizationConfig(**opt_config_data)
         benchmark = BenchmarkConfig(**raw_config["benchmark"])
         
         # Handle optional database_url and storage_file

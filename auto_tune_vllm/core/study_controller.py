@@ -366,15 +366,21 @@ class StudyController:
             trial_number=trial.number,
             parameters=parameters,
             benchmark_config=self.config.benchmark,
+            optimization_config=self.config.optimization,
             logging_config=self.config.logging_config
         )
     
     def get_optimization_results(self) -> Dict:
         """Get optimization results summary."""
-        if isinstance(self.config.optimization.objective, list):
+        if self.config.optimization.is_multi_objective:
             # Multi-objective results
             return {
                 "type": "multi_objective",
+                "approach": self.config.optimization.approach,
+                "objectives": [
+                    {"metric": obj.metric, "direction": obj.direction, "percentile": obj.percentile}
+                    for obj in self.config.optimization.objectives
+                ],
                 "n_trials": len(self.study.trials),
                 "n_pareto_solutions": len(self.study.best_trials),
                 "pareto_front": [
@@ -385,8 +391,15 @@ class StudyController:
         else:
             # Single objective results
             best_trial = self.study.best_trial
+            objective = self.config.optimization.objectives[0]
             return {
                 "type": "single_objective",
+                "approach": self.config.optimization.approach,
+                "objective": {
+                    "metric": objective.metric,
+                    "direction": objective.direction,
+                    "percentile": objective.percentile
+                },
                 "n_trials": len(self.study.trials),
                 "best_value": best_trial.value,
                 "best_params": best_trial.params,
