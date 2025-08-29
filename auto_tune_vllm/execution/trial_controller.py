@@ -513,7 +513,7 @@ class RayTrialController(BaseTrialController):
     def _get_worker_id(self) -> str:
         """Get Ray worker node ID."""
         try:
-            return ray.get_runtime_context().node_id.hex()
+            return ray.get_runtime_context().get_node_id()
         except Exception:
             return "ray_worker_unknown"
     
@@ -531,8 +531,8 @@ class RayTrialController(BaseTrialController):
         try:
             if ray.is_initialized():
                 runtime_ctx = ray.get_runtime_context()
-                vllm_logger.info(f"Ray worker node: {runtime_ctx.node_id.hex()[:8]}")
-                vllm_logger.info(f"Ray worker process: {runtime_ctx.worker_id.hex()[:8]}")
+                vllm_logger.info(f"Ray worker node: {runtime_ctx.get_node_id()[:8]}")
+                vllm_logger.info(f"Ray worker process: {runtime_ctx.get_worker_id()[:8]}")
         except Exception as e:
             vllm_logger.warning(f"Could not get Ray context: {e}")
         

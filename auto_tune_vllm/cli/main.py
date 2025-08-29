@@ -605,7 +605,7 @@ def _check_ray_cluster_environment():
             
             # Return node info
             import ray
-            node_id = ray.get_runtime_context().node_id.hex()
+            node_id = ray.get_runtime_context().get_node_id()
             return f"Worker node {node_id[:8]}"
         
         # Get cluster resources to determine number of nodes
