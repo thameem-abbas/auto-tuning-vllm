@@ -196,19 +196,31 @@ class StudyController:
                     elif hasattr(param_config, 'min_value'):
                         # Generate discrete values for range parameters
                         values = []
-                        current = param_config.min_value
+                        min_val = param_config.min_value
+                        max_val = param_config.max_value
                         step = param_config.step or 1
-                        # Safeguard float accumulation by bounding iterations
-                        max_iters = 100000
-                        iters = 0
-                        while current <= param_config.max_value and iters < max_iters:
-                            # For floats, round to reasonable precision
-                            if isinstance(current, float):
-                                values.append(round(current, 8))
-                            else:
+                        
+                        # Use integer-based generation for floats to avoid accumulation drift
+                        if isinstance(min_val, float) or isinstance(step, float):
+                            # Calculate number of steps and generate via multiplication
+                            n_steps = int((max_val - min_val) / step) + 1
+                            # Cap to reasonable grid size
+                            n_steps = min(n_steps, 10000)
+                            for i in range(n_steps):
+                                val = min_val + (i * step)
+                                if val > max_val:
+                                    break
+                                # Round to avoid floating precision artifacts
+                                values.append(round(val, 3))
+                        else:
+                            # Integer range - simple iteration
+                            current = min_val
+                            while current <= max_val:
                                 values.append(current)
-                            current = current + step
-                            iters += 1
+                                current += step
+                                # Safety break for large ranges
+                                if len(values) > 10000:
+                                    break
                         search_space[param_name] = values
                     else:
                         search_space[param_name] = [True, False]  # Boolean
