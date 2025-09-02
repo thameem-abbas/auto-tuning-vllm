@@ -43,10 +43,10 @@ class StudyController:
     @staticmethod
     def get_study_id(study_name: str) -> int:
         """Get consistent study ID from study name."""
-        # Use a safe hash that fits within PostgreSQL INTEGER range (-2^31 to 2^31-1)
-        # Take absolute value and constrain to positive range (0 to 2^31-1)
-        return abs(hash(study_name)) % 2147483647
-    
+        import hashlib
+        # 31-bit positive integer (PostgreSQL INTEGER range)
+        digest = hashlib.sha256(study_name.encode("utf-8")).hexdigest()
+        return int(digest[:8], 16) % 2147483647
     @classmethod
     def create_from_config(
         cls, 
