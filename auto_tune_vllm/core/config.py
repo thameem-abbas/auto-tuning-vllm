@@ -436,11 +436,14 @@ class ConfigValidator:
             "description": description
         }
         
-        def get_value(key: str, schema_fallback=None):
-            """Get value with priority: user_config > defaults > schema > schema_fallback."""
+        def get_value(key: str, schema_fallback=None, allow_defaults: bool = False):
+            """
+            Priority: user_config > (defaults if allow_defaults) > schema > schema_fallback.
+            Note: defaults are parameter values, not bounds; do NOT use for min/max/step/options.
+            """
             if key in user_config:
                 return user_config[key]
-            if name in self.defaults:
+            if allow_defaults and name in self.defaults:
                 return self.defaults[name]
             if key in schema_def:
                 return schema_def[key]
@@ -449,9 +452,9 @@ class ConfigValidator:
         if param_type == "range":
             return RangeParameter(
                 **base_config,
-                min=get_value("min", schema_def["min"]),
-                max=get_value("max", schema_def["max"]),
-                step=get_value("step", schema_def.get("step")),
+                min=get_value("min", schema_def["min"], allow_defaults=False),
+                max=get_value("max", schema_def["max"], allow_defaults=False),
+                step=get_value("step", schema_def.get("step"), allow_defaults=False),
                 data_type=schema_def["data_type"]
             )
         elif param_type == "list":
