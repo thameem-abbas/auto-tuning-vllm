@@ -36,8 +36,8 @@ auto-tune-vllm optimize --config study.yaml --backend ray
 When auto-starting, the Ray head is configured with:
 - Ports: Automatically chosen by Ray (avoids conflicts)
 - Dashboard: Enabled on all interfaces (0.0.0.0)
+- Security note: On shared hosts or networks, prefer `--dashboard-host=127.0.0.1` or protect access (firewall/ACL/reverse proxy).
 - Connection: Uses Ray's auto-discovery mechanism
-
 ## Error Handling
 
 ### Without `--start-ray-head`
