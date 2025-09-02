@@ -11,6 +11,7 @@ This module provides functionality to:
 import re
 import subprocess
 import json
+import ast
 from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass, asdict
 from enum import Enum
@@ -114,13 +115,13 @@ class VLLMCLIParser:
         elif default_str.startswith('[') and default_str.endswith(']'):
             # List default
             try:
-                return eval(default_str), cleaned_desc
+                return ast.literal_eval(default_str), cleaned_desc
             except Exception:
                 return default_str, cleaned_desc
         elif default_str.startswith('{') and default_str.endswith('}'):
             # Dict/JSON default
             try:
-                return eval(default_str), cleaned_desc
+                return ast.literal_eval(default_str), cleaned_desc
             except Exception:
                 return default_str, cleaned_desc
         else:

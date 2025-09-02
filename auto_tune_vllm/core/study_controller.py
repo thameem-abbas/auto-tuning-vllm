@@ -84,11 +84,8 @@ class StudyController:
         # Create sampler based on config
         sampler = cls._create_sampler(config)
         
-        # Determine optimization direction(s)
-        if isinstance(config.optimization.objective, list):
-            directions = config.optimization.objective
-        else:
-            directions = config.optimization.objective
+        # Determine optimization directions for Optuna (works for single and multi-objective)
+        directions = config.optimization.optuna_directions
         
         # Determine storage backend for Optuna study
         if config.database_url:
@@ -114,7 +111,7 @@ class StudyController:
             study = optuna.create_study(
                 storage=storage,
                 study_name=config.study_name,
-                direction=directions,  # "maximize", "minimize", or ["maximize", "minimize"] 
+                directions=directions,  # ["maximize"] for single objective or list for multi-objective
                 sampler=sampler,
                 load_if_exists=True
             )
@@ -200,9 +197,18 @@ class StudyController:
                         # Generate discrete values for range parameters
                         values = []
                         current = param_config.min_value
-                        while current <= param_config.max_value:
-                            values.append(current)
-                            current += param_config.step or 1
+                        step = param_config.step or 1
+                        # Safeguard float accumulation by bounding iterations
+                        max_iters = 100000
+                        iters = 0
+                        while current <= param_config.max_value and iters < max_iters:
+                            # For floats, round to reasonable precision
+                            if isinstance(current, float):
+                                values.append(round(current, 8))
+                            else:
+                                values.append(current)
+                            current = current + step
+                            iters += 1
                         search_space[param_name] = values
                     else:
                         search_space[param_name] = [True, False]  # Boolean

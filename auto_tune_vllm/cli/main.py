@@ -460,8 +460,24 @@ def validate_command(
         table.add_column("Value", style="green")
         
         table.add_row("Study Name", study_config.study_name)
-        table.add_row("Database URL", study_config.database_url[:50] + "...")
-        table.add_row("Optimization", f"{study_config.optimization.objective} ({study_config.optimization.sampler})")
+        # Safe DB/Storage display
+        storage_display = study_config.database_url or study_config.storage_file or "(none)"
+        if isinstance(storage_display, str) and len(storage_display) > 53:
+            storage_display = storage_display[:50] + "..."
+        table.add_row("Database/Storage", storage_display)
+        # Optimization summary (supports structured objectives)
+        try:
+            if study_config.optimization.is_multi_objective:
+                obj_summaries = []
+                for obj in study_config.optimization.objectives:
+                    obj_summaries.append(f"{obj.metric}:{obj.direction}:{obj.percentile}")
+                opt_summary = f"multi_objective [{', '.join(obj_summaries)}]"
+            else:
+                obj = study_config.optimization.objectives[0]
+                opt_summary = f"single_objective {obj.metric}:{obj.direction}:{obj.percentile}"
+        except Exception:
+            opt_summary = str(getattr(study_config.optimization, 'objective', 'unknown'))
+        table.add_row("Optimization", f"{opt_summary} ({study_config.optimization.sampler})")
         table.add_row("Trials", str(study_config.optimization.n_trials))
         table.add_row("Model", study_config.benchmark.model)
         table.add_row("Parameters", str(len([p for p in study_config.parameters.values() if p.enabled])))
