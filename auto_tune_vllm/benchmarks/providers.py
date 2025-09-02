@@ -144,8 +144,9 @@ class GuideLLMBenchmark(BenchmarkProvider):
                 cmd.extend(["--data-type", "huggingface", "--dataset", dataset_name])
             else:
                 # Local file
+                if not os.path.exists(config.dataset):
+                    raise FileNotFoundError(f"Dataset file not found: {config.dataset}")
                 cmd.extend(["--data-type", "file", "--dataset", config.dataset])
-        
         return cmd
     
     def _parse_guidellm_results(self, results_file: str) -> Dict[str, Any]:
