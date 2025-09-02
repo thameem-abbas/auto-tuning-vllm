@@ -79,10 +79,14 @@ class BaseTrialController(TrialController):
             )
         
         # Check if commands are available in PATH
-        required_commands = {
-            'python': 'Python interpreter',
-            'guidellm': 'GuideLLM CLI tool',
-        }
+        required_commands = {'python': 'Python interpreter'}
+        try:
+            bench_type = (trial_config.benchmark_config.benchmark_type
+                          if trial_config and trial_config.benchmark_config else "guidellm")
+        except Exception:
+            bench_type = "guidellm"
+        if bench_type == "guidellm":
+            required_commands['guidellm'] = 'GuideLLM CLI tool'
         
         import shutil
         missing_commands = []
