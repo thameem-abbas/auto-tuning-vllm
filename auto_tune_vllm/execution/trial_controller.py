@@ -169,12 +169,41 @@ class BaseTrialController(TrialController):
     def _get_trial_logger(self, component: str):
         """Get trial logger for specific component, fallback to default if not available."""
         return self.trial_loggers.get(component, logger)
+    
+    def _flush_trial_logs(self, trial_number: int):
+        """Flush any buffered logs for the trial to ensure all records are written."""
+        try:
+            # Flush trial-specific loggers if we have them
+            for component_logger in self.trial_loggers.values():
+                for handler in component_logger.handlers:
+                    try:
+                        handler.flush()
+                    except Exception as e:
+                        logger.debug(f"Failed to flush handler: {e}")
+            
+            # Also try to flush by logger name pattern (fallback)
+            import logging
+            study_id = getattr(self, '_current_study_id', None)
+            if study_id:
+                for component in ['controller', 'vllm', 'benchmark']:
+                    logger_name = f"study_{study_id}.trial_{trial_number}.{component}"
+                    trial_logger = logging.getLogger(logger_name)
+                    for handler in trial_logger.handlers:
+                        try:
+                            handler.flush()
+                        except Exception as e:
+                            logger.debug(f"Failed to flush handler for {logger_name}: {e}")
+        except Exception as e:
+            logger.debug(f"Error flushing trial logs: {e}")
         
     def run_trial(self, trial_config: TrialConfig) -> TrialResult:
         """Execute trial with proper error handling and cleanup."""
         execution_info = ExecutionInfo()
         
         try:
+            # Store study ID for log flushing
+            self._current_study_id = trial_config.study_id
+            
             # Setup trial-specific logging first
             self._setup_trial_logging(trial_config)
             
@@ -235,6 +264,8 @@ class BaseTrialController(TrialController):
                 error_message=str(e)
             )
         finally:
+            # Flush any buffered logs before cleanup
+            self._flush_trial_logs(trial_config.trial_number)
             self.cleanup_resources()
     
     def _create_benchmark_provider(self, trial_config: TrialConfig) -> BenchmarkProvider:

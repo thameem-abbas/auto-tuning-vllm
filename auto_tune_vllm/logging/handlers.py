@@ -136,6 +136,11 @@ class BufferedLogHandler(logging.Handler):
         if len(self.buffer) >= self.buffer_size:
             self.flush()
     
+    def setLevel(self, level):
+        """Set level on both this handler and the target handler."""
+        super().setLevel(level)
+        self.target_handler.setLevel(level)
+    
     def flush(self):
         """Flush buffered records to target handler."""
         if self.buffer:

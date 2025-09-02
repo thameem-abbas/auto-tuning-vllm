@@ -6,7 +6,7 @@ import asyncio
 import logging
 from typing import Optional
 
-from .handlers import PostgreSQLLogHandler, LocalFileHandler
+from .handlers import PostgreSQLLogHandler, LocalFileHandler, BufferedLogHandler
 
 logger = logging.getLogger(__name__)
 
@@ -73,12 +73,14 @@ class CentralizedLogger:
         
         # Only add handlers if not already configured
         if not trial_logger.handlers:
-            # PostgreSQL handler (if configured)
+            # PostgreSQL handler (if configured) - wrapped with buffering for performance
             if self.pg_url:
                 pg_handler = PostgreSQLLogHandler(
                     self.study_id, trial_number, component, self.pg_url
                 )
-                trial_logger.addHandler(pg_handler)
+                # Wrap with buffering to reduce DB connection overhead
+                buffered_pg_handler = BufferedLogHandler(pg_handler, buffer_size=50)
+                trial_logger.addHandler(buffered_pg_handler)
             
             # File handler (if configured)
             if self.file_path:
@@ -99,6 +101,19 @@ class CentralizedLogger:
             trial_logger.propagate = False  # Don't propagate to root logger
         
         return trial_logger
+    
+    def flush_trial_logs(self, trial_number: int):
+        """Flush buffered logs for a specific trial to ensure all records are written."""
+        for component in ['controller', 'vllm', 'benchmark']:
+            logger_name = f"study_{self.study_id}.trial_{trial_number}.{component}"
+            trial_logger = logging.getLogger(logger_name)
+            
+            # Flush all handlers (especially BufferedLogHandler instances)
+            for handler in trial_logger.handlers:
+                try:
+                    handler.flush()
+                except Exception as e:
+                    logger.warning(f"Failed to flush handler for {logger_name}: {e}")
     
     def cleanup_old_logs(self, days_to_keep: int = 30):
         """Clean up old log entries (optional maintenance)."""
