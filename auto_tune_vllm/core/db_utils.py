@@ -117,13 +117,16 @@ def verify_database_connection(database_url: str) -> bool:
     """
     try:
         import psycopg2
-        
-        with psycopg2.connect(database_url) as conn:
+    except ImportError:
+        logger.debug("psycopg2 not installed; cannot verify database connection")
+        return False
+
+    try:
+        with psycopg2.connect(database_url, connect_timeout=5) as conn:
             with conn.cursor() as cur:
                 cur.execute("SELECT 1")
                 return True
-                
-    except Exception as e:
+    except psycopg2.Error as e:
         logger.debug(f"Database connection failed: {e}")
         return False
 
