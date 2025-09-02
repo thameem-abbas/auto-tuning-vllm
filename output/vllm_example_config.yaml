@@ -1,4 +1,4 @@
-'# Example vLLM configuration generated from CLI parsing': null
+# Example vLLM configuration generated from CLI parsing
 benchmark:
   benchmark_type: guidellm
   dataset: null
