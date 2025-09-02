@@ -72,10 +72,3 @@ parameters:
     data_type: "bool"
     description: "Enable prefix caching"
     
-  guidellm_concurrency:
-    type: "range"
-    data_type: "int"
-    min: 10
-    max: 500
-    step: 10
-    description: "Number of concurrent requests for benchmarking"
