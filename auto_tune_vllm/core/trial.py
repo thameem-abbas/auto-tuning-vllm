@@ -19,10 +19,17 @@ def calculate_gpu_requirements(parameters: Dict[str, Any]) -> int:
     Returns:
         Number of GPUs required (product of parallelism settings)
     """
-    # Extract parallelism parameters with defaults
-    tensor_parallel = parameters.get("tensor_parallel_size", 1)
-    pipeline_parallel = parameters.get("pipeline_parallel_size", 1) 
-    data_parallel = parameters.get("data_parallel_size", 1)
+    # Extract parallelism parameters with defaults and safe coercion
+    def _as_pos_int(v, default=1):
+        try:
+            i = int(v)
+        except (TypeError, ValueError):
+            return default
+        return default if i < 1 else i
+
+    tensor_parallel = _as_pos_int(parameters.get("tensor_parallel_size"), 1)
+    pipeline_parallel = _as_pos_int(parameters.get("pipeline_parallel_size"), 1)
+    data_parallel   = _as_pos_int(parameters.get("data_parallel_size"),   1)
     
     # Calculate total GPU requirement
     total_gpus = tensor_parallel * pipeline_parallel * data_parallel
