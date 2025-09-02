@@ -155,9 +155,9 @@ optimization:
 | Sampler | Best For | Description |
 |---------|----------|-------------|
 | `"tpe"` | Single objective | Tree-structured Parzen Estimator, good default |
-| `"nsga2"` | Multi-objective | Non-dominated Sorting Genetic Algorithm II |
-| `"botorch"` | Single objective (advanced) | Bayesian optimization, slower but powerful |
-| `"random"` | Testing/baseline | Random sampling, good for quick tests |
+| `"nsga2"` | Multi-objective | Non-dominated Sorting Genetic Algorithm II - Default sampler for multi-objective optimization|
+| `"botorch"` | Single/Multi objective (advanced) | Bayesian Optimization - Fast but not necessarily the best result. Can get stuck in local optima. |
+| `"random"` | Testing/baseline | Random sampling, good for quick tests - Do not use outside of testing |
 | `"grid"` | Exhaustive search | Grid search over all parameter combinations |
 
 ## Use Case Examples
@@ -296,3 +296,4 @@ More complex parameter spaces need more trials. If you have many parameters enab
 - `study_config_minimal.yaml`: Balanced multi-objective
 - `study_config.yaml`: Advanced throughput vs TTFT optimization
 - `study_config_optimization_examples.yaml`: Comprehensive examples
+

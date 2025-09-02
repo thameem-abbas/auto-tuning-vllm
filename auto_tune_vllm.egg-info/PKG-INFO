@@ -226,12 +226,13 @@ Requires-Dist: optuna-integration[botorch]>=4.0.0
 Requires-Dist: ray[default]>=2.0.0
 Requires-Dist: vllm>=0.2.0
 Requires-Dist: guidellm>=0.1.0
-Requires-Dist: psycopg2-binary>=2.9.0
 Requires-Dist: pyyaml>=6.0
 Requires-Dist: pydantic>=2.0.0
 Requires-Dist: typer>=0.9.0
 Requires-Dist: rich>=13.0.0
 Requires-Dist: requests>=2.28.0
+Provides-Extra: postgresql
+Requires-Dist: psycopg2-binary>=2.9.0; extra == "postgresql"
 Provides-Extra: dev
 Requires-Dist: pytest>=7.0.0; extra == "dev"
 Requires-Dist: black>=23.0.0; extra == "dev"
@@ -312,6 +313,35 @@ asyncio.run(main())
 - PostgreSQL database
 
 All ML dependencies (vLLM, Ray, GuideLLM, BoTorch) are included automatically.
+
+## Known Issues
+
+### Ray Cluster Concurrency Validation
+
+**Issue**: The `--max-concurrent` parameter is not validated against available Ray cluster resources.
+
+**Details**: When using Ray backend, the system doesn't check if the requested concurrency level is feasible given the cluster's GPU/CPU resources. For example, setting `--max-concurrent 10` on a cluster with only 4 GPUs will not warn the user that only 4 trials can actually run concurrently.
+
+**Reason**: There is not a clear answer if all the trials would use the exact same number of GPUs. For example, we might have different parallelism related tunings for different trials which might result in different number of GPUs being required for the trial.
+
+**Current Behavior**: 
+- Excess trials are queued by Ray until resources become available
+- No warning or guidance is provided to users
+- May lead to confusion about why trials aren't running as expected
+
+**Workaround**: 
+- Use `auto-tune-vllm check-env --ray-cluster` to inspect available resources
+- Set concurrency based on available GPUs (typically 1 GPU per trial)
+- Monitor Ray dashboard at `http://<head-node>:8265` for resource utilization
+
+**Example**:
+```bash
+# Check cluster resources first
+auto-tune-vllm check-env --ray-cluster
+
+# Set realistic concurrency (e.g., if you have 4 GPUs)
+auto-tune-vllm optimize --config study.yaml --max-concurrent 4
+```
 
 ## License
 
