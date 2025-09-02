@@ -175,7 +175,7 @@ def main():
                 if args.verbose:
                     print(f"   Could not load version info: {e}")
         
-    except Exception as e:
+    except (OSError, RuntimeError, yaml.YAMLError) as e:
         print(f"❌ Error generating defaults: {e}")
         if args.verbose:
             import traceback
