@@ -98,8 +98,12 @@ def optimize_command(
             if start_ray_head:
                 console.print("[blue]Will start Ray head if no cluster found[/blue]")
         elif backend.lower() == "local":
-            execution_backend = LocalExecutionBackend(max_concurrent or 2)
+            default_max_concurrent = 1
+            actual_max_concurrent = max_concurrent or default_max_concurrent
+            execution_backend = LocalExecutionBackend(actual_max_concurrent)
             console.print("[yellow]Using local execution[/yellow]")
+            if max_concurrent is None:
+                console.print(f"[yellow]Using default max_concurrent: {default_max_concurrent}[/yellow]")
         else:
             console.print(f"[bold red]Error: Unknown backend: {backend}[/bold red]")
             raise typer.Exit(1)
