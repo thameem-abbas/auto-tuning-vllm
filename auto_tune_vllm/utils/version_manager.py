@@ -52,7 +52,7 @@ class VLLMVersionManager:
         versions = []
         
         # Pattern to match version files (v0_10_1_1.yaml)
-        version_pattern = re.compile(r'^v(\d+(?:_\d+)*).yaml$')
+        version_pattern = re.compile(r'^v(\d+(?:_\d+)*)\.yaml$')
         
         for file_path in self.defaults_dir.glob("v*.yaml"):
             if file_path.name == "latest.yaml":  # Skip the latest symlink
