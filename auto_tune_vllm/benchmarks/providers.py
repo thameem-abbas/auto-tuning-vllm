@@ -85,12 +85,15 @@ class GuideLLMBenchmark(BenchmarkProvider):
             # Parse results
             return self._parse_guidellm_results(results_file)
             
-        except subprocess.TimeoutExpired:
-            raise RuntimeError(f"GuideLLM benchmark timed out after {config.max_seconds + 120} seconds")
+        except subprocess.TimeoutExpired as e:
+            raise RuntimeError(
+                f"GuideLLM benchmark timed out after {config.max_seconds + 120} seconds"
+            ) from e
         except subprocess.CalledProcessError as e:
-            raise RuntimeError(f"GuideLLM failed: {e.stderr}")
-        except Exception as e:
-            raise RuntimeError(f"Benchmark execution failed: {e}")
+            raise RuntimeError(f"GuideLLM failed: {e.stderr}") from e
+        except OSError as e:
+            # e.g., FileNotFoundError for the CLI
+            raise RuntimeError("Failed to execute GuideLLM CLI") from e
         finally:
             # Cleanup results file
             if os.path.exists(results_file):
