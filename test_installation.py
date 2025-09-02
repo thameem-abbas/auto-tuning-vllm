@@ -10,25 +10,31 @@ sys.path.insert(0, str(Path(__file__).parent))
 def test_imports():
     """Test that all major components can be imported."""
     print("Testing imports...")
-    
-    # Core imports
-    print("✓ Core components imported successfully")
-    
-    # Configuration system
-    print("✓ Configuration system imported successfully")
-    
-    # Execution backends
-    print("✓ Execution system imported successfully")
-    
-    # Benchmark providers
-    print("✓ Benchmark system imported successfully")
-    
-    # Logging system
-    print("✓ Logging system imported successfully")
-    
-    # CLI
-    print("✓ CLI imported successfully")
 
+    # Core/public API
+    import auto_tune_vllm  # noqa: F401
+    from auto_tune_vllm.core import trial as _trial  # noqa: F401
+    print("✓ Core components imported successfully")
+
+    # Configuration system
+    from auto_tune_vllm.benchmarks.config import BenchmarkConfig as _BC  # noqa: F401
+    print("✓ Configuration system imported successfully")
+
+    # Execution backends
+    from auto_tune_vllm.execution.backends import LocalExecutionBackend as _LEB  # noqa: F401
+    print("✓ Execution system imported successfully")
+
+    # Benchmark providers
+    from auto_tune_vllm.benchmarks import providers as _providers  # noqa: F401
+    print("✓ Benchmark system imported successfully")
+
+    # Logging system
+    from auto_tune_vllm.logging import manager as _logging  # noqa: F401
+    print("✓ Logging system imported successfully")
+
+    # CLI surface
+    import auto_tune_vllm.cli as _cli  # noqa: F401
+    print("✓ CLI imported successfully")
 def test_config_validation():
     """Test configuration validation."""
     print("\nTesting configuration validation...")
