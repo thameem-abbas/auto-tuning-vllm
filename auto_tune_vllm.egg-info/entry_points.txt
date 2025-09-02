@@ -1,2 +1,0 @@
-[console_scripts]
-auto-tune-vllm = auto_tune_vllm.cli:main
