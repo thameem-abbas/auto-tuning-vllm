@@ -55,20 +55,21 @@ def test_backend_interface():
     # Create local backend
     backend = LocalExecutionBackend(max_concurrent=1)
     print(f"✓ LocalExecutionBackend created with {backend.max_concurrent} concurrent slots")
-    
-    # Create trial config
-    trial_config = TrialConfig(
-        study_id=1,
-        trial_number=1,
-        parameters={"max_num_batched_tokens": 8192},
-        benchmark_config=BenchmarkConfig()
-    )
-    
-    # Test vLLM args generation
-    args = trial_config.vllm_args
-    assert "--max-num-batched-tokens" in args
-    assert "8192" in args
-    print("✓ TrialConfig vLLM args generation works")
+    try:
+        # Create trial config
+        trial_config = TrialConfig(
+            study_id=1,
+            trial_number=1,
+            parameters={"max_num_batched_tokens": 8192},
+            benchmark_config=BenchmarkConfig()
+        )
+        # Test vLLM args generation
+        args = trial_config.vllm_args
+        assert "--max-num-batched-tokens" in args
+        assert "8192" in args
+        print("✓ TrialConfig vLLM args generation works")
+    finally:
+        backend.shutdown()
 
 def main():
     """Run all tests."""
