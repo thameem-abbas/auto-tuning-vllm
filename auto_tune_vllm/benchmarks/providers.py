@@ -55,7 +55,13 @@ class GuideLLMBenchmark(BenchmarkProvider):
         try:
             # Build GuideLLM command
             cmd = self._build_guidellm_command(model_url, config, results_file)
-            
+            # Validate binary and basic inputs
+            import shutil
+            if shutil.which("guidellm") is None:
+                raise RuntimeError("GuideLLM CLI not found on PATH. Please install or provide the full path.")
+            if not (model_url.startswith("http://") or model_url.startswith("https://")):
+                raise ValueError(f"Invalid model_url: {model_url!r} (expected http/https)")
+
             # Run GuideLLM
             self._logger.info(f"Running: {' '.join(cmd)}")
             process = subprocess.run(
