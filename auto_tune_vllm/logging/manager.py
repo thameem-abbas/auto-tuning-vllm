@@ -117,16 +117,22 @@ class CentralizedLogger:
     
     def cleanup_old_logs(self, days_to_keep: int = 30):
         """Clean up old log entries (optional maintenance)."""
+        if not self.pg_url:
+            logger.debug("cleanup_old_logs skipped: no pg_url configured")
+            return
         try:
             import psycopg2
             
             with psycopg2.connect(self.pg_url) as conn:
                 with conn.cursor() as cur:
-                    cur.execute("""
+                    cur.execute(
+                        """
                         DELETE FROM trial_logs 
                         WHERE study_id = %s 
-                        AND timestamp < NOW() - INTERVAL '%s days'
-                    """, (self.study_id, days_to_keep))
+                          AND timestamp < NOW() - make_interval(days => %s)
+                        """,
+                        (self.study_id, int(days_to_keep))
+                    )
                     
                     deleted_count = cur.rowcount
                     if deleted_count > 0:
