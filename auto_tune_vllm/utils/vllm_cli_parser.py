@@ -10,6 +10,7 @@ This module provides functionality to:
 
 import re
 import subprocess
+import sys
 import json
 import ast
 from typing import Dict, List, Optional, Any, Tuple
@@ -68,14 +69,16 @@ class VLLMCLIParser:
         if self._vllm_version is not None:
             return self._vllm_version
         
-        if self.venv_path:
-            cmd = f"source {self.venv_path}/bin/activate && vllm -v"
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-        else:
-            result = subprocess.run(["vllm", "-v"], capture_output=True, text=True)
-        
-        if result.returncode != 0:
-            raise RuntimeError(f"Failed to get vllm version: {result.stderr}")
+        python_bin = f"{self.venv_path}/bin/python" if self.venv_path else sys.executable
+        try:
+            result = subprocess.run(
+                [python_bin, "-m", "vllm", "-v"],
+                capture_output=True, text=True, check=True
+            )
+        except subprocess.CalledProcessError as err:
+            raise RuntimeError(
+                f"Failed to get vLLM version (exit {err.returncode}): {err.stderr or err.stdout}"
+            ) from err
         
         # Extract version from output (format: "0.10.1.1")
         version_line = result.stdout.strip().split('\n')[-1]
@@ -84,14 +87,16 @@ class VLLMCLIParser:
     
     def get_help_output(self) -> str:
         """Execute 'vllm serve --help' and return the output."""
-        if self.venv_path:
-            cmd = f"source {self.venv_path}/bin/activate && vllm serve --help"
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-        else:
-            result = subprocess.run(["vllm", "serve", "--help"], capture_output=True, text=True)
-        
-        if result.returncode != 0:
-            raise RuntimeError(f"Failed to get vllm help: {result.stderr}")
+        python_bin = f"{self.venv_path}/bin/python" if self.venv_path else sys.executable
+        try:
+            result = subprocess.run(
+                [python_bin, "-m", "vllm", "serve", "--help"],
+                capture_output=True, text=True, check=True
+            )
+        except subprocess.CalledProcessError as err:
+            raise RuntimeError(
+                f"Failed to get vLLM help (exit {err.returncode}): {err.stderr or err.stdout}"
+            ) from err
         
         return result.stdout
     
