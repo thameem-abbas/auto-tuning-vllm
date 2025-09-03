@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import concurrent.futures
 import logging
+import shutil
 import subprocess
 import time
 from abc import ABC, abstractmethod
@@ -160,6 +161,10 @@ class RayExecutionBackend(ExecutionBackend):
             
             logger.info(f"Starting Ray head with command: {' '.join(cmd)}")
             
+            # Check for ray available in path
+            if shutil.which("ray") is None:
+                raise RuntimeError("Ray is not installed. Cannot start Ray head. Install or add Ray to PATH.")
+            
             # Start Ray head as subprocess
             process = subprocess.run(
                 cmd,
@@ -181,11 +186,11 @@ class RayExecutionBackend(ExecutionBackend):
             self._started_ray_head = True
             
         except subprocess.CalledProcessError as e:
-            raise RuntimeError(f"Failed to start Ray head: {e.stderr}")
-        except subprocess.TimeoutExpired:
-            raise RuntimeError("Ray head start timed out after 30 seconds")
+            raise RuntimeError(f"Failed to start Ray head: {e.stderr}") from e
+        except subprocess.TimeoutExpired as e:
+            raise RuntimeError("Ray head start timed out after 30 seconds") from e
         except Exception as e:
-            raise RuntimeError(f"Unexpected error starting Ray head: {e}")
+            raise RuntimeError(f"Unexpected error starting Ray head: {e}") from e
     
     def submit_trial(self, trial_config: TrialConfig) -> JobHandle:
         """Submit trial to Ray cluster."""
