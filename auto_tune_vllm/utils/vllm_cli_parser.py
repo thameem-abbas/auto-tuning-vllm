@@ -353,11 +353,19 @@ class VLLMCLIParser:
                         param_def["max"] = arg.default_value + 1000
                         param_def["step"] = 1
                 elif arg.arg_type == ArgumentType.FLOAT:
-                    param_def["type"] = "range"
-                    param_def["data_type"] = "float"
-                    if arg.default_value is not None:
-                        param_def["min"] = max(0.0, arg.default_value - 1.0)
-                        param_def["max"] = min(1.0, arg.default_value + 1.0)
+                     param_def["type"] = "range"
+                     param_def["data_type"] = "float"
+                     if arg.default_value is not None:
+-                        param_def["min"] = max(0.0, arg.default_value - 1.0)
+-                        param_def["max"] = min(1.0, arg.default_value + 1.0)
+                        dv = float(arg.default_value)
+                        if 0.0 <= dv <= 1.0:
+                            param_def["min"] = max(0.0, dv - 0.1)
+                            param_def["max"] = min(1.0, dv + 0.1)
+                        else:
+                            span = max(1.0, abs(dv) * 0.25)
+                            param_def["min"] = dv - span
+                            param_def["max"] = dv + span
                         param_def["step"] = 0.01
                 elif arg.arg_type == ArgumentType.LIST:
                     param_def["type"] = "list"
