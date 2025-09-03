@@ -10,9 +10,17 @@ study:
   # If not specified, defaults to: ./optuna_studies/{study_name}/study.db
   
 optimization:
-  objective: "maximize"  # maximize throughput
+  # Low-latency optimization: Minimize end-to-end request latency
+  approach: "single_objective"
+  objective:
+    metric: "request_latency"  # End-to-end latency optimization
+    direction: "minimize"
+    percentile: "p95"  # Optimize for 95th percentile (SLA-friendly)
   sampler: "tpe"
   n_trials: 50
+  
+  # Alternative: Use preset for common configurations
+  # preset: "low_latency"
   
 benchmark:
   benchmark_type: "guidellm"

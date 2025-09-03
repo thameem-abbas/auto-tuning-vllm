@@ -1,7 +1,7 @@
 # Test configuration that uses vLLM defaults instead of hardcoded values
 study:
   name: "vllm_defaults_test"
-  database_url: "postgresql://user:pass@localhost/optuna"
+  database_url: "postgresql://user:${POSTGRES_PASSWORD}@localhost/optuna"
   
 optimization:
   objective: "maximize"

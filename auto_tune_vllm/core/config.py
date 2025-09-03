@@ -7,6 +7,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
+import os
+import re
 import yaml
 from pydantic import BaseModel, Field
 
@@ -350,15 +352,57 @@ class ConfigValidator:
         return flat_defaults
     
     def load_and_validate(self, config_path: str) -> StudyConfig:
-        """Load and validate study configuration."""
+        """Load and validate study configuration with environment variable expansion."""
         config_path = Path(config_path)
         if not config_path.exists():
             raise FileNotFoundError(f"Configuration file not found: {config_path}")
         
+        # Read yaml contents
         with open(config_path) as f:
             raw_config = yaml.safe_load(f)
         
+        expanded_config = self.expand_environment_variables(raw_config)
+        raw_config = yaml.safe_load(expanded_config)
+        
         return self._validate_config(raw_config)
+
+    def expand_environment_variables(self, yaml_content: str) -> str:
+        """
+        Expand environment variables in YAML content.
+
+        Supports patterns:
+        - ${VAR_NAME} - expands to environment variable value or empty string if not set
+        - ${VAR_NAME:-default_value} - expands to environment variable value or default_value if not set
+
+        Args:
+            yaml_content: Raw YAML content as string
+
+        Returns:
+            YAML content with environment variables expanded
+
+        Examples:
+            ${POSTGRES_PASSWORD} -> value of POSTGRES_PASSWORD env var
+            ${LOG_LEVEL:-INFO} -> value of LOG_LEVEL env var or "INFO" if not set
+        """
+        def replace_env_var(match):
+            var_name = match.group(1)
+            default_value = match.group(2) if match.group(2) is not None else ""
+
+            env_value = os.getenv(var_name)
+            if env_value is None:
+                if default_value:
+                    return default_value
+                else:
+                    # Log warning for missing required env vars without defaults
+                    print(f"Warning: Environment variable '{var_name}' not found, using empty string")
+                    return ""
+            return env_value
+
+        # Pattern: ${VAR_NAME} or ${VAR_NAME:-default_value}
+        pattern = r'\$\{([A-Za-z_][A-Za-z0-9_]*?)(?::-(.*?))?\}'
+        expanded_content = re.sub(pattern, replace_env_var, yaml_content)
+
+        return expanded_content
     
     def _validate_config(self, raw_config: Dict[str, Any]) -> StudyConfig:
         """Validate configuration against schema."""

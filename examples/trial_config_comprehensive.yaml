@@ -2,7 +2,7 @@
 # This config demonstrates using many parameters with vLLM CLI defaults
 study:
   name: "vllm_comprehensive_optimization"
-  database_url: "postgresql://tuner-user:password@localhost:5432/optuna"
+  database_url: "postgresql://tuner-user:${POSTGRES_PASSWORD}@localhost:5432/optuna"
 
 optimization:
   objective: "maximize"

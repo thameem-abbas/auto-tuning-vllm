@@ -58,5 +58,5 @@ parameters:
     min: 1
     step: 1
 study:
-  database_url: postgresql://user:pass@localhost/optuna
+  database_url: postgresql://user:${POSTGRES_PASSWORD}@localhost/optuna
   name: vllm_cli_optimization

@@ -3,7 +3,7 @@
 # Load with: StudyConfig.from_file("trial_config_version_specific.yaml", vllm_version="0.10.1.1")
 study:
   name: "vllm_v0_10_1_1_optimization"
-  database_url: "postgresql://tuner-user:password@localhost:5432/optuna"
+  database_url: "postgresql://tuner-user:${POSTGRES_PASSWORD}@localhost:5432/optuna"
 
 optimization:
   objective: "maximize"
@@ -22,7 +22,7 @@ logging:
   file_path: "/tmp/auto-tune-vllm-v0-10-1-1"
   log_level: "INFO"
 
-  database_url: "postgresql://tuner-user:password@localhost:5432/optuna"
+  database_url: "postgresql://tuner-user:${POSTGRES_PASSWORD}@localhost:5432/optuna"
 
 parameters:
   # Parameters that leverage vLLM v0.10.1.1 specific defaults
