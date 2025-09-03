@@ -176,7 +176,7 @@ def generate_example_config(parser: VLLMCLIParser, sections: list) -> dict:
             "benchmark_type": "guidellm",
             "model": "microsoft/DialoGPT-medium",
             "max_seconds": 300,
-            "dataset": None,
+            "use_synthetic_data": True,
             "prompt_tokens": 1000,
             "output_tokens": 500
         },
