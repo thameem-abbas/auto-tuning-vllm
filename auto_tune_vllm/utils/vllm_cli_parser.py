@@ -484,14 +484,18 @@ class VLLMCLIParser:
         Returns:
             Default value or None if not found
         """
-        # Normalize parameter name
-        if not param_name.startswith('--'):
-            param_name = '--' + param_name.replace('_', '-')
-        
-        if param_name in self.arguments:
-            return self.arguments[param_name].default_value
-        
-        return None
+     def get_parameter_defaults(self, param_name: str) -> Any:
+        # Ensure the CLI has been parsed so self.arguments is populated
+        if not self.arguments:
+            self.parse()
+         # Normalize parameter name
+         if not param_name.startswith('--'):
+             param_name = '--' + param_name.replace('_', '-')
+         
+         if param_name in self.arguments:
+             return self.arguments[param_name].default_value
+         
+         return None
 
 
 def main():
