@@ -10,12 +10,13 @@ import optuna
 from auto_tune_vllm import (
     StudyController,
     StudyConfig, 
-    RayExecutionBackend
+    # RayExecutionBackend,
+    LocalExecutionBackend
 )
 
 def main():
     # Create study configuration
-    config = StudyConfig.from_file("study_config.yaml")
+    config = StudyConfig.from_file("examples/study_config.yaml")
     
     # Setup Optuna study with PostgreSQL
     study = optuna.create_study(
@@ -27,10 +28,10 @@ def main():
     
     # Choose execution backend
     # Option 1: Ray distributed execution
-    backend = RayExecutionBackend(resource_requirements={"num_gpus": 1, "num_cpus": 4})
+    # backend = RayExecutionBackend(resource_requirements={"num_gpus": 1, "num_cpus": 4})
     
     # Option 2: Local execution for testing
-    # backend = LocalExecutionBackend(max_concurrent=2)
+    backend = LocalExecutionBackend(max_concurrent=2) # Use this for testing
     
     # Create study controller
     controller = StudyController(backend=backend, study=study, config=config)
