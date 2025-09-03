@@ -165,8 +165,14 @@ def clear_study_command(
                 console.print("[yellow]Operation cancelled[/yellow]")
                 raise typer.Exit(0)
         
+        # Get study_id for logs using the same method as StudyController
+        study_id = None
+        if clear_logs:
+            from ..core.study_controller import StudyController
+            study_id = StudyController.get_study_id(study_name)
+        
         # Perform the clearing
-        result = clear_study_data(study_name, database_url, clear_logs, logs_db_url)
+        result = clear_study_data(study_name, database_url, clear_logs, logs_db_url, study_id)
         
         if result["success"]:
             console.print(f"[bold green]✅ Successfully cleared study '{study_name}'[/bold green]")

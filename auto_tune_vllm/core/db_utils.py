@@ -131,7 +131,7 @@ def verify_database_connection(database_url: str) -> bool:
         return False
 
 
-def clear_study_data(study_name: str, database_url: str, clear_logs: bool = False, logs_database_url: str = None) -> dict:
+def clear_study_data(study_name: str, database_url: str, clear_logs: bool = False, logs_database_url: str = None, study_id: int = None) -> dict:
     """
     Clear study-specific data from databases.
     
@@ -140,6 +140,7 @@ def clear_study_data(study_name: str, database_url: str, clear_logs: bool = Fals
         database_url: Database URL for Optuna study data
         clear_logs: Whether to also clear trial logs
         logs_database_url: Database URL for logs (if different from study database)
+        study_id: Study ID for clearing logs (if not provided, will be retrieved from database)
         
     Returns:
         Dict with success status and deletion counts
@@ -168,25 +169,25 @@ def clear_study_data(study_name: str, database_url: str, clear_logs: bool = Fals
                     result["error"] = f"Study '{study_name}' not found in database"
                     return result
                 
-                study_id = study_row[0]
+                optuna_study_id = study_row[0]
                 
                 # Count trials before deletion
-                cur.execute("SELECT COUNT(*) FROM trials WHERE study_id = %s", (study_id,))
+                cur.execute("SELECT COUNT(*) FROM trials WHERE study_id = %s", (optuna_study_id,))
                 trials_count = cur.fetchone()[0]
                 
                 # Delete in order respecting foreign key constraints
                 # Delete trial-related data first
-                cur.execute("DELETE FROM trial_intermediate_values WHERE trial_id IN (SELECT trial_id FROM trials WHERE study_id = %s)", (study_id,))
-                cur.execute("DELETE FROM trial_system_attributes WHERE trial_id IN (SELECT trial_id FROM trials WHERE study_id = %s)", (study_id,))
-                cur.execute("DELETE FROM trial_user_attributes WHERE trial_id IN (SELECT trial_id FROM trials WHERE study_id = %s)", (study_id,))
-                cur.execute("DELETE FROM trial_values WHERE trial_id IN (SELECT trial_id FROM trials WHERE study_id = %s)", (study_id,))
-                cur.execute("DELETE FROM trial_params WHERE trial_id IN (SELECT trial_id FROM trials WHERE study_id = %s)", (study_id,))
+                cur.execute("DELETE FROM trial_intermediate_values WHERE trial_id IN (SELECT trial_id FROM trials WHERE study_id = %s)", (optuna_study_id,))
+                cur.execute("DELETE FROM trial_system_attributes WHERE trial_id IN (SELECT trial_id FROM trials WHERE study_id = %s)", (optuna_study_id,))
+                cur.execute("DELETE FROM trial_user_attributes WHERE trial_id IN (SELECT trial_id FROM trials WHERE study_id = %s)", (optuna_study_id,))
+                cur.execute("DELETE FROM trial_values WHERE trial_id IN (SELECT trial_id FROM trials WHERE study_id = %s)", (optuna_study_id,))
+                cur.execute("DELETE FROM trial_params WHERE trial_id IN (SELECT trial_id FROM trials WHERE study_id = %s)", (optuna_study_id,))
                 
                 # Delete trials
-                cur.execute("DELETE FROM trials WHERE study_id = %s", (study_id,))
+                cur.execute("DELETE FROM trials WHERE study_id = %s", (optuna_study_id,))
                 
                 # Delete study
-                cur.execute("DELETE FROM studies WHERE study_id = %s", (study_id,))
+                cur.execute("DELETE FROM studies WHERE study_id = %s", (optuna_study_id,))
                 
                 result["trials_deleted"] = trials_count
                 
@@ -196,19 +197,22 @@ def clear_study_data(study_name: str, database_url: str, clear_logs: bool = Fals
         if clear_logs:
             logs_db_url = logs_database_url or database_url
             
+            # Use provided study_id or compute it using the same method as StudyController
+            logs_study_id = study_id
+            if logs_study_id is None:
+                # Generate study_id using the same hash method as StudyController
+                import hashlib
+                digest = hashlib.sha256(study_name.encode("utf-8")).hexdigest()
+                logs_study_id = int(digest[:8], 16) % 2147483647
+            
             with psycopg2.connect(logs_db_url) as conn:
                 with conn.cursor() as cur:
-                    # Get study ID for logs (might be different if different DB)
-                    # For logs, we use a hash of the study name as study_id
-                    # Use a safe hash that fits within PostgreSQL INTEGER range (-2^31 to 2^31-1)
-                    study_id_hash = abs(hash(study_name)) % 2147483647
-                    
                     # Count logs before deletion
-                    cur.execute("SELECT COUNT(*) FROM trial_logs WHERE study_id = %s", (study_id_hash,))
+                    cur.execute("SELECT COUNT(*) FROM trial_logs WHERE study_id = %s", (logs_study_id,))
                     logs_count = cur.fetchone()[0]
                     
                     # Delete trial logs
-                    cur.execute("DELETE FROM trial_logs WHERE study_id = %s", (study_id_hash,))
+                    cur.execute("DELETE FROM trial_logs WHERE study_id = %s", (logs_study_id,))
                     
                     result["logs_deleted"] = logs_count
                     
