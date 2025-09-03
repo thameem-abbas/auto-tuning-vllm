@@ -359,11 +359,11 @@ class ConfigValidator:
         
         # Read yaml contents
         with open(config_path) as f:
-            raw_config = yaml.safe_load(f)
+            raw_config = f.read()
         
         expanded_config = self.expand_environment_variables(raw_config)
         raw_config = yaml.safe_load(expanded_config)
-        
+
         return self._validate_config(raw_config)
 
     def expand_environment_variables(self, yaml_content: str) -> str:
