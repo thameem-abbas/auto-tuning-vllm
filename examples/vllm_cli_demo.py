@@ -165,8 +165,11 @@ def generate_example_config(parser: VLLMCLIParser, sections: list) -> dict:
             "database_url": "postgresql://user:pass@localhost/optuna"
         },
         "optimization": {
-            "objective": "maximize",
-            "sampler": "tpe", 
+            "approach": "single_objective",
+            "objectives": [
+                {"metric": "requests_per_second", "direction": "maximize"}
+            ],
+            "sampler": "tpe",
             "n_trials": 100
         },
         "benchmark": {
