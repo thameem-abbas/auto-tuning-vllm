@@ -6,6 +6,7 @@ This example shows how to set up and run a vLLM optimization study
 using the Python API instead of the CLI.
 """
 
+import json
 import optuna
 from auto_tune_vllm import (
     StudyController,
@@ -39,10 +40,10 @@ def main():
     # Run optimization
     print("Starting vLLM optimization study...")
     controller.run_optimization(n_trials=100)
+
+    results = controller.get_optimization_results()
     
     # Print results
-    print(f"Best trial: {study.best_trial.value}")
-    print(f"Best params: {study.best_trial.params}")
-
+    print(json.dumps(results, indent=4))
 if __name__ == "__main__":
     main()
