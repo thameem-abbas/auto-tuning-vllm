@@ -410,7 +410,7 @@ class ConfigValidator:
         validated_params = {}
         
         for param_name, param_config in raw_config.get("parameters", {}).items():
-            if not param_config.get("enabled", False):
+            if not param_config.get("enabled", True):
                 continue
             
             # Get schema definition
