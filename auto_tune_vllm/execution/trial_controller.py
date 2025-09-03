@@ -289,7 +289,8 @@ class BaseTrialController(TrialController):
             # Try to import from benchmarks.custom module
             module_name = f"auto_tune_vllm.benchmarks.custom.{benchmark_type}"
             module = __import__(module_name, fromlist=[benchmark_type])
-            provider_class = getattr(module, f"{benchmark_type.title()}Benchmark")
+            class_name = ''.join(part.capitalize() for part in benchmark_type.split('_')) + "Benchmark"
+            provider_class = getattr(module, class_name)
             return provider_class()
         except (ImportError, AttributeError) as e:
             raise ValueError(f"Unknown benchmark provider: {benchmark_type}") from e
