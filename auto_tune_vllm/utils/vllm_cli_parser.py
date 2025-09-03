@@ -382,6 +382,10 @@ class VLLMCLIParser:
             # Default to optimization-relevant sections
             sections = ['cacheconfig', 'schedulerconfig', 'modelconfig', 'parallelconfig']
         
+        # Parse arguments if not already done
+        if not self.arguments:
+            self.parse()
+            
         version = self.get_vllm_version()
         
         defaults = {
@@ -438,6 +442,10 @@ class VLLMCLIParser:
         """
         from pathlib import Path
         
+        # Parse arguments if not already done
+        if not self.arguments:
+            self.parse()
+            
         version = self.get_vllm_version()
         safe_version = version.replace('.', '_')  # Make filesystem-safe
         
