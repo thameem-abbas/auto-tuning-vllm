@@ -157,14 +157,14 @@ class StudyController:
             # Provide appropriate log viewing instructions
             if log_file_path:
                 logger.info(f"📋 File logging enabled. Logs will be written to: {log_file_path}")
-                logger.info(f"📋 View logs with: auto-tune-vllm view-file-logs --study-id {study_id} --log-path {log_file_path}")
+                logger.info(f"📋 View logs with: auto-tune-vllm logs --study-id {study_id} --log-path {log_file_path}")
             elif log_database_url:
                 logger.info(f"📋 Database logging ready. View logs with: auto-tune-vllm logs --study-id {study_id} --database-url {log_database_url}")
                 
         except Exception as e:
             logger.warning(f"Failed to initialize logging infrastructure: {e}")
             if log_file_path:
-                logger.info(f"📋 To view file logs: auto-tune-vllm view-file-logs --study-id {study_id} --log-path {log_file_path}")
+                logger.info(f"📋 To view file logs: auto-tune-vllm logs --study-id {study_id} --log-path {log_file_path}")
             elif log_database_url:
                 logger.info(f"📋 To view logs: auto-tune-vllm logs --study-id {study_id} --database-url {log_database_url}")
             else:
@@ -430,14 +430,28 @@ class StudyController:
         logger.info(f"Resuming study: {self.config.study_name}")
         logger.info(f"🔍 STUDY ID: {study_id} (use this ID for log viewing)")
         
-        # Provide appropriate log viewing instructions based on config
-        if self.config.logging_config and self.config.logging_config.get("file_path"):
-            log_file_path = self.config.logging_config["file_path"]
-            logger.info(f"📋 View file logs with: auto-tune-vllm view-file-logs --study-id {study_id} --log-path {log_file_path}")
-        elif self.config.database_url:
-            logger.info(f"📋 View logs with: auto-tune-vllm logs --study-id {study_id} --database-url {self.config.database_url}")
+        # Provide appropriate log viewing instructions based on logging configuration
+        log_database_url = None
+        log_file_path = None
+        
+        if self.config.logging_config:
+            log_database_url = self.config.logging_config.get("database_url")
+            log_file_path = self.config.logging_config.get("file_path")
+        
+        # Default to main database if no specific logging config and database is available
+        if not log_database_url and not log_file_path and self.config.database_url:
+            log_database_url = self.config.database_url
+        elif not log_database_url and not log_file_path and not self.config.database_url:
+            # No PostgreSQL available - use file logging
+            log_file_path = f"./logs/study_{study_id}"
+        
+        # Display appropriate instructions using the unified logs command
+        if log_file_path:
+            logger.info(f"📋 View logs with: auto-tune-vllm logs --study-id {study_id} --log-path {log_file_path}")
+        elif log_database_url:
+            logger.info(f"📋 View logs with: auto-tune-vllm logs --study-id {study_id} --database-url {log_database_url}")
         else:
-            logger.info(f"📋 Using file-based storage. View logs with: auto-tune-vllm view-file-logs --study-id {study_id} --log-path ./logs/study_{study_id}")
+            logger.info(f"📋 Console logging only - no database or file logging configured")
         
         # Count existing trials
         n_existing = len(self.study.trials)

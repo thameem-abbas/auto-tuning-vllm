@@ -38,6 +38,32 @@ def setup_logging(verbose: bool = False):
     )
 
 
+def _display_log_viewing_instructions(config: StudyConfig, study_id: int):
+    """Display appropriate log viewing instructions based on logging configuration."""
+    # Determine the correct logging database URL or file path
+    log_database_url = None
+    log_file_path = None
+    
+    if config.logging_config:
+        log_database_url = config.logging_config.get("database_url")
+        log_file_path = config.logging_config.get("file_path")
+    
+    # Default to main database if no specific logging config and database is available
+    if not log_database_url and not log_file_path and config.database_url:
+        log_database_url = config.database_url
+    elif not log_database_url and not log_file_path and not config.database_url:
+        # No PostgreSQL available - use file logging
+        log_file_path = f"./logs/study_{study_id}"
+    
+    # Display appropriate instructions using the unified logs command
+    if log_file_path:
+        console.print(f"[blue]📋 View logs with: auto-tune-vllm logs --study-id {study_id} --log-path {log_file_path}[/blue]")
+    elif log_database_url:
+        console.print(f"[blue]📋 View logs with: auto-tune-vllm logs --study-id {study_id} --database-url {log_database_url}[/blue]")
+    else:
+        console.print(f"[blue]📋 Console logging only - no database or file logging configured[/blue]")
+
+
 @app.command("optimize")
 def optimize_command(
     config: str = typer.Option(..., "--config", "-c", help="Study configuration file"),
@@ -204,7 +230,9 @@ def run_optimization_sync(
     # Display study ID prominently in the CLI
     study_id = StudyController.get_study_id(config.study_name)
     console.print(f"[bold cyan]🔍 Study ID: {study_id}[/bold cyan]")
-    console.print(f"[blue]📋 View logs with: auto-tune-vllm logs --study-id {study_id} --database-url {config.database_url}[/blue]")
+    
+    # Show appropriate log viewing instructions based on logging configuration
+    _display_log_viewing_instructions(config, study_id)
     console.print()  # Add blank line for better readability
     
     total_trials = n_trials or config.optimization.n_trials
@@ -282,35 +310,115 @@ def display_optimization_results(controller: StudyController):
 @app.command("logs")
 def logs_command(
     study_id: int = typer.Option(..., "--study-id", help="Study ID"),
-    database_url: str = typer.Option(..., "--database-url", help="PostgreSQL database URL"),
+    database_url: Optional[str] = typer.Option(None, "--database-url", help="PostgreSQL database URL for remote logs"),
+    log_path: Optional[str] = typer.Option(None, "--log-path", help="Base log directory path for file logs"),
     trial_number: Optional[int] = typer.Option(None, "--trial", help="Specific trial number"),
     component: Optional[str] = typer.Option(None, "--component", help="Component (vllm, benchmark, controller)"),
     follow: bool = typer.Option(True, "--follow/--no-follow", help="Follow logs in real-time"),
     tail_lines: int = typer.Option(100, "--tail", "-n", help="Number of recent lines to show when starting follow mode"),
 ):
-    """Stream logs from PostgreSQL database."""
-    console.print(f"[blue]Streaming logs for study {study_id}[/blue]")
-    if follow:
-        console.print(f"[dim]Showing last {tail_lines} lines, then following new logs...[/dim]")
+    """View logs from either PostgreSQL database or local files.
     
-    try:
-        streamer = LogStreamer(study_id, database_url)
-        
-        # TODO: Make log streaming synchronous too
-        import asyncio
-        if trial_number is not None:
-            asyncio.run(streamer.stream_trial_logs(trial_number, component, follow, tail_lines))
-        else:
-            asyncio.run(streamer.stream_study_logs(follow, tail_lines))
-            
-    except KeyboardInterrupt:
-        console.print("\n[yellow]Log streaming stopped by user[/yellow]")
-    except Exception as e:
-        console.print(f"[bold red]Log streaming failed: {e}[/bold red]")
+    Provide either --database-url for remote database logs or --log-path for local file logs.
+    """
+    # Validate that exactly one logging source is provided
+    if not database_url and not log_path:
+        console.print("[bold red]Error: Must specify either --database-url or --log-path[/bold red]")
+        console.print("Examples:")
+        console.print("  # View database logs:")
+        console.print("  auto-tune-vllm logs --study-id 123 --database-url postgresql://...")
+        console.print("  # View file logs:")
+        console.print("  auto-tune-vllm logs --study-id 123 --log-path /path/to/logs")
         raise typer.Exit(1)
+    
+    if database_url and log_path:
+        console.print("[bold red]Error: Cannot specify both --database-url and --log-path[/bold red]")
+        console.print("Choose one logging source.")
+        raise typer.Exit(1)
+    
+    if database_url:
+        # Use database logging (original logs command logic)
+        console.print(f"[blue]Streaming logs for study {study_id} from database[/blue]")
+        if follow:
+            console.print(f"[dim]Showing last {tail_lines} lines, then following new logs...[/dim]")
+        
+        try:
+            streamer = LogStreamer(study_id, database_url)
+            
+            # TODO: Make log streaming synchronous too
+            import asyncio
+            if trial_number is not None:
+                asyncio.run(streamer.stream_trial_logs(trial_number, component, follow, tail_lines))
+            else:
+                asyncio.run(streamer.stream_study_logs(follow, tail_lines))
+                
+        except KeyboardInterrupt:
+            console.print("\n[yellow]Log streaming stopped by user[/yellow]")
+        except Exception as e:
+            console.print(f"[bold red]Log streaming failed: {e}[/bold red]")
+            raise typer.Exit(1)
+    
+    else:
+        # Use file logging (original view-file-logs command logic)
+        console.print(f"[blue]Viewing file logs for study {study_id}[/blue]")
+        
+        try:
+            from pathlib import Path
+            
+            study_dir = Path(log_path) / f"study_{study_id}"
+            
+            if not study_dir.exists():
+                console.print(f"[yellow]No logs found for study {study_id} in {log_path}[/yellow]")
+                console.print(f"Expected directory: {study_dir}")
+                return
+            
+            # Find log files
+            if trial_number is not None:
+                trial_dir = study_dir / f"trial_{trial_number}"
+                if not trial_dir.exists():
+                    console.print(f"[yellow]No logs found for trial {trial_number}[/yellow]")
+                    return
+                    
+                log_files = list(trial_dir.glob("*.log"))
+                if component:
+                    log_files = [f for f in log_files if f.stem == component]
+            else:
+                log_files = list(study_dir.glob("*/*.log"))
+                if component:
+                    log_files = [f for f in log_files if f.stem == component]
+            
+            if not log_files:
+                console.print("[yellow]No log files found matching criteria[/yellow]")
+                return
+            
+            # Sort files by modification time
+            log_files.sort(key=lambda f: f.stat().st_mtime, reverse=True)
+            
+            for log_file in log_files:
+                trial_name = log_file.parent.name
+                component_name = log_file.stem
+                
+                console.print(f"\n[bold cyan]===== {trial_name}/{component_name}.log =====[/bold cyan]")
+                
+                try:
+                    if follow:
+                        # Simple file following
+                        _follow_file(log_file)
+                    else:
+                        # Show recent lines (use tail_lines parameter instead of hardcoded 'lines')
+                        _show_recent_lines(log_file, tail_lines)
+                        
+                except Exception as e:
+                    console.print(f"[red]Error reading {log_file}: {e}[/red]")
+                    
+        except KeyboardInterrupt:
+            console.print("\n[yellow]Log viewing stopped by user[/yellow]")
+        except Exception as e:
+            console.print(f"[bold red]Failed to view file logs: {e}[/bold red]")
+            raise typer.Exit(1)
 
 
-@app.command("view-file-logs")
+@app.command("view-file-logs", deprecated=True)
 def view_file_logs_command(
     study_id: int = typer.Option(..., "--study-id", help="Study ID"),
     log_path: str = typer.Option(..., "--log-path", help="Base log directory path"),
@@ -319,7 +427,10 @@ def view_file_logs_command(
     follow: bool = typer.Option(False, "--follow", help="Follow logs in real-time"),
     lines: Optional[int] = typer.Option(50, "--lines", "-n", help="Number of recent lines to show"),
 ):
-    """View logs from local files."""
+    """[DEPRECATED] View logs from local files. Use 'logs --log-path' instead."""
+    console.print("[yellow]⚠️  WARNING: 'view-file-logs' command is deprecated.[/yellow]")
+    console.print("[yellow]   Use 'auto-tune-vllm logs --study-id {} --log-path {}' instead.[/yellow]".format(study_id, log_path))
+    console.print()
     console.print(f"[blue]Viewing file logs for study {study_id}[/blue]")
     
     try:
@@ -435,7 +546,9 @@ def resume_study_sync(
     # Display study ID prominently in the CLI
     study_id = StudyController.get_study_id(config.study_name)
     console.print(f"[bold cyan]🔍 Study ID: {study_id}[/bold cyan]")
-    console.print(f"[blue]📋 View logs with: auto-tune-vllm logs --study-id {study_id} --database-url {config.database_url}[/blue]")
+    
+    # Show appropriate log viewing instructions based on logging configuration
+    _display_log_viewing_instructions(config, study_id)
     console.print()  # Add blank line for better readability
     
     controller.resume_study()
