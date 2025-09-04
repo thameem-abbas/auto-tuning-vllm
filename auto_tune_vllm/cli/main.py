@@ -80,9 +80,15 @@ def optimize_command(
     """Run optimization study."""
     setup_logging(verbose)
     
-    # Validate Python environment options (only one should be specified)
+    # Validate Python environment options (exactly one should be specified)
     python_env_options = [python_executable, venv_path, conda_env]
     specified_options = [opt for opt in python_env_options if opt is not None]
+    
+    if len(specified_options) == 0:
+        console.print("[bold red]Error: At least one Python environment option must be specified[/bold red]")
+        console.print("Choose one of: --python-executable, --venv-path, or --conda-env")
+        raise typer.Exit(1)
+    
     if len(specified_options) > 1:
         console.print("[bold red]Error: Only one Python environment option can be specified at a time[/bold red]")
         console.print("Choose one of: --python-executable, --venv-path, or --conda-env")
@@ -498,9 +504,15 @@ def resume_command(
     """Resume an existing optimization study."""
     setup_logging(verbose)
     
-    # Validate Python environment options (only one should be specified)
+    # Validate Python environment options (exactly one should be specified)
     python_env_options = [python_executable, venv_path, conda_env]
     specified_options = [opt for opt in python_env_options if opt is not None]
+    
+    if len(specified_options) == 0:
+        console.print("[bold red]Error: At least one Python environment option must be specified[/bold red]")
+        console.print("Choose one of: --python-executable, --venv-path, or --conda-env")
+        raise typer.Exit(1)
+    
     if len(specified_options) > 1:
         console.print("[bold red]Error: Only one Python environment option can be specified at a time[/bold red]")
         console.print("Choose one of: --python-executable, --venv-path, or --conda-env")

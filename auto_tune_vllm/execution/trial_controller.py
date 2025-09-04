@@ -538,8 +538,8 @@ class LocalTrialController(BaseTrialController):
         return f"local_{socket.gethostname()}"
 
 
-class RayTrialController(BaseTrialController):
-    """Ray-based distributed trial controller."""
+class RayWorkerTrialController(BaseTrialController):
+    """Ray worker node trial controller with Ray-specific functionality."""
     
     def _get_worker_id(self) -> str:
         """Get Ray worker node ID."""
@@ -571,11 +571,9 @@ class RayTrialController(BaseTrialController):
         return super()._start_vllm_server(trial_config)
 
 
-# Ray remote wrapper for RayTrialController
-_RayTrialControllerBase = RayTrialController
-
+# Ray remote actor wrapper
 @ray.remote
-class RayTrialController(_RayTrialControllerBase):
+class RayTrialActor(RayWorkerTrialController):
     """Ray remote actor for distributed trial execution."""
     
     def run_trial(self, trial_config: TrialConfig) -> TrialResult:
