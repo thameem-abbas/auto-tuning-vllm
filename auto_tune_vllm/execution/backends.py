@@ -194,7 +194,7 @@ class RayExecutionBackend(ExecutionBackend):
     
     def submit_trial(self, trial_config: TrialConfig) -> JobHandle:
         """Submit trial to Ray cluster."""
-        from .trial_controller import RayTrialController
+        from .trial_controller import RayTrialActor
         
         # Create Ray actor with resource requirements from trial config
         # Extract num_gpus and num_cpus from trial's resource_requirements
@@ -222,7 +222,7 @@ class RayExecutionBackend(ExecutionBackend):
         if runtime_env:
             controller_options["runtime_env"] = runtime_env
         
-        controller = RayTrialController.options(**controller_options).remote()
+        controller = RayTrialActor.options(**controller_options).remote()
         
         # Submit trial execution
         future_ref = controller.run_trial.remote(trial_config)
