@@ -79,14 +79,10 @@ class BaseTrialController(TrialController):
             )
         
         # Check if commands are available in PATH
-        required_commands = {'python': 'Python interpreter'}
-        try:
-            bench_type = (trial_config.benchmark_config.benchmark_type
-                          if trial_config and trial_config.benchmark_config else "guidellm")
-        except Exception:
-            bench_type = "guidellm"
-        if bench_type == "guidellm":
-            required_commands['guidellm'] = 'GuideLLM CLI tool'
+        required_commands = {
+            'python': 'Python interpreter',
+            'guidellm': 'GuideLLM CLI tool',
+        }
         
         import shutil
         missing_commands = []
@@ -289,8 +285,7 @@ class BaseTrialController(TrialController):
             # Try to import from benchmarks.custom module
             module_name = f"auto_tune_vllm.benchmarks.custom.{benchmark_type}"
             module = __import__(module_name, fromlist=[benchmark_type])
-            class_name = ''.join(part.capitalize() for part in benchmark_type.split('_')) + "Benchmark"
-            provider_class = getattr(module, class_name)
+            provider_class = getattr(module, f"{benchmark_type.title()}Benchmark")
             return provider_class()
         except (ImportError, AttributeError) as e:
             raise ValueError(f"Unknown benchmark provider: {benchmark_type}") from e

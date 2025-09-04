@@ -13,7 +13,7 @@ from rich.table import Table
 
 from ..core.config import StudyConfig
 from ..core.study_controller import StudyController
-from ..execution.backends import RayExecutionBackend, LocalExecutionBackend
+from ..execution.backends import RayExecutionBackend
 from ..logging.manager import LogStreamer, CentralizedLogger
 from ..core.db_utils import verify_database_connection, clear_study_data
 
@@ -67,7 +67,7 @@ def _display_log_viewing_instructions(config: StudyConfig, study_id: int):
 @app.command("optimize")
 def optimize_command(
     config: str = typer.Option(..., "--config", "-c", help="Study configuration file"),
-    backend: str = typer.Option("ray", "--backend", "-b", help="Execution backend: 'ray' or 'local'"),
+    backend: str = typer.Option("ray", "--backend", "-b", help="Execution backend: 'ray' (only supported option)"),
     n_trials: Optional[int] = typer.Option(None, "--trials", "-n", help="Number of trials (overrides config)"),
     max_concurrent: Optional[int] = typer.Option(None, "--max-concurrent", help="Max concurrent trials"),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose logging"),
@@ -123,15 +123,11 @@ def optimize_command(
             console.print("[blue]Using Ray distributed execution[/blue]")
             if start_ray_head:
                 console.print("[blue]Will start Ray head if no cluster found[/blue]")
-        elif backend.lower() == "local":
-            default_max_concurrent = 1
-            actual_max_concurrent = max_concurrent or default_max_concurrent
-            execution_backend = LocalExecutionBackend(actual_max_concurrent)
-            console.print("[yellow]Using local execution[/yellow]")
-            if max_concurrent is None:
-                console.print(f"[yellow]Using default max_concurrent: {default_max_concurrent}[/yellow]")
         else:
-            console.print(f"[bold red]Error: Unknown backend: {backend}[/bold red]")
+            console.print("[bold red]Error: Local execution backend is not supported in this version.[/bold red]")
+            console.print("[bold red]Only Ray distributed execution is available.[/bold red]")
+            console.print("[blue]Use --backend ray (default) or set up a Ray cluster.[/blue]")
+            console.print("[blue]See docs/ray_cluster_setup.md for Ray setup instructions.[/blue]")
             raise typer.Exit(1)
         
         # Run optimization
@@ -492,7 +488,7 @@ def view_file_logs_command(
 @app.command("resume")
 def resume_command(
     config: str = typer.Option(..., "--config", "-c", help="Study configuration file"),
-    backend: str = typer.Option("ray", "--backend", "-b", help="Execution backend"),
+    backend: str = typer.Option("ray", "--backend", "-b", help="Execution backend: 'ray' (only supported option)"),
     n_additional_trials: Optional[int] = typer.Option(None, "--additional-trials", help="Additional trials to run"),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose logging"),
     python_executable: Optional[str] = typer.Option(None, "--python-executable", help="Explicit Python executable path for Ray workers"),
@@ -522,8 +518,14 @@ def resume_command(
                 venv_path=venv_path,
                 conda_env=conda_env
             )
+            console.print("[blue]Using Ray distributed execution[/blue]")
+      
         else:
-            execution_backend = LocalExecutionBackend(max_concurrent=2)
+            console.print("[bold red]Error: Local execution backend is not supported in this version.[/bold red]")
+            console.print("[bold red]Only Ray distributed execution is available.[/bold red]")
+            console.print("[blue]Use --backend ray (default) or set up a Ray cluster.[/blue]")
+            console.print("[blue]See docs/ray_cluster_setup.md for Ray setup instructions.[/blue]")
+            raise typer.Exit(1)
         
         # Resume study
         resume_study_sync(execution_backend, study_config, n_additional_trials)

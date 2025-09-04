@@ -404,6 +404,15 @@ class ConfigValidator:
 
         return expanded_content
     
+    def _generate_unique_study_name(self) -> str:
+        """Generate a unique study name in the format study_N."""
+        # Use timestamp seconds as a simple unique number
+        import time
+        timestamp_seconds = int(time.time())
+        # Take last 6 digits to keep numbers reasonable
+        study_number = timestamp_seconds % 1000000
+        return f"study_{study_number}"
+    
     def _validate_config(self, raw_config: Dict[str, Any]) -> StudyConfig:
         """Validate configuration against schema."""
         # Validate and build parameter configs
@@ -423,7 +432,15 @@ class ConfigValidator:
             validated_params[param_name] = validated_param
         
         # Build other configs
-        study_info = raw_config["study"]
+        study_info = raw_config.get("study", {})
+        if study_info is None:
+            study_info = {}
+        
+        # Auto-generate study name if not provided
+        if not study_info.get("name"):
+            auto_name = self._generate_unique_study_name()
+            study_info["name"] = auto_name
+            print(f"Auto-generated study name: {auto_name}")
         
         # Handle optimization config with validation
         opt_config_data = raw_config["optimization"]
