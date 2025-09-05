@@ -263,6 +263,8 @@ class StudyConfig:
     parameters: Dict[str, ParameterConfig] = field(default_factory=dict)
     logging_config: Optional[Dict[str, Any]] = None
     storage_file: Optional[str] = None  # Alternative to database_url for file-based storage
+    study_prefix: Optional[str] = None  # For auto-generated study names with custom prefix
+    use_explicit_name: bool = False  # Flag to indicate explicit name usage (affects load_if_exists behavior)
     
     @classmethod
     def from_file(cls, config_path: str, schema_path: Optional[str] = None, 
@@ -404,14 +406,57 @@ class ConfigValidator:
 
         return expanded_content
     
-    def _generate_unique_study_name(self) -> str:
-        """Generate a unique study name in the format study_N."""
+    def _generate_unique_study_name(self, prefix: Optional[str] = None) -> str:
+        """Generate a unique study name in the format {prefix}_{N} or study_N."""
         # Use timestamp seconds as a simple unique number
         import time
         timestamp_seconds = int(time.time())
         # Take last 6 digits to keep numbers reasonable
         study_number = timestamp_seconds % 1000000
-        return f"study_{study_number}"
+        
+        if prefix:
+            return f"{prefix}_{study_number}"
+        else:
+            return f"study_{study_number}"
+    
+    def _handle_study_naming(self, study_info: Dict[str, Any]) -> tuple[str, Optional[str], bool]:
+        """
+        Handle study naming logic with prefix support.
+        
+        Returns:
+            tuple: (study_name, study_prefix, use_explicit_name)
+        
+        Rules:
+        1. If just 'name' is provided: Use exact name, fail if exists (use_explicit_name=True)
+        2. If just 'prefix' is provided: Auto-generate with prefix (use_explicit_name=False)
+        3. If both provided: Validation error
+        4. If neither provided: Auto-generate with default prefix (use_explicit_name=False)
+        """
+        name = study_info.get("name")
+        prefix = study_info.get("prefix")
+        
+        # Scenario 3: Both name and prefix provided - ERROR
+        if name and prefix:
+            raise ValueError(
+                "Cannot specify both 'name' and 'prefix' in study configuration. "
+                "Use 'name' for exact study names that must be unique, or 'prefix' for auto-generated names."
+            )
+        
+        # Scenario 1: Just name provided - use exact name, fail if exists
+        if name and not prefix:
+            print(f"Using explicit study name: {name} (will fail if study already exists)")
+            return name, None, True
+        
+        # Scenario 2: Just prefix provided - auto-generate with prefix
+        if prefix and not name:
+            auto_name = self._generate_unique_study_name(prefix)
+            print(f"Generated study name: {auto_name} from prefix: {prefix}")
+            return auto_name, prefix, False
+        
+        # Scenario 4: Neither provided - auto-generate with default prefix
+        auto_name = self._generate_unique_study_name()
+        print(f"Auto-generated study name: {auto_name}")
+        return auto_name, None, False
     
     def _validate_config(self, raw_config: Dict[str, Any]) -> StudyConfig:
         """Validate configuration against schema."""
@@ -436,11 +481,8 @@ class ConfigValidator:
         if study_info is None:
             study_info = {}
         
-        # Auto-generate study name if not provided
-        if not study_info.get("name"):
-            auto_name = self._generate_unique_study_name()
-            study_info["name"] = auto_name
-            print(f"Auto-generated study name: {auto_name}")
+        # Handle study naming logic with prefix support
+        study_name, study_prefix, use_explicit_name = self._handle_study_naming(study_info)
         
         # Handle optimization config with validation
         opt_config_data = raw_config["optimization"]
@@ -466,19 +508,21 @@ class ConfigValidator:
         # Validate storage configuration
         if not database_url and not storage_file:
             # Default to file-based storage using study name
-            storage_file = f"./optuna_studies/{study_info['name']}/study.db"
+            storage_file = f"./optuna_studies/{study_name}/study.db"
         
         if database_url and storage_file:
             raise ValueError("Cannot specify both database_url and storage_file. Choose one storage method.")
         
         return StudyConfig(
-            study_name=study_info["name"],
+            study_name=study_name,
             database_url=database_url,
             optimization=optimization,
             benchmark=benchmark, 
             parameters=validated_params,
             logging_config=raw_config.get("logging"),
-            storage_file=storage_file
+            storage_file=storage_file,
+            study_prefix=study_prefix,
+            use_explicit_name=use_explicit_name
         )
     
     def _build_parameter_config(

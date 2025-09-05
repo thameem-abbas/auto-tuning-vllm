@@ -106,17 +106,33 @@ class StudyController:
         if storage:
             logger.info(f"Storage location: {storage}")
         
-        # Create Optuna study
+        # Create Optuna study with appropriate load_if_exists behavior
+        load_if_exists = not config.use_explicit_name  # For explicit names, fail if exists
+        
+        if config.use_explicit_name:
+            logger.info(f"Creating new study with explicit name: {config.study_name} (will fail if exists)")
+        else:
+            logger.info(f"Creating study: {config.study_name} (will load existing if found)")
+        
         try:
             study = optuna.create_study(
                 storage=storage,
                 study_name=config.study_name,
                 directions=directions,  # ["maximize"] for single objective or list for multi-objective
                 sampler=sampler,
-                load_if_exists=True
+                load_if_exists=load_if_exists
             )
         except Exception as e:
-            if config.database_url and ("does not exist" in str(e).lower() or "database" in str(e).lower()):
+            # Handle explicit name conflicts with helpful error messages
+            if config.use_explicit_name and "already exists" in str(e).lower():
+                raise RuntimeError(
+                    f"Study '{config.study_name}' already exists. "
+                    f"Options: \n"
+                    f"  • Use 'auto-tune-vllm resume --config <config_file>' to continue the existing study\n"
+                    f"  • Change the study name to create a new study\n"
+                    f"  • Use 'prefix: {config.study_name}' instead of 'name' for auto-generated unique names"
+                )
+            elif config.database_url and ("does not exist" in str(e).lower() or "database" in str(e).lower()):
                 raise RuntimeError(
                     f"Failed to create Optuna study. Database connection error: {e}. "
                     f"Use --create-db flag to create the database automatically."
