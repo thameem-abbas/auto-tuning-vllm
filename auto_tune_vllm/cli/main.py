@@ -568,10 +568,21 @@ def resume_study_sync(
     # Count existing trials to determine how many more to run
     n_existing = len(controller.study.trials)
     
+    # Display current results if any trials exist
+    if n_existing > 0:
+        console.print(f"[bold yellow]Current Study Results ({n_existing} trials completed)[/bold yellow]")
+        display_optimization_results(controller)
+        console.print()  # Add blank line for readability
+    
     if n_trials is not None:
         # --trials specifies additional trials to run
         console.print(f"Running {n_trials} additional trials...")
         controller.run_optimization(n_trials, max_concurrent)
+        
+        # Display updated results after running additional trials
+        console.print(f"\n[bold green]Updated Study Results ({len(controller.study.trials)} total trials)[/bold green]")
+        display_optimization_results(controller)
+        
     elif n_total_trials is not None:
         # --total-trials specifies total trials to run
         if n_total_trials <= n_existing:
@@ -581,6 +592,11 @@ def resume_study_sync(
             trials_to_run = n_total_trials - n_existing
             console.print(f"Running {trials_to_run} more trials to reach total of {n_total_trials} trials...")
             controller.run_optimization(trials_to_run, max_concurrent)
+            
+            # Display updated results after running additional trials
+            console.print(f"\n[bold green]Final Study Results ({len(controller.study.trials)} total trials)[/bold green]")
+            display_optimization_results(controller)
+            
     else:
         console.print("Study resumed. Use --trials to run additional trials or --total-trials to set total trial count.")
 
