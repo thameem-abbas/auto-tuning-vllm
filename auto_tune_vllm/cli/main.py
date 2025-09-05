@@ -61,7 +61,7 @@ def _display_log_viewing_instructions(config: StudyConfig, study_id: int):
     elif log_database_url:
         console.print(f"[blue]📋 View logs with: auto-tune-vllm logs --study-id {study_id} --database-url {log_database_url}[/blue]")
     else:
-        console.print(f"[blue]📋 Console logging only - no database or file logging configured[/blue]")
+        console.print("[blue]📋 Console logging only - no database or file logging configured[/blue]")
 
 
 @app.command("optimize")
@@ -495,7 +495,8 @@ def view_file_logs_command(
 def resume_command(
     config: str = typer.Option(..., "--config", "-c", help="Study configuration file"),
     backend: str = typer.Option("ray", "--backend", "-b", help="Execution backend: 'ray' (only supported option)"),
-    n_additional_trials: Optional[int] = typer.Option(None, "--additional-trials", help="Additional trials to run"),
+    n_trials: Optional[int] = typer.Option(None, "--trials", "-n", help="Number of additional trials to run"),
+    n_total_trials: Optional[int] = typer.Option(None, "--total-trials", help="Total number of trials to reach (overrides config)"),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose logging"),
     python_executable: Optional[str] = typer.Option(None, "--python-executable", help="Explicit Python executable path for Ray workers"),
     venv_path: Optional[str] = typer.Option(None, "--venv-path", help="Virtual environment path for Ray workers"),
@@ -540,7 +541,7 @@ def resume_command(
             raise typer.Exit(1)
         
         # Resume study
-        resume_study_sync(execution_backend, study_config, n_additional_trials)
+        resume_study_sync(execution_backend, study_config, n_trials, n_total_trials)
         
     except Exception as e:
         console.print(f"[bold red]Resume failed: {e}[/bold red]")
@@ -552,7 +553,8 @@ def resume_command(
 def resume_study_sync(
     backend, 
     config: StudyConfig, 
-    n_additional_trials: Optional[int]
+    n_trials: Optional[int],
+    n_total_trials: Optional[int]
 ):
     """Resume study execution."""
     controller = StudyController.create_from_config(backend, config)
@@ -567,11 +569,24 @@ def resume_study_sync(
     
     controller.resume_study()
     
-    if n_additional_trials:
-        console.print(f"Running {n_additional_trials} additional trials...")
-        controller.run_optimization(n_additional_trials)
+    # Count existing trials to determine how many more to run
+    n_existing = len(controller.study.trials)
+    
+    if n_trials is not None:
+        # --trials specifies additional trials to run
+        console.print(f"Running {n_trials} additional trials...")
+        controller.run_optimization(n_trials)
+    elif n_total_trials is not None:
+        # --total-trials specifies total trials to run
+        if n_total_trials <= n_existing:
+            console.print(f"Study already has {n_existing} trials. Specified --total-trials={n_total_trials} would not run any new trials.")
+            console.print("Use --trials to run more trials, or increase --total-trials count.")
+        else:
+            trials_to_run = n_total_trials - n_existing
+            console.print(f"Running {trials_to_run} more trials to reach total of {n_total_trials} trials...")
+            controller.run_optimization(trials_to_run)
     else:
-        console.print("Study resumed. Use --additional-trials to run more trials.")
+        console.print("Study resumed. Use --trials to run additional trials or --total-trials to set total trial count.")
 
 
 @app.command("validate")
