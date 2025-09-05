@@ -2,6 +2,7 @@
 
 import logging
 import sys
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -13,6 +14,7 @@ from rich.table import Table
 
 from ..core.config import StudyConfig
 from ..core.study_controller import StudyController
+from ..visualization.dashboard import create_study_dashboard, format_study_data_for_visualization
 from ..execution.backends import RayExecutionBackend
 from ..logging.manager import LogStreamer, CentralizedLogger
 from ..core.db_utils import verify_database_connection, clear_study_data
@@ -253,7 +255,7 @@ def run_optimization_sync(
 
 
 def display_optimization_results(controller: StudyController):
-    """Display optimization results in a nice table."""
+    """Display optimization results in a nice table and generate visualizations."""
     results = controller.get_optimization_results()
     
     console.print("\n[bold green]Optimization Results[/bold green]")
@@ -300,6 +302,110 @@ def display_optimization_results(controller: StudyController):
         
         console.print(table)
         console.print(f"[blue]Total Pareto solutions: {results['n_pareto_solutions']}[/blue]")
+    
+    # Generate visualizations
+    generate_study_visualizations(controller, results)
+
+
+def generate_study_visualizations(controller: StudyController, results: dict):
+    """Generate and save study visualizations."""
+    try:
+        console.print("\n[bold blue]Generating Visualizations...[/bold blue]")
+        
+        # Format data for visualization
+        study_data = format_study_data_for_visualization(controller)
+        
+        # Determine output directory
+        output_dir = os.path.join(controller.log_dir or ".", "visualizations")
+        
+        # Create visualizations
+        saved_files = create_study_dashboard(study_data, output_dir)
+        
+        # Report generated files
+        if any(saved_files.values()):
+            console.print("\n[green]📊 Visualizations Generated Successfully![/green]")
+            
+            # Show summary dashboard first
+            if saved_files.get('summary'):
+                console.print(f"[bold]📋 Main Dashboard:[/bold] {saved_files['summary'][0]}")
+            
+            # Show specific visualizations
+            if saved_files.get('specific'):
+                viz_type = "Single-objective" if results["type"] == "single_objective" else "Multi-objective"
+                console.print(f"[bold]🎯 {viz_type} Analysis:[/bold]")
+                for file_path in saved_files['specific']:
+                    file_name = os.path.basename(file_path).replace('.html', '').replace('_', ' ').title()
+                    console.print(f"  • {file_name}: {file_path}")
+            
+            # Show common visualizations
+            if saved_files.get('common'):
+                console.print(f"[bold]📈 General Analysis:[/bold]")
+                for file_path in saved_files['common']:
+                    file_name = os.path.basename(file_path).replace('.html', '').replace('_', ' ').title()
+                    console.print(f"  • {file_name}: {file_path}")
+            
+            console.print(f"\n[dim]Open the dashboard in your browser to explore the results interactively.[/dim]")
+        else:
+            console.print("[yellow]⚠️  No visualizations generated - insufficient data or errors occurred[/yellow]")
+            
+    except Exception as e:
+        console.print(f"[red]❌ Error generating visualizations: {e}[/red]")
+        # Don't fail the entire process if visualization fails
+        pass
+
+
+@app.command("visualize")
+def visualize_command(
+    study_name: str = typer.Option(..., "--study-name", help="Study name to visualize"),
+    database_url: Optional[str] = typer.Option(None, "--database-url", help="PostgreSQL database URL"),
+    output_dir: Optional[str] = typer.Option(None, "--output-dir", help="Output directory for visualizations"),
+):
+    """Generate visualizations for an existing study."""
+    try:
+        console.print(f"[blue]Loading study: {study_name}[/blue]")
+        
+        # Load the study
+        controller = StudyController.from_study_name(
+            study_name=study_name,
+            database_url=database_url
+        )
+        
+        # Get results
+        results = controller.get_optimization_results()
+        
+        # Set output directory
+        if output_dir:
+            viz_output_dir = output_dir
+        else:
+            viz_output_dir = os.path.join(controller.log_dir or ".", "visualizations")
+        
+        console.print(f"[blue]Generating visualizations in: {viz_output_dir}[/blue]")
+        
+        # Format data and create visualizations
+        study_data = format_study_data_for_visualization(controller)
+        study_data['output_dir'] = viz_output_dir
+        
+        saved_files = create_study_dashboard(study_data, viz_output_dir)
+        
+        # Report results
+        if any(saved_files.values()):
+            console.print("\n[green]✅ Visualizations Generated Successfully![/green]")
+            
+            total_files = sum(len(files) for files in saved_files.values())
+            console.print(f"[bold]Generated {total_files} visualization files[/bold]")
+            
+            if saved_files.get('summary'):
+                console.print(f"\n[bold blue]🎯 Main Dashboard:[/bold blue]")
+                console.print(f"  {saved_files['summary'][0]}")
+            
+            console.print(f"\n[dim]Open the dashboard in your browser to explore the results.[/dim]")
+        else:
+            console.print("[red]❌ Failed to generate visualizations[/red]")
+            raise typer.Exit(1)
+            
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
 
 
 @app.command("logs")
