@@ -16,12 +16,12 @@ class CentralizedLogger:
     
     def __init__(
         self, 
-        study_id: int, 
+        study_name: str, 
         pg_url: Optional[str] = None, 
         file_path: Optional[str] = None, 
         log_level: str = "INFO"
     ):
-        self.study_id = study_id
+        self.study_name = study_name
         self.pg_url = pg_url
         self.file_path = file_path
         self.log_level = getattr(logging, log_level.upper())
@@ -40,7 +40,7 @@ class CentralizedLogger:
                     cur.execute("""
                         CREATE TABLE IF NOT EXISTS trial_logs (
                             id SERIAL PRIMARY KEY,
-                            study_id INTEGER NOT NULL,
+                            study_name VARCHAR(255) NOT NULL,
                             trial_number INTEGER NOT NULL,
                             component VARCHAR(50) NOT NULL,
                             timestamp TIMESTAMP NOT NULL,
@@ -53,22 +53,22 @@ class CentralizedLogger:
                     # Create indexes for efficient querying
                     cur.execute("""
                         CREATE INDEX IF NOT EXISTS idx_trial_logs_study_trial 
-                        ON trial_logs (study_id, trial_number, id)
+                        ON trial_logs (study_name, trial_number, id)
                     """)
                     
                     cur.execute("""
                         CREATE INDEX IF NOT EXISTS idx_trial_logs_study_trial_component
-                        ON trial_logs (study_id, trial_number, component)
+                        ON trial_logs (study_name, trial_number, component)
                     """)
             
-            logger.info(f"Log tables ready for study {self.study_id}")
+            logger.info(f"Log tables ready for study {self.study_name}")
             
         except Exception as e:
             logger.warning(f"Failed to setup log tables: {e}")
     
     def get_trial_logger(self, trial_number: int, component: str) -> logging.Logger:
         """Get logger for specific trial and component."""
-        logger_name = f"study_{self.study_id}.trial_{trial_number}.{component}"
+        logger_name = f"study_{self.study_name}.trial_{trial_number}.{component}"
         trial_logger = logging.getLogger(logger_name)
         
         # Only add handlers if not already configured
@@ -76,7 +76,7 @@ class CentralizedLogger:
             # PostgreSQL handler (if configured) - wrapped with buffering for performance
             if self.pg_url:
                 pg_handler = PostgreSQLLogHandler(
-                    self.study_id, trial_number, component, self.pg_url
+                    self.study_name, trial_number, component, self.pg_url
                 )
                 # Wrap with buffering to reduce DB connection overhead
                 buffered_pg_handler = BufferedLogHandler(pg_handler, buffer_size=50)
@@ -85,7 +85,7 @@ class CentralizedLogger:
             # File handler (if configured)
             if self.file_path:
                 file_handler = LocalFileHandler(
-                    self.study_id, trial_number, component, self.file_path
+                    self.study_name, trial_number, component, self.file_path
                 )
                 trial_logger.addHandler(file_handler)
             
@@ -145,8 +145,8 @@ class CentralizedLogger:
 class LogStreamer:
     """Live log streaming from PostgreSQL."""
     
-    def __init__(self, study_id: int, pg_url: str):
-        self.study_id = study_id
+    def __init__(self, study_name: str, pg_url: str):
+        self.study_name = study_name
         self.pg_url = pg_url
         self._ensure_log_tables_exist()
     
@@ -208,7 +208,7 @@ class LogStreamer:
         tail_lines: int = 100
     ):
         """Stream logs for a specific trial."""
-        logger.info(f"Streaming logs for study {self.study_id}, trial {trial_number}" +
+        logger.info(f"Streaming logs for study {self.study_name}, trial {trial_number}" +
                    (f", component {component}" if component else ""))
         
         try:
@@ -269,9 +269,9 @@ class LogStreamer:
                     query = """
                         SELECT id, timestamp, level, component, message, worker_node
                         FROM trial_logs 
-                        WHERE study_id = %s AND trial_number = %s
+                        WHERE study_name = %s AND trial_number = %s
                     """
-                    params = [self.study_id, trial_number]
+                    params = [self.study_name, trial_number]
                     
                     if component:
                         query += " AND component = %s"
@@ -303,9 +303,9 @@ class LogStreamer:
                     query = """
                         SELECT id, timestamp, level, component, message, worker_node
                         FROM trial_logs 
-                        WHERE study_id = %s AND trial_number = %s AND id > %s
+                        WHERE study_name = %s AND trial_number = %s AND id > %s
                     """
-                    params = [self.study_id, trial_number, last_seen_id]
+                    params = [self.study_name, trial_number, last_seen_id]
                     
                     if component:
                         query += " AND component = %s"
@@ -322,7 +322,7 @@ class LogStreamer:
     
     async def stream_study_logs(self, follow: bool = True, tail_lines: int = 100):
         """Stream all logs for the entire study."""
-        logger.info(f"Streaming all logs for study {self.study_id}")
+        logger.info(f"Streaming all logs for study {self.study_name}")
         
         try:
             # First, fetch and display the last N lines (tail behavior)
@@ -375,9 +375,9 @@ class LogStreamer:
                     cur.execute("""
                         SELECT id, timestamp, level, trial_number, component, message, worker_node
                         FROM trial_logs 
-                        WHERE study_id = %s
+                        WHERE study_name = %s
                         ORDER BY id DESC LIMIT %s
-                    """, (self.study_id, limit))
+                    """, (self.study_name, limit))
                     
                     # Reverse to get chronological order (oldest to newest)
                     return list(reversed(cur.fetchall()))
@@ -396,9 +396,9 @@ class LogStreamer:
                     cur.execute("""
                         SELECT id, timestamp, level, trial_number, component, message, worker_node
                         FROM trial_logs 
-                        WHERE study_id = %s AND id > %s
+                        WHERE study_name = %s AND id > %s
                         ORDER BY id ASC LIMIT 100
-                    """, (self.study_id, last_seen_id))
+                    """, (self.study_name, last_seen_id))
                     
                     return cur.fetchall()
                     

@@ -131,7 +131,7 @@ def verify_database_connection(database_url: str) -> bool:
         return False
 
 
-def clear_study_data(study_name: str, database_url: str, clear_logs: bool = False, logs_database_url: str = None, study_id: int = None) -> dict:
+def clear_study_data(study_name: str, database_url: str, clear_logs: bool = False, logs_database_url: str = None) -> dict:
     """
     Clear study-specific data from databases.
     
@@ -140,7 +140,6 @@ def clear_study_data(study_name: str, database_url: str, clear_logs: bool = Fals
         database_url: Database URL for Optuna study data
         clear_logs: Whether to also clear trial logs
         logs_database_url: Database URL for logs (if different from study database)
-        study_id: Study ID for clearing logs (if not provided, will be retrieved from database)
         
     Returns:
         Dict with success status and deletion counts
@@ -197,22 +196,14 @@ def clear_study_data(study_name: str, database_url: str, clear_logs: bool = Fals
         if clear_logs:
             logs_db_url = logs_database_url or database_url
             
-            # Use provided study_id or compute it using the same method as StudyController
-            logs_study_id = study_id
-            if logs_study_id is None:
-                # Generate study_id using the same hash method as StudyController
-                import hashlib
-                digest = hashlib.sha256(study_name.encode("utf-8")).hexdigest()
-                logs_study_id = int(digest[:8], 16) % 2147483647
-            
             with psycopg2.connect(logs_db_url) as conn:
                 with conn.cursor() as cur:
                     # Count logs before deletion
-                    cur.execute("SELECT COUNT(*) FROM trial_logs WHERE study_id = %s", (logs_study_id,))
+                    cur.execute("SELECT COUNT(*) FROM trial_logs WHERE study_name = %s", (study_name,))
                     logs_count = cur.fetchone()[0]
                     
                     # Delete trial logs
-                    cur.execute("DELETE FROM trial_logs WHERE study_id = %s", (logs_study_id,))
+                    cur.execute("DELETE FROM trial_logs WHERE study_name = %s", (study_name,))
                     
                     result["logs_deleted"] = logs_count
                     

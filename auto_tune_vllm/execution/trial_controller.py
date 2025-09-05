@@ -141,7 +141,7 @@ class BaseTrialController(TrialController):
             
             if log_database_url or log_file_path:
                 centralized_logger = CentralizedLogger(
-                    study_id=trial_config.study_id,
+                    study_name=trial_config.study_name,
                     pg_url=log_database_url,
                     file_path=log_file_path,
                     log_level=log_level
@@ -183,10 +183,10 @@ class BaseTrialController(TrialController):
             
             # Also try to flush by logger name pattern (fallback)
             import logging
-            study_id = getattr(self, '_current_study_id', None)
-            if study_id:
+            study_name = getattr(self, '_current_study_name', None)
+            if study_name:
                 for component in ['controller', 'vllm', 'benchmark']:
-                    logger_name = f"study_{study_id}.trial_{trial_number}.{component}"
+                    logger_name = f"study_{study_name}.trial_{trial_number}.{component}"
                     trial_logger = logging.getLogger(logger_name)
                     for handler in trial_logger.handlers:
                         try:
@@ -201,8 +201,8 @@ class BaseTrialController(TrialController):
         execution_info = ExecutionInfo()
         
         try:
-            # Store study ID for log flushing
-            self._current_study_id = trial_config.study_id
+            # Store study name for log flushing
+            self._current_study_name = trial_config.study_name
             
             # Setup trial-specific logging first
             self._setup_trial_logging(trial_config)

@@ -41,12 +41,9 @@ class StudyController:
         self.completed_trials = 0
         
     @staticmethod
-    def get_study_id(study_name: str) -> int:
-        """Get consistent study ID from study name."""
-        import hashlib
-        # 31-bit positive integer (PostgreSQL INTEGER range)
-        digest = hashlib.sha256(study_name.encode("utf-8")).hexdigest()
-        return int(digest[:8], 16) % 2147483647
+    def get_study_identifier(study_name: str) -> str:
+        """Get study identifier - now just returns the study name for consistency."""
+        return study_name
     @classmethod
     def create_from_config(
         cls, 
@@ -140,10 +137,9 @@ class StudyController:
             else:
                 raise RuntimeError(f"Failed to create Optuna study: {e}")
         
-        # Generate and prominently log study ID
-        study_id = cls.get_study_id(config.study_name)
+        # Log study information
         logger.info(f"Created study: {config.study_name} with {config.optimization.sampler} sampler")
-        logger.info(f"🔍 STUDY ID: {study_id} (use this ID for log viewing)")
+        logger.info(f"🔍 Study Name: {config.study_name} (use this name for log viewing)")
         
         # Initialize logging infrastructure if configured
         log_database_url = None
@@ -158,13 +154,13 @@ class StudyController:
             log_database_url = config.database_url
         elif not log_database_url and not log_file_path and not config.database_url:
             # No PostgreSQL available - enforce file logging mode
-            log_file_path = f"./logs/study_{study_id}"
+            log_file_path = f"./logs/{config.study_name}"
             logger.info(f"No PostgreSQL available - using file logging: {log_file_path}")
         
         try:
             # Initialize CentralizedLogger
             CentralizedLogger(
-                study_id=study_id,
+                study_name=config.study_name,
                 pg_url=log_database_url,
                 file_path=log_file_path,
                 log_level=config.logging_config.get("log_level", "INFO") if config.logging_config else "INFO"
@@ -173,16 +169,131 @@ class StudyController:
             # Provide appropriate log viewing instructions
             if log_file_path:
                 logger.info(f"📋 File logging enabled. Logs will be written to: {log_file_path}")
-                logger.info(f"📋 View logs with: auto-tune-vllm logs --study-id {study_id} --log-path {log_file_path}")
+                logger.info(f"📋 View logs with: auto-tune-vllm logs --study-name {config.study_name} --log-path {log_file_path}")
             elif log_database_url:
-                logger.info(f"📋 Database logging ready. View logs with: auto-tune-vllm logs --study-id {study_id} --database-url {log_database_url}")
+                logger.info(f"📋 Database logging ready. View logs with: auto-tune-vllm logs --study-name {config.study_name} --database-url {log_database_url}")
                 
         except Exception as e:
             logger.warning(f"Failed to initialize logging infrastructure: {e}")
             if log_file_path:
-                logger.info(f"📋 To view file logs: auto-tune-vllm logs --study-id {study_id} --log-path {log_file_path}")
+                logger.info(f"📋 To view file logs: auto-tune-vllm logs --study-name {config.study_name} --log-path {log_file_path}")
             elif log_database_url:
-                logger.info(f"📋 To view logs: auto-tune-vllm logs --study-id {study_id} --database-url {log_database_url}")
+                logger.info(f"📋 To view logs: auto-tune-vllm logs --study-name {config.study_name} --database-url {log_database_url}")
+            else:
+                logger.info("📋 Console logging only - no file or database logging configured")
+        
+        return cls(backend, study, config)
+    
+    @classmethod
+    def resume_from_config(
+        cls, 
+        backend: ExecutionBackend, 
+        config: StudyConfig
+    ) -> StudyController:
+        """Resume an existing study from configuration. Fails if study doesn't exist."""
+        # Verify database connection before proceeding (only if using PostgreSQL)
+        if config.database_url and not verify_database_connection(config.database_url):
+            raise RuntimeError(
+                f"Cannot connect to database: {config.database_url}. "
+                f"Please check your database connection."
+            )
+        
+        # Create sampler based on config
+        sampler = cls._create_sampler(config)
+        
+        # Determine storage backend for Optuna study
+        if config.database_url:
+            storage = config.database_url
+            storage_type = "PostgreSQL"
+        elif config.storage_file:
+            # Ensure directory exists for file-based storage
+            storage_path = Path(config.storage_file)
+            if not storage_path.exists():
+                raise RuntimeError(
+                    f"Study '{config.study_name}' not found in storage. "
+                    f"Storage file does not exist: {config.storage_file}. "
+                    f"Options:\n"
+                    f"  • Use 'auto-tune-vllm optimize --config <config_file>' to create a new study\n"
+                    f"  • Verify the study name and storage path are correct"
+                )
+            storage = f"sqlite:///{config.storage_file}"
+            storage_type = "SQLite file"
+        else:
+            # This should not happen due to validation in config.py
+            raise RuntimeError("No storage configuration found. Cannot resume study.")
+        
+        logger.info(f"Using {storage_type} storage for resuming Optuna study")
+        logger.info(f"Storage location: {storage}")
+        
+        # Try to load existing study - this will fail if the study doesn't exist
+        logger.info(f"Attempting to resume existing study: {config.study_name}")
+        
+        try:
+            study = optuna.load_study(
+                storage=storage,
+                study_name=config.study_name,
+                sampler=sampler
+            )
+        except Exception as e:
+            # Provide helpful error messages for common resume failures
+            if "not found" in str(e).lower() or "does not exist" in str(e).lower():
+                raise RuntimeError(
+                    f"Study '{config.study_name}' not found in storage. "
+                    f"Options:\n"
+                    f"  • Use 'auto-tune-vllm optimize --config <config_file>' to create a new study\n"
+                    f"  • Verify the study name is correct\n"
+                    f"  • Check that the storage location contains the study"
+                )
+            elif config.database_url and ("database" in str(e).lower() or "connection" in str(e).lower()):
+                raise RuntimeError(
+                    f"Failed to connect to database for resuming study: {e}. "
+                    f"Please check your database connection."
+                )
+            else:
+                raise RuntimeError(f"Failed to resume study '{config.study_name}': {e}")
+        
+        # Log study information
+        logger.info(f"Successfully resumed study: {config.study_name}")
+        logger.info(f"🔍 Study Name: {config.study_name} (use this name for log viewing)")
+        
+        # Initialize logging infrastructure if configured (same as create_from_config)
+        log_database_url = None
+        log_file_path = None
+        
+        if config.logging_config:
+            log_database_url = config.logging_config.get("database_url")
+            log_file_path = config.logging_config.get("file_path")
+            
+        # Default to main database if no specific logging config and database is available
+        if not log_database_url and not log_file_path and config.database_url:
+            log_database_url = config.database_url
+        elif not log_database_url and not log_file_path and not config.database_url:
+            # No PostgreSQL available - enforce file logging mode
+            log_file_path = f"./logs/{config.study_name}"
+            logger.info(f"No PostgreSQL available - using file logging: {log_file_path}")
+        
+        try:
+            # Initialize CentralizedLogger
+            CentralizedLogger(
+                study_name=config.study_name,
+                pg_url=log_database_url,
+                file_path=log_file_path,
+                log_level=config.logging_config.get("log_level", "INFO") if config.logging_config else "INFO"
+            )
+            
+            # Provide appropriate log viewing instructions
+            if log_file_path:
+                logger.info(f"📋 File logging enabled. Logs will be written to: {log_file_path}")
+                logger.info(f"📋 View logs with: auto-tune-vllm logs --study-name {config.study_name} --log-path {log_file_path}")
+            elif log_database_url:
+                logger.info(f"📋 Database logging ready. View logs with: auto-tune-vllm logs --study-name {config.study_name} --database-url {log_database_url}")
+                
+        except Exception as e:
+            logger.warning(f"Failed to initialize logging infrastructure: {e}")
+            if log_file_path:
+                logger.info(f"📋 To view file logs: auto-tune-vllm logs --study-name {config.study_name} --log-path {log_file_path}")
+            elif log_database_url:
+                logger.info(f"📋 To view logs: auto-tune-vllm logs --study-name {config.study_name} --database-url {log_database_url}")
             else:
                 logger.info("📋 Console logging only - no file or database logging configured")
         
@@ -396,7 +507,7 @@ class StudyController:
                 parameters[param_name] = value
         
         return TrialConfig(
-            study_id=self.get_study_id(self.config.study_name),
+            study_name=self.config.study_name,
             trial_number=trial.number,
             parameters=parameters,
             benchmark_config=self.config.benchmark,
@@ -442,9 +553,8 @@ class StudyController:
     
     def resume_study(self) -> StudyController:
         """Resume an existing study from the database."""
-        study_id = self.get_study_id(self.config.study_name)
         logger.info(f"Resuming study: {self.config.study_name}")
-        logger.info(f"🔍 STUDY ID: {study_id} (use this ID for log viewing)")
+        logger.info(f"🔍 Study Name: {self.config.study_name} (use this name for log viewing)")
         
         # Provide appropriate log viewing instructions based on logging configuration
         log_database_url = None
@@ -459,15 +569,15 @@ class StudyController:
             log_database_url = self.config.database_url
         elif not log_database_url and not log_file_path and not self.config.database_url:
             # No PostgreSQL available - use file logging
-            log_file_path = f"./logs/study_{study_id}"
+            log_file_path = f"./logs/{self.config.study_name}"
         
         # Display appropriate instructions using the unified logs command
         if log_file_path:
-            logger.info(f"📋 View logs with: auto-tune-vllm logs --study-id {study_id} --log-path {log_file_path}")
+            logger.info(f"📋 View logs with: auto-tune-vllm logs --study-name {self.config.study_name} --log-path {log_file_path}")
         elif log_database_url:
-            logger.info(f"📋 View logs with: auto-tune-vllm logs --study-id {study_id} --database-url {log_database_url}")
+            logger.info(f"📋 View logs with: auto-tune-vllm logs --study-name {self.config.study_name} --database-url {log_database_url}")
         else:
-            logger.info(f"📋 Console logging only - no database or file logging configured")
+            logger.info("📋 Console logging only - no database or file logging configured")
         
         # Count existing trials
         n_existing = len(self.study.trials)

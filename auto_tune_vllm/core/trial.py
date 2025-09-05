@@ -41,7 +41,7 @@ def calculate_gpu_requirements(parameters: Dict[str, Any]) -> int:
 class TrialConfig:
     """Configuration for a single optimization trial."""
     
-    study_id: int
+    study_name: str
     trial_number: int
     parameters: Dict[str, Any]  # vLLM parameters from Optuna
     benchmark_config: BenchmarkConfig

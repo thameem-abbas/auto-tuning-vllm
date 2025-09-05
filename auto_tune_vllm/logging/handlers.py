@@ -8,9 +8,9 @@ from pathlib import Path
 class PostgreSQLLogHandler(logging.Handler):
     """Log handler that writes to PostgreSQL database."""
     
-    def __init__(self, study_id: int, trial_number: int, component: str, pg_url: str):
+    def __init__(self, study_name: str, trial_number: int, component: str, pg_url: str):
         super().__init__()
-        self.study_id = study_id
+        self.study_name = study_name
         self.trial_number = trial_number
         self.component = component
         self.pg_url = pg_url
@@ -33,10 +33,10 @@ class PostgreSQLLogHandler(logging.Handler):
                 with conn.cursor() as cur:
                     cur.execute("""
                         INSERT INTO trial_logs 
-                        (study_id, trial_number, component, timestamp, level, message, worker_node)
+                        (study_name, trial_number, component, timestamp, level, message, worker_node)
                         VALUES (%s, %s, %s, %s, %s, %s, %s)
                     """, (
-                        self.study_id,
+                        self.study_name,
                         self.trial_number,
                         self.component,
                         datetime.fromtimestamp(record.created),
@@ -67,14 +67,14 @@ class PostgreSQLLogHandler(logging.Handler):
 class LocalFileHandler(logging.Handler):
     """Log handler that writes to local files."""
     
-    def __init__(self, study_id: int, trial_number: int, component: str, log_path: str):
+    def __init__(self, study_name: str, trial_number: int, component: str, log_path: str):
         super().__init__()
-        self.study_id = study_id
+        self.study_name = study_name
         self.trial_number = trial_number
         self.component = component
         
-        # Create log file path
-        self.log_file = Path(log_path) / f"study_{study_id}" / f"trial_{trial_number}" / f"{component}.log"
+        # Create log file path - use study name directly as folder name
+        self.log_file = Path(log_path) / study_name / f"trial_{trial_number}" / f"{component}.log"
         self.log_file.parent.mkdir(parents=True, exist_ok=True)
         
         # Setup formatter with timestamp and worker info

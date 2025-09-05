@@ -38,7 +38,7 @@ def setup_logging(verbose: bool = False):
     )
 
 
-def _display_log_viewing_instructions(config: StudyConfig, study_id: int):
+def _display_log_viewing_instructions(config: StudyConfig):
     """Display appropriate log viewing instructions based on logging configuration."""
     # Determine the correct logging database URL or file path
     log_database_url = None
@@ -53,13 +53,13 @@ def _display_log_viewing_instructions(config: StudyConfig, study_id: int):
         log_database_url = config.database_url
     elif not log_database_url and not log_file_path and not config.database_url:
         # No PostgreSQL available - use file logging
-        log_file_path = f"./logs/study_{study_id}"
+        log_file_path = f"./logs/{config.study_name}"
     
     # Display appropriate instructions using the unified logs command
     if log_file_path:
-        console.print(f"[blue]📋 View logs with: auto-tune-vllm logs --study-id {study_id} --log-path {log_file_path}[/blue]")
+        console.print(f"[blue]📋 View logs with: auto-tune-vllm logs --study-name {config.study_name} --log-path {log_file_path}[/blue]")
     elif log_database_url:
-        console.print(f"[blue]📋 View logs with: auto-tune-vllm logs --study-id {study_id} --database-url {log_database_url}[/blue]")
+        console.print(f"[blue]📋 View logs with: auto-tune-vllm logs --study-name {config.study_name} --database-url {log_database_url}[/blue]")
     else:
         console.print("[blue]📋 Console logging only - no database or file logging configured[/blue]")
 
@@ -193,14 +193,8 @@ def clear_study_command(
                 console.print("[yellow]Operation cancelled[/yellow]")
                 raise typer.Exit(0)
         
-        # Get study_id for logs using the same method as StudyController
-        study_id = None
-        if clear_logs:
-            from ..core.study_controller import StudyController
-            study_id = StudyController.get_study_id(study_name)
-        
         # Perform the clearing
-        result = clear_study_data(study_name, database_url, clear_logs, logs_db_url, study_id)
+        result = clear_study_data(study_name, database_url, clear_logs, logs_db_url)
         
         if result["success"]:
             console.print(f"[bold green]✅ Successfully cleared study '{study_name}'[/bold green]")
@@ -229,12 +223,11 @@ def run_optimization_sync(
     # Create study controller
     controller = StudyController.create_from_config(backend, config, create_db=create_db)
     
-    # Display study ID prominently in the CLI
-    study_id = StudyController.get_study_id(config.study_name)
-    console.print(f"[bold cyan]🔍 Study ID: {study_id}[/bold cyan]")
+    # Display study name prominently in the CLI
+    console.print(f"[bold cyan]🔍 Study Name: {config.study_name}[/bold cyan]")
     
     # Show appropriate log viewing instructions based on logging configuration
-    _display_log_viewing_instructions(config, study_id)
+    _display_log_viewing_instructions(config)
     console.print()  # Add blank line for better readability
     
     total_trials = n_trials or config.optimization.n_trials
@@ -311,7 +304,7 @@ def display_optimization_results(controller: StudyController):
 
 @app.command("logs")
 def logs_command(
-    study_id: int = typer.Option(..., "--study-id", help="Study ID"),
+    study_name: str = typer.Option(..., "--study-name", help="Study Name"),
     database_url: Optional[str] = typer.Option(None, "--database-url", help="PostgreSQL database URL for remote logs"),
     log_path: Optional[str] = typer.Option(None, "--log-path", help="Base log directory path for file logs"),
     trial_number: Optional[int] = typer.Option(None, "--trial", help="Specific trial number"),
@@ -328,9 +321,9 @@ def logs_command(
         console.print("[bold red]Error: Must specify either --database-url or --log-path[/bold red]")
         console.print("Examples:")
         console.print("  # View database logs:")
-        console.print("  auto-tune-vllm logs --study-id 123 --database-url postgresql://...")
+        console.print("  auto-tune-vllm logs --study-name my_study --database-url postgresql://...")
         console.print("  # View file logs:")
-        console.print("  auto-tune-vllm logs --study-id 123 --log-path /path/to/logs")
+        console.print("  auto-tune-vllm logs --study-name my_study --log-path /path/to/logs")
         raise typer.Exit(1)
     
     if database_url and log_path:
@@ -340,12 +333,12 @@ def logs_command(
     
     if database_url:
         # Use database logging (original logs command logic)
-        console.print(f"[blue]Streaming logs for study {study_id} from database[/blue]")
+        console.print(f"[blue]Streaming logs for study {study_name} from database[/blue]")
         if follow:
             console.print(f"[dim]Showing last {tail_lines} lines, then following new logs...[/dim]")
         
         try:
-            streamer = LogStreamer(study_id, database_url)
+            streamer = LogStreamer(study_name, database_url)
             
             # TODO: Make log streaming synchronous too
             import asyncio
@@ -362,15 +355,15 @@ def logs_command(
     
     else:
         # Use file logging (original view-file-logs command logic)
-        console.print(f"[blue]Viewing file logs for study {study_id}[/blue]")
+        console.print(f"[blue]Viewing file logs for study {study_name}[/blue]")
         
         try:
             from pathlib import Path
             
-            study_dir = Path(log_path) / f"study_{study_id}"
+            study_dir = Path(log_path) / study_name
             
             if not study_dir.exists():
-                console.print(f"[yellow]No logs found for study {study_id} in {log_path}[/yellow]")
+                console.print(f"[yellow]No logs found for study {study_name} in {log_path}[/yellow]")
                 console.print(f"Expected directory: {study_dir}")
                 return
             
@@ -422,7 +415,7 @@ def logs_command(
 
 @app.command("view-file-logs", deprecated=True)
 def view_file_logs_command(
-    study_id: int = typer.Option(..., "--study-id", help="Study ID"),
+    study_name: str = typer.Option(..., "--study-name", help="Study Name"),
     log_path: str = typer.Option(..., "--log-path", help="Base log directory path"),
     trial_number: Optional[int] = typer.Option(None, "--trial", help="Specific trial number"),
     component: Optional[str] = typer.Option(None, "--component", help="Component (vllm, benchmark, controller)"),
@@ -431,17 +424,17 @@ def view_file_logs_command(
 ):
     """[DEPRECATED] View logs from local files. Use 'logs --log-path' instead."""
     console.print("[yellow]⚠️  WARNING: 'view-file-logs' command is deprecated.[/yellow]")
-    console.print("[yellow]   Use 'auto-tune-vllm logs --study-id {} --log-path {}' instead.[/yellow]".format(study_id, log_path))
+    console.print("[yellow]   Use 'auto-tune-vllm logs --study-name {} --log-path {}' instead.[/yellow]".format(study_name, log_path))
     console.print()
-    console.print(f"[blue]Viewing file logs for study {study_id}[/blue]")
+    console.print(f"[blue]Viewing file logs for study {study_name}[/blue]")
     
     try:
         from pathlib import Path
         
-        study_dir = Path(log_path) / f"study_{study_id}"
+        study_dir = Path(log_path) / study_name
         
         if not study_dir.exists():
-            console.print(f"[yellow]No logs found for study {study_id} in {log_path}[/yellow]")
+            console.print(f"[yellow]No logs found for study {study_name} in {log_path}[/yellow]")
             console.print(f"Expected directory: {study_dir}")
             return
         
@@ -504,7 +497,7 @@ def resume_command(
     venv_path: Optional[str] = typer.Option(None, "--venv-path", help="Virtual environment path for Ray workers"),
     conda_env: Optional[str] = typer.Option(None, "--conda-env", help="Conda environment name for Ray workers"),
 ):
-    """Resume an existing optimization study."""
+    """Resume an existing optimization study. Fails if the study doesn't exist."""
     setup_logging(verbose)
     
     # Validate Python environment options (exactly one should be specified)
@@ -563,17 +556,14 @@ def resume_study_sync(
     max_concurrent: Optional[int]
 ):
     """Resume study execution."""
-    controller = StudyController.create_from_config(backend, config)
+    controller = StudyController.resume_from_config(backend, config)
     
-    # Display study ID prominently in the CLI
-    study_id = StudyController.get_study_id(config.study_name)
-    console.print(f"[bold cyan]🔍 Study ID: {study_id}[/bold cyan]")
+    # Display study name prominently in the CLI
+    console.print(f"[bold cyan]🔍 Study Name: {config.study_name}[/bold cyan]")
     
     # Show appropriate log viewing instructions based on logging configuration
-    _display_log_viewing_instructions(config, study_id)
+    _display_log_viewing_instructions(config)
     console.print()  # Add blank line for better readability
-    
-    controller.resume_study()
     
     # Count existing trials to determine how many more to run
     n_existing = len(controller.study.trials)
@@ -690,8 +680,8 @@ def setup_logging_command(
             console.print("Tables: trial_logs (with indexes)")
             
             if study_id:
-                console.print(f"\n[blue]You can now view logs for study {study_id}:[/blue]")
-                console.print(f"auto-tune-vllm logs --study-id {study_id} --database-url {database_url}")
+                console.print(f"\n[blue]You can now view logs for study with ID {study_id}:[/blue]")
+                console.print(f"auto-tune-vllm logs --study-name <study_name> --database-url {database_url}")
         
         if file_path:
             # Setup file logging
@@ -711,12 +701,12 @@ def setup_logging_command(
             
             console.print("[bold green]✅ File logging directory ready[/bold green]")
             console.print(f"Log path: {file_path}")
-            console.print(f"Structure: {file_path}/study_<ID>/trial_<NUM>/<component>.log")
+            console.print(f"Structure: {file_path}/<study_name>/trial_<NUM>/<component>.log")
             console.print("[dim]Note: This setup is optional - just add 'file_path' to your study config instead![/dim]")
             
             if study_id:
-                console.print(f"\n[blue]You can view logs for study {study_id} with:[/blue]")
-                console.print(f"auto-tune-vllm view-file-logs --study-id {study_id} --log-path {file_path}")
+                console.print("\n[blue]You can view logs for any study with:[/blue]")
+                console.print(f"auto-tune-vllm logs --study-name <study_name> --log-path {file_path}")
         
     except Exception as e:
         console.print(f"[bold red]Failed to setup logging: {e}[/bold red]")
@@ -864,8 +854,8 @@ def main():
         console.print("\nUse --help for available commands")
         console.print("\nQuick start:")
         console.print("  auto-tune-vllm optimize --config study.yaml")
-        console.print("  auto-tune-vllm logs --study-id 42 --database-url postgresql://...")
-        console.print("  auto-tune-vllm view-file-logs --study-id 42 --log-path /path/to/logs")
+        console.print("  auto-tune-vllm logs --study-name my_study --database-url postgresql://...")
+        console.print("  auto-tune-vllm logs --study-name my_study --log-path /path/to/logs")
         console.print("  auto-tune-vllm setup-logging --database-url postgresql://...")
         console.print("  auto-tune-vllm clear-study --study-name my_study --database-url postgresql://...")
         sys.exit(0)
