@@ -497,7 +497,9 @@ def resume_command(
     backend: str = typer.Option("ray", "--backend", "-b", help="Execution backend: 'ray' (only supported option)"),
     n_trials: Optional[int] = typer.Option(None, "--trials", "-n", help="Number of additional trials to run"),
     n_total_trials: Optional[int] = typer.Option(None, "--total-trials", help="Total number of trials to reach (overrides config)"),
+    max_concurrent: Optional[int] = typer.Option(None, "--max-concurrent", help="Max concurrent trials"),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose logging"),
+    start_ray_head: bool = typer.Option(False, "--start-ray-head", help="Start Ray head if no cluster is found"),
     python_executable: Optional[str] = typer.Option(None, "--python-executable", help="Explicit Python executable path for Ray workers"),
     venv_path: Optional[str] = typer.Option(None, "--venv-path", help="Virtual environment path for Ray workers"),
     conda_env: Optional[str] = typer.Option(None, "--conda-env", help="Conda environment name for Ray workers"),
@@ -527,11 +529,14 @@ def resume_command(
         # Create backend
         if backend.lower() == "ray":
             execution_backend = RayExecutionBackend(
+                start_ray_head=start_ray_head,
                 python_executable=python_executable,
                 venv_path=venv_path,
                 conda_env=conda_env
             )
             console.print("[blue]Using Ray distributed execution[/blue]")
+            if start_ray_head:
+                console.print("[blue]Will start Ray head if no cluster found[/blue]")
       
         else:
             console.print("[bold red]Error: Local execution backend is not supported in this version.[/bold red]")
@@ -541,7 +546,7 @@ def resume_command(
             raise typer.Exit(1)
         
         # Resume study
-        resume_study_sync(execution_backend, study_config, n_trials, n_total_trials)
+        resume_study_sync(execution_backend, study_config, n_trials, n_total_trials, max_concurrent)
         
     except Exception as e:
         console.print(f"[bold red]Resume failed: {e}[/bold red]")
@@ -554,7 +559,8 @@ def resume_study_sync(
     backend, 
     config: StudyConfig, 
     n_trials: Optional[int],
-    n_total_trials: Optional[int]
+    n_total_trials: Optional[int],
+    max_concurrent: Optional[int]
 ):
     """Resume study execution."""
     controller = StudyController.create_from_config(backend, config)
@@ -575,7 +581,7 @@ def resume_study_sync(
     if n_trials is not None:
         # --trials specifies additional trials to run
         console.print(f"Running {n_trials} additional trials...")
-        controller.run_optimization(n_trials)
+        controller.run_optimization(n_trials, max_concurrent)
     elif n_total_trials is not None:
         # --total-trials specifies total trials to run
         if n_total_trials <= n_existing:
@@ -584,7 +590,7 @@ def resume_study_sync(
         else:
             trials_to_run = n_total_trials - n_existing
             console.print(f"Running {trials_to_run} more trials to reach total of {n_total_trials} trials...")
-            controller.run_optimization(trials_to_run)
+            controller.run_optimization(trials_to_run, max_concurrent)
     else:
         console.print("Study resumed. Use --trials to run additional trials or --total-trials to set total trial count.")
 
