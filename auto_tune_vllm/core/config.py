@@ -143,7 +143,7 @@ class OptimizationConfig:
             self.objectives = [ObjectiveConfig(
                 metric="output_tokens_per_second",
                 direction="maximize",
-                percentile="median"
+                percentile="mean"
             )]
         elif self.preset == "low_latency":
             self.approach = "single_objective"
@@ -158,7 +158,7 @@ class OptimizationConfig:
                 ObjectiveConfig(
                     metric="output_tokens_per_second",
                     direction="maximize",
-                    percentile="median"
+                    percentile="mean"
                 ),
                 ObjectiveConfig(
                     metric="request_latency",
@@ -227,7 +227,7 @@ class OptimizationConfig:
         self.objectives = [ObjectiveConfig(
             metric="output_tokens_per_second",
             direction="maximize",
-            percentile="median"
+            percentile="mean"
         )]
     
     @property

@@ -6,25 +6,38 @@ study:
   
 optimization:
   # High-throughput optimization: Maximize token generation rate
-  approach: "single_objective"
-  objective:
-    metric: "output_tokens_per_second"  # Throughput optimization
-    direction: "maximize"
-    percentile: "median"  # Use median for stable results
-  sampler: "tpe"
-  n_trials: 1
+  # approach: "single_objective"
+  # objective:
+  #   metric: "output_tokens_per_second"  # Throughput optimization
+  #   direction: "maximize"
+  #   percentile: "mean"  # Use median for stable results
+  # # sampler: "tpe"
+  # n_trials: 1
   
   # Alternative: Use preset for common configurations
-  # preset: "high_throughput"
+  preset: "high_throughput" 
+  # options are: high_throughput, low_latency, balanced
+
+  # Alternative: Multi-objective (throughput vs latency)
+  # approach: "multi_objective"
+  # objectives:
+  #   - metric: "output_tokens_per_second"
+  #     direction: "maximize"
+  #     percentile: "mean"
+  #   - metric: "request_latency"
+  #     direction: "minimize"
+  #     percentile: "median"
+  sampler: "botorch"
+  n_trials: 200
   
 benchmark:
   benchmark_type: "guidellm"
-  model: "RedHatAI/Qwen3-1.7B-FP8-dynamic"  # Small model for quick testing
-  max_seconds: 30                 # Short benchmark time
+  model: "RedHatAI/Qwen3-1.7B-FP8-dynamic"  
+  max_seconds: 240                 
   dataset: null  # Use synthetic data
-  prompt_tokens: 100   # Smaller for quick test
-  output_tokens: 100
-  rate: 10              # Low concurrency for local testing
+  prompt_tokens: 2000   
+  output_tokens: 2000
+  rate: 30             
   
 logging:
   file_path: "/tmp/auto-tune-vllm-local-run/logs"  # Local temp folder

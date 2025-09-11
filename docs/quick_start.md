@@ -46,9 +46,49 @@ auto-tune-vllm --help
 ### 3) Configure the Study
 
 Start from `examples/study_config_local_exec.yaml`:
-- Set/confirm the study name and model
-- Choose the optimization objective(s) (e.g., throughput)
-- Adjust parameter ranges for tunables you want to explore
+- Set/confirm the study name and model ([Study Configuration](configuration.md#study-configuration))
+- Choose the optimization objective(s) (e.g., throughput) ([Optimization Configuration](configuration.md#optimization-configuration))
+- Adjust parameter ranges for tunables you want to explore ([Parameter Configuration](configuration.md#parameter-configuration))
+
+#### Using Optimization Presets (Recommended)
+
+**Use presets for common optimization scenarios** - they're pre-configured for best results:
+
+```yaml
+optimization:
+  preset: "high_throughput"  # Maximize token generation rate
+  n_trials: 100
+```
+
+**Available presets:**
+- `"high_throughput"`: Maximize output tokens per second
+- `"low_latency"`: Minimize request latency (95th percentile)
+- `"balanced"`: Multi-objective optimization (throughput vs latency)
+
+**To customize or add presets:**
+- Edit the `_apply_preset()` method in `auto_tune_vllm/core/config.py` (line 139)
+- Add new preset conditions or modify existing ones
+
+#### What Gets Optimized
+
+The optimizer will tune parameters you mark as `enabled: true` in your config. Parameters you don't specify use vLLM defaults.
+
+**Quick example:**
+```yaml
+parameters:
+  gpu_memory_utilization:
+    enabled: true
+    min: 0.85
+    max: 0.95
+  # Other parameters use vLLM defaults
+```
+
+**To customize optimization ranges** (for better results after initial studies):
+- Edit `auto_tune_vllm/schemas/v0_10_1_1.yaml` 
+- Narrow ranges around promising values from previous runs
+- **Don't change the `default` values** - only adjust `min`/`max`/`options`
+
+> 💡 **Tip**: Start simple with 2-3 key parameters, then expand based on results. See [Parameter Configuration](configuration.md#parameter-configuration) for all available parameters.
 
 ### 4) Validate Configuration
 
@@ -103,6 +143,8 @@ If you configured PostgreSQL logging:
 auto-tune-vllm logs --study-id <your_study_id> --database-url postgresql://user:pass@host:5432/db
 ```
 
+> See [Logging Configuration](configuration.md#logging-configuration) for detailed logging options.
+
 ### View Study in Optuna Dashboard
 
 Use the Optuna Dashboard Web UI (no local install needed):
@@ -147,5 +189,6 @@ You can now explore optimization history, parameter importance, and parallel coo
 
 - Inspect resources on your cluster: `auto-tune-vllm check-env --ray-cluster`
 - Calibrate concurrency based on available GPUs (e.g., 1 GPU per trial to start)
+- Explore advanced configuration options: [Configuration Guide](configuration.md)
 
 Project home: [Auto‑Tune vLLM (GitHub)](https://github.com/openshift-psap/auto-tuning-vllm/tree/main)
