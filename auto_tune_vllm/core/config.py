@@ -253,6 +253,25 @@ class OptimizationConfig:
 
 
 @dataclass
+class BaselineConfig:
+    """Configuration for baseline trials."""
+    
+    enabled: bool = False
+    run_first: bool = True  # Run baseline before optimization trials
+    concurrency_levels: List[int] = field(default_factory=lambda: [50])  # Concurrency levels to test
+    
+    def __post_init__(self):
+        """Validate baseline configuration."""
+        if self.enabled and not self.concurrency_levels:
+            raise ValueError("Baseline configuration requires at least one concurrency level")
+        
+        if self.enabled:
+            for concurrency in self.concurrency_levels:
+                if not isinstance(concurrency, int) or concurrency <= 0:
+                    raise ValueError(f"Invalid concurrency level: {concurrency}. Must be positive integer")
+
+
+@dataclass
 class StudyConfig:
     """Complete study configuration."""
     
@@ -261,6 +280,7 @@ class StudyConfig:
     optimization: OptimizationConfig
     benchmark: BenchmarkConfig
     parameters: Dict[str, ParameterConfig] = field(default_factory=dict)
+    baseline: Optional[BaselineConfig] = None  # NEW: Baseline configuration
     logging_config: Optional[Dict[str, Any]] = None
     storage_file: Optional[str] = None  # Alternative to database_url for file-based storage
     study_prefix: Optional[str] = None  # For auto-generated study names with custom prefix
@@ -513,12 +533,20 @@ class ConfigValidator:
         if database_url and storage_file:
             raise ValueError("Cannot specify both database_url and storage_file. Choose one storage method.")
         
+        # Handle baseline configuration
+        baseline_config = None
+        if "baseline" in raw_config:
+            baseline_data = raw_config["baseline"]
+            if baseline_data.get("enabled", False):
+                baseline_config = BaselineConfig(**baseline_data)
+        
         return StudyConfig(
             study_name=study_name,
             database_url=database_url,
             optimization=optimization,
             benchmark=benchmark, 
             parameters=validated_params,
+            baseline=baseline_config,
             logging_config=raw_config.get("logging"),
             storage_file=storage_file,
             study_prefix=study_prefix,

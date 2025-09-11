@@ -392,6 +392,10 @@ class StudyController:
                    f"max concurrent: {max_concurrent if max_concurrent != float('inf') else 'unlimited'}")
         
         try:
+            # Run baseline trials first if configured
+            if self.config.baseline and self.config.baseline.enabled and self.config.baseline.run_first:
+                self._run_baseline_trials()
+            
             while self.completed_trials < total_trials:
                 # Submit new trials up to concurrency limit
                 self._submit_available_trials(
@@ -584,3 +588,46 @@ class StudyController:
         logger.info(f"Found {n_existing} existing trials in study")
         
         return self
+    
+    def _run_baseline_trials(self):
+        """Run baseline trials using pure vLLM defaults + max-num-seqs."""
+        logger.info("🔄 Running baseline trials...")
+        
+        for concurrency in self.config.baseline.concurrency_levels:
+            logger.info(f"Running baseline trial with concurrency={concurrency}")
+            
+            # Create baseline trial config with only max-num-seqs parameter
+            baseline_parameters = {
+                "max_num_seqs": concurrency
+            }
+            
+            # Create special baseline trial configuration
+            baseline_trial_config = TrialConfig(
+                study_name=self.config.study_name,
+                trial_number=-1,  # Use negative number to distinguish from optimization trials
+                parameters=baseline_parameters,
+                benchmark_config=self.config.benchmark,
+                optimization_config=self.config.optimization,
+                logging_config=self.config.logging_config
+            )
+            
+            try:
+                # Submit baseline trial to execution backend
+                job_handle = self.backend.submit_trial(baseline_trial_config)
+                
+                # Wait for baseline trial to complete
+                logger.info(f"⏳ Waiting for baseline trial (concurrency={concurrency}) to complete...")
+                trial_result = job_handle.get_result(timeout_seconds=7200)  # 2 hour timeout
+                
+                # Log baseline results (don't add to Optuna study)
+                metrics = trial_result.objective_values
+                logger.info(f"✅ Baseline trial (concurrency={concurrency}) completed:")
+                for metric_name, value in metrics.items():
+                    logger.info(f"  {metric_name}: {value}")
+                
+            except Exception as e:
+                logger.error(f"❌ Baseline trial (concurrency={concurrency}) failed: {e}")
+                # Continue with other concurrency levels
+                continue
+        
+        logger.info("✅ Baseline trials completed")
