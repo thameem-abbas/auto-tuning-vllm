@@ -103,6 +103,17 @@ If you configured PostgreSQL logging:
 auto-tune-vllm logs --study-id <your_study_id> --database-url postgresql://user:pass@host:5432/db
 ```
 
+### View Study in Optuna Dashboard
+
+Use the Optuna Dashboard Web UI (no local install needed):
+
+- Open the dashboard in your browser: https://optuna.github.io/optuna-dashboard/#/
+- After your study finishes, locate the SQLite file created by the run:
+  - `optuna_studies/<study_name>/study.db`
+- Drag-and-drop the `study.db` file into the dashboard page.
+
+You can now explore optimization history, parameter importance, and parallel coordinates to see how configurations evolved over the study.
+
 ### Troubleshooting
 
 - Error: "At least one Python environment option must be specified"
