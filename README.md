@@ -16,7 +16,8 @@ A distributed hyperparameter optimization framework for vLLM serving, built with
 - 📈 **Multi-Objective**: Support for throughput vs latency trade-offs
 - 🔧 **Extensible**: Plugin system for custom benchmarks
 
-## Quick Start
+## Quick Start (5 minutes)
+For a detailed starter guide, see the [Quick Start Guide](docs/quick_start.md).
 
 ### Installation
 
