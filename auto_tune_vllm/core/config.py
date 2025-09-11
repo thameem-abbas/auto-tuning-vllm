@@ -158,7 +158,7 @@ class OptimizationConfig:
                 ObjectiveConfig(
                     metric="output_tokens_per_second",
                     direction="maximize",
-                    percentile="median"
+                    percentile="mean"
                 ),
                 ObjectiveConfig(
                     metric="request_latency",
