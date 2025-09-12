@@ -356,6 +356,69 @@ Focus on high-impact parameters first:
 - **Medium impact**: `block_size`, `dtype`  
 - **Low impact**: `scheduler_delay_factor`, `compilation_config`
 
+#### Performance Notes for High-Impact Parameters
+
+**`kv_cache_dtype`**: FP8 typically provides 2x+ throughput improvement over "auto". Consider using FP8 if your model supports it.
+
+**`gpu_memory_utilization`**: Values below 0.9 significantly reduce performance. Start optimization around 0.9-0.95 range.
+
+**`max_num_batched_tokens`**: Higher values generally improve throughput but increase memory usage. Balance with `gpu_memory_utilization`.
+
+## Baseline Configuration
+
+Baseline trials establish performance baselines using pure vLLM defaults before running optimization. This helps measure optimization improvements and provides reference performance data.
+
+### Baseline Configuration Fields
+
+```yaml
+baseline:
+  enabled: true
+  run_first: true  # Run baseline before optimization trials
+  concurrency_levels: [50, 100, 150]  # Test multiple load levels
+```
+
+#### Configuration Fields:
+- **`enabled`** (boolean): Enable baseline trials
+- **`run_first`** (boolean): Run baseline trials before optimization (recommended: true)
+- **`concurrency_levels`** (array): List of concurrency levels to test baseline performance
+
+### Baseline Trial Behavior
+
+Baseline trials use **pure vLLM defaults** with only one parameter modified:
+- `--max-num-seqs` is set to the concurrency level being tested
+- All other parameters use vLLM's built-in defaults (not hardcoded values)
+
+This provides clean baseline performance data for comparison with optimized configurations.
+
+### Example Configuration
+
+```yaml
+baseline:
+  enabled: true
+  run_first: true
+  concurrency_levels: [50, 100]
+
+optimization:
+  preset: "high_throughput"
+  n_trials: 50
+
+parameters:
+  gpu_memory_utilization:
+    enabled: true
+    min: 0.88
+    max: 0.95
+    
+  kv_cache_dtype:
+    enabled: true
+    options: ["auto", "fp8"]
+    # PERFORMANCE NOTE: fp8 typically provides 2x+ throughput improvement
+```
+
+This configuration will:
+1. **First** run baseline trials at concurrency 50 and 100 using pure vLLM defaults
+2. **Then** run 50 optimization trials to find the best parameter settings
+3. **Finally** compare the best optimized performance against the baseline
+
 ## Environment Variables
 
 Auto-tune-vllm configuration files support environment variable expansion, allowing you to externalize sensitive information and environment-specific settings.

@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 import time
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 
 import optuna
 from optuna.samplers import (
@@ -37,8 +37,9 @@ class StudyController:
         self.backend = backend
         self.study = study
         self.config = config
-        self.active_trials: Dict[int, JobHandle] = {}
+        self.active_trials: Dict[str, JobHandle] = {}
         self.completed_trials = 0
+        self.baseline_results: Dict[int, List[float]] = {}  # concurrency -> objective_values
         
     @staticmethod
     def get_study_identifier(study_name: str) -> str:
@@ -392,6 +393,10 @@ class StudyController:
                    f"max concurrent: {max_concurrent if max_concurrent != float('inf') else 'unlimited'}")
         
         try:
+            # Run baseline trials first if configured
+            if self.config.baseline and self.config.baseline.enabled and self.config.baseline.run_first:
+                self._run_baseline_trials()
+            
             while self.completed_trials < total_trials:
                 # Submit new trials up to concurrency limit
                 self._submit_available_trials(
@@ -411,7 +416,10 @@ class StudyController:
                 time.sleep(poll_interval)
             
             # Wait for any remaining trials
-            while self.active_trials:
+            final_cleanup_attempts = 0
+            max_cleanup_attempts = 60  # Prevent infinite loop (5 minutes at 5s intervals)
+            
+            while self.active_trials and final_cleanup_attempts < max_cleanup_attempts:
                 newly_completed = self._collect_completed_trials()
                 self.completed_trials += newly_completed
                 
@@ -420,8 +428,20 @@ class StudyController:
                 
                 if not self.active_trials:
                     break
+                
+                final_cleanup_attempts += 1
+                if final_cleanup_attempts % 12 == 0:  # Every minute
+                    logger.warning(f"Still waiting for {len(self.active_trials)} active trials to complete "
+                                 f"(attempt {final_cleanup_attempts}/{max_cleanup_attempts})")
+                    logger.debug(f"Active trial IDs: {list(self.active_trials.keys())}")
                     
                 time.sleep(poll_interval)
+            
+            # If we hit the max attempts, log an error but continue
+            if final_cleanup_attempts >= max_cleanup_attempts and self.active_trials:
+                logger.error(f"Timeout waiting for {len(self.active_trials)} active trials to complete. "
+                           f"Forcing completion. Active trial IDs: {list(self.active_trials.keys())}")
+                self.active_trials.clear()  # Force clear to prevent infinite loop
             
             logger.info(f"Optimization completed: {self.completed_trials} trials")
             return self.study
@@ -450,7 +470,7 @@ class StudyController:
             # Submit to execution backend
             try:
                 job_handle = self.backend.submit_trial(trial_config)
-                self.active_trials[trial.number] = job_handle
+                self.active_trials[trial_config.trial_id] = job_handle
                 
                 logger.info(f"Submitted trial {trial.number} with parameters: {trial.params}")
                 remaining_trials -= 1
@@ -470,31 +490,37 @@ class StudyController:
         job_handles = list(self.active_trials.values())
         completed_results, remaining_handles = self.backend.poll_trials(job_handles)
         
-        completed_count = 0
+        optimization_completed_count = 0
         
         for result in completed_results:
-            trial_number = result.trial_number
+            trial_id = result.trial_id
             
             # Remove from active trials
-            if trial_number in self.active_trials:
-                del self.active_trials[trial_number]
+            if trial_id in self.active_trials:
+                del self.active_trials[trial_id]
             
-            # Report to Optuna
+            # Report to Optuna (only for optimization trials)
             try:
-                if result.success and result.objective_values:
-                    self.study.tell(trial_number, result.objective_values)
-                    logger.info(f"Trial {trial_number} completed successfully: {result.objective_values}")
-                else:
-                    # Failed trial
-                    self.study.tell(trial_number, None)
-                    logger.error(f"Trial {trial_number} failed: {result.error_message}")
-                
-                completed_count += 1
+                if result.trial_type == "optimization" and result.trial_number is not None:
+                    if result.success and result.objective_values:
+                        self.study.tell(result.trial_number, result.objective_values)
+                        logger.info(f"Trial {trial_id} completed successfully: {result.objective_values}")
+                    else:
+                        # Failed trial
+                        self.study.tell(result.trial_number, None)
+                        logger.error(f"Trial {trial_id} failed: {result.error_message}")
+                    
+                    # Only count optimization trials toward completion
+                    optimization_completed_count += 1
+                    
+                elif result.trial_type == "baseline":
+                    logger.info(f"Baseline trial {trial_id} completed: {result.objective_values if result.success else 'failed'}")
+                    # Baseline trials don't count toward optimization progress
                 
             except Exception as e:
-                logger.error(f"Failed to report trial {trial_number} to Optuna: {e}")
+                logger.error(f"Failed to report trial {trial_id} to Optuna: {e}")
         
-        return completed_count
+        return optimization_completed_count
     
     def _build_trial_config(self, trial: optuna.Trial) -> TrialConfig:
         """Build trial configuration from Optuna trial."""
@@ -508,17 +534,63 @@ class StudyController:
         
         return TrialConfig(
             study_name=self.config.study_name,
+            trial_id=f"trial_{trial.number}",
             trial_number=trial.number,
+            trial_type="optimization",
             parameters=parameters,
             benchmark_config=self.config.benchmark,
             optimization_config=self.config.optimization,
             logging_config=self.config.logging_config
         )
     
+    def get_best_baseline_result(self) -> Optional[List[float]]:
+        """Get the best baseline result for comparison."""
+        if not self.baseline_results:
+            return None
+        
+        # For single objective, find the best baseline based on optimization direction
+        if len(self.config.optimization.objectives) == 1:
+            objective = self.config.optimization.objectives[0]
+            if objective.direction == "maximize":
+                best_concurrency = max(self.baseline_results.keys(), 
+                                     key=lambda k: self.baseline_results[k][0])
+            else:  # minimize
+                best_concurrency = min(self.baseline_results.keys(), 
+                                     key=lambda k: self.baseline_results[k][0])
+            return self.baseline_results[best_concurrency]
+        else:
+            # For multi-objective, return the first baseline (could be improved with Pareto analysis)
+            first_concurrency = min(self.baseline_results.keys())
+            return self.baseline_results[first_concurrency]
+    
     def get_optimization_results(self) -> Dict:
         """Get optimization results summary."""
+        # Get baseline results for comparison
+        baseline_result = self.get_best_baseline_result()
+        
         if self.config.optimization.is_multi_objective:
             # Multi-objective results
+            pareto_front = []
+            for t in self.study.best_trials[:10]:  # Top 10
+                trial_data = {"trial": t.number, "values": t.values, "params": t.params}
+                
+                # Add baseline comparison for each objective
+                if baseline_result:
+                    improvements = []
+                    for i, (value, objective) in enumerate(zip(t.values, self.config.optimization.objectives)):
+                        baseline_val = baseline_result[i] if i < len(baseline_result) else None
+                        if baseline_val and baseline_val != 0:
+                            if objective.direction == "maximize":
+                                improvement = ((value - baseline_val) / baseline_val) * 100
+                            else:  # minimize
+                                improvement = ((baseline_val - value) / baseline_val) * 100
+                            improvements.append(improvement)
+                        else:
+                            improvements.append(None)
+                    trial_data["baseline_improvements"] = improvements
+                
+                pareto_front.append(trial_data)
+            
             return {
                 "type": "multi_objective",
                 "approach": self.config.optimization.approach,
@@ -528,15 +600,23 @@ class StudyController:
                 ],
                 "n_trials": len(self.study.trials),
                 "n_pareto_solutions": len(self.study.best_trials),
-                "pareto_front": [
-                    {"trial": t.number, "values": t.values, "params": t.params} 
-                    for t in self.study.best_trials[:10]  # Top 10
-                ]
+                "pareto_front": pareto_front,
+                "baseline_values": baseline_result
             }
         else:
             # Single objective results
             best_trial = self.study.best_trial
             objective = self.config.optimization.objectives[0]
+            
+            # Calculate baseline improvement
+            baseline_improvement = None
+            if baseline_result and len(baseline_result) > 0 and baseline_result[0] != 0:
+                baseline_val = baseline_result[0]
+                if objective.direction == "maximize":
+                    baseline_improvement = ((best_trial.value - baseline_val) / baseline_val) * 100
+                else:  # minimize
+                    baseline_improvement = ((baseline_val - best_trial.value) / baseline_val) * 100
+            
             return {
                 "type": "single_objective",
                 "approach": self.config.optimization.approach,
@@ -548,7 +628,9 @@ class StudyController:
                 "n_trials": len(self.study.trials),
                 "best_value": best_trial.value,
                 "best_params": best_trial.params,
-                "best_trial_number": best_trial.number
+                "best_trial_number": best_trial.number,
+                "baseline_value": baseline_result[0] if baseline_result else None,
+                "baseline_improvement": baseline_improvement
             }
     
     def resume_study(self) -> StudyController:
@@ -584,3 +666,68 @@ class StudyController:
         logger.info(f"Found {n_existing} existing trials in study")
         
         return self
+    
+    def _run_baseline_trials(self):
+        """Run baseline trials using pure vLLM defaults + max-num-seqs."""
+        logger.info("🔄 Running baseline trials...")
+        
+        for concurrency in self.config.baseline.concurrency_levels:
+            logger.info(f"Running baseline trial with concurrency={concurrency}")
+            
+            # Create baseline trial config with only max-num-seqs parameter
+            baseline_parameters = {
+                "max_num_seqs": concurrency
+            }
+            
+            # Create special baseline trial configuration
+            baseline_trial_config = TrialConfig(
+                study_name=self.config.study_name,
+                trial_id=f"baseline_concurrency_{concurrency}",
+                trial_number=None,  # No Optuna trial number for baselines
+                trial_type="baseline",
+                parameters=baseline_parameters,
+                benchmark_config=self.config.benchmark,
+                optimization_config=self.config.optimization,
+                logging_config=self.config.logging_config
+            )
+            
+            try:
+                # Submit baseline trial to execution backend
+                job_handle = self.backend.submit_trial(baseline_trial_config)
+                
+                # Wait for baseline trial to complete using polling mechanism
+                logger.info(f"⏳ Waiting for baseline trial (concurrency={concurrency}) to complete...")
+                
+                import time
+                timeout_seconds = 7200  # 2 hour timeout
+                start_time = time.time()
+                poll_interval = 5  # Poll every 5 seconds
+                
+                while time.time() - start_time < timeout_seconds:
+                    # Poll for completion
+                    completed_results, remaining_handles = self.backend.poll_trials([job_handle])
+                    
+                    if completed_results:
+                        # Trial completed
+                        trial_result = completed_results[0]
+                        logger.info(f"✅ Baseline trial (concurrency={concurrency}) completed:")
+                        if trial_result.success and trial_result.objective_values:
+                            logger.info(f"   Objectives: {trial_result.objective_values}")
+                            # Store baseline results for comparison
+                            self.baseline_results[concurrency] = trial_result.objective_values
+                        else:
+                            logger.error(f"❌ Baseline trial failed: {trial_result.error_message}")
+                        break
+                    else:
+                        # Still running, wait and poll again
+                        time.sleep(poll_interval)
+                else:
+                    # Timeout reached
+                    logger.error(f"❌ Baseline trial (concurrency={concurrency}) timed out after {timeout_seconds} seconds")
+                
+            except Exception as e:
+                logger.error(f"❌ Baseline trial (concurrency={concurrency}) failed: {e}")
+                # Continue with other concurrency levels
+                continue
+        
+        logger.info("✅ Baseline trials completed")

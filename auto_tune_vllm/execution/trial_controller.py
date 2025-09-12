@@ -149,17 +149,17 @@ class BaseTrialController(TrialController):
                 
                 # Get trial-specific loggers for different components
                 self.trial_loggers['controller'] = centralized_logger.get_trial_logger(
-                    trial_config.trial_number, 'controller'
+                    trial_config.trial_id, 'controller'
                 )
                 self.trial_loggers['vllm'] = centralized_logger.get_trial_logger(
-                    trial_config.trial_number, 'vllm'
+                    trial_config.trial_id, 'vllm'
                 )
                 self.trial_loggers['benchmark'] = centralized_logger.get_trial_logger(
-                    trial_config.trial_number, 'benchmark'
+                    trial_config.trial_id, 'benchmark'
                 )
                 
                 # Log trial start
-                self.trial_loggers['controller'].info(f"Starting trial {trial_config.trial_number}")
+                self.trial_loggers['controller'].info(f"Starting trial {trial_config.trial_id}")
                 self.trial_loggers['controller'].info(f"Parameters: {trial_config.parameters}")
                 
         except Exception as e:
@@ -170,7 +170,7 @@ class BaseTrialController(TrialController):
         """Get trial logger for specific component, fallback to default if not available."""
         return self.trial_loggers.get(component, logger)
     
-    def _flush_trial_logs(self, trial_number: int):
+    def _flush_trial_logs(self, trial_id: str):
         """Flush any buffered logs for the trial to ensure all records are written."""
         try:
             # Flush trial-specific loggers if we have them
@@ -186,7 +186,7 @@ class BaseTrialController(TrialController):
             study_name = getattr(self, '_current_study_name', None)
             if study_name:
                 for component in ['controller', 'vllm', 'benchmark']:
-                    logger_name = f"study_{study_name}.trial_{trial_number}.{component}"
+                    logger_name = f"study_{study_name}.{trial_id}.{component}"
                     trial_logger = logging.getLogger(logger_name)
                     for handler in trial_logger.handlers:
                         try:
@@ -243,7 +243,9 @@ class BaseTrialController(TrialController):
             execution_info.mark_completed()
             
             return TrialResult(
+                trial_id=trial_config.trial_id,
                 trial_number=trial_config.trial_number,
+                trial_type=trial_config.trial_type,
                 objective_values=objective_values,
                 detailed_metrics=benchmark_result,
                 execution_info=execution_info,
@@ -253,10 +255,12 @@ class BaseTrialController(TrialController):
         except Exception as e:
             execution_info.mark_completed()
             error_logger = self._get_trial_logger('controller')
-            error_logger.error(f"Trial {trial_config.trial_number} failed: {e}")
+            error_logger.error(f"Trial {trial_config.trial_id} failed: {e}")
             
             return TrialResult(
+                trial_id=trial_config.trial_id,
                 trial_number=trial_config.trial_number,
+                trial_type=trial_config.trial_type,
                 objective_values=[],
                 detailed_metrics={},
                 execution_info=execution_info,
@@ -265,7 +269,7 @@ class BaseTrialController(TrialController):
             )
         finally:
             # Flush any buffered logs before cleanup
-            self._flush_trial_logs(trial_config.trial_number)
+            self._flush_trial_logs(trial_config.trial_id)
             self.cleanup_resources()
     
     def _create_benchmark_provider(self, trial_config: TrialConfig) -> BenchmarkProvider:

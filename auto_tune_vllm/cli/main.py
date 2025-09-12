@@ -244,9 +244,16 @@ def run_optimization_sync(
             total=total_trials
         )
         
-        # Run optimization
-        controller.run_optimization(n_trials, max_concurrent)
-        progress.update(task, completed=total_trials)
+        try:
+            # Run optimization
+            controller.run_optimization(n_trials, max_concurrent)
+            
+            # Mark task as completed
+            progress.update(task, completed=total_trials, description="✅ Optimization completed")
+        except Exception as e:
+            # Mark task as failed and re-raise
+            progress.update(task, description="❌ Optimization failed")
+            raise
     
     # Display results
     display_optimization_results(controller)
@@ -267,6 +274,21 @@ def display_optimization_results(controller: StudyController):
         table.add_row("Best Value", f"{results['best_value']:.4f}")
         table.add_row("Best Trial", str(results["best_trial_number"]))
         
+        # Add baseline comparison if available
+        if results.get("baseline_value") is not None:
+            table.add_row("Baseline Value", f"{results['baseline_value']:.4f}")
+            
+            if results.get("baseline_improvement") is not None:
+                improvement = results["baseline_improvement"]
+                if improvement > 0:
+                    improvement_text = f"+{improvement:.1f}%"
+                    improvement_style = "green"
+                else:
+                    improvement_text = f"{improvement:.1f}%"
+                    improvement_style = "red"
+                
+                table.add_row("Improvement", f"[{improvement_style}]{improvement_text}[/{improvement_style}]")
+        
         console.print(table)
         
         # Parameters table
@@ -280,26 +302,85 @@ def display_optimization_results(controller: StudyController):
         console.print(params_table)
         
     else:  # Multi-objective
-        table = Table(title="Pareto-Optimal Solutions")
-        table.add_column("Trial", style="cyan")
-        table.add_column("Objective 1", style="green")
-        table.add_column("Objective 2", style="green")
-        table.add_column("Top Parameters", style="yellow")
+        # Check if we have baseline comparisons
+        has_baseline = results.get("baseline_values") is not None
         
-        for solution in results["pareto_front"][:5]:  # Show top 5
-            # Show first few parameters
-            top_params = list(solution["params"].items())[:3]
-            params_str = ", ".join(f"{k}={v}" for k, v in top_params)
+        if has_baseline:
+            # Enhanced table with baseline comparison
+            table = Table(title="Pareto-Optimal Solutions with Baseline Comparison")
+            table.add_column("Trial", style="cyan")
             
-            table.add_row(
-                str(solution["trial"]),
-                f"{solution['values'][0]:.4f}",
-                f"{solution['values'][1]:.4f}",
-                params_str
-            )
+            # Add columns for each objective
+            objectives = results["objectives"]
+            for i, obj in enumerate(objectives):
+                table.add_column(f"{obj['metric']}", style="green")
+                table.add_column(f"{obj['metric']} Δ", style="yellow")
+            
+            table.add_column("Top Parameters", style="blue")
+            
+            for solution in results["pareto_front"][:5]:  # Show top 5
+                row_data = [str(solution["trial"])]
+                
+                # Add objective values and improvements
+                for i, value in enumerate(solution["values"]):
+                    row_data.append(f"{value:.4f}")
+                    
+                    # Add improvement if available
+                    if "baseline_improvements" in solution and solution["baseline_improvements"]:
+                        improvement = solution["baseline_improvements"][i]
+                        if improvement is not None:
+                            if improvement > 0:
+                                improvement_text = f"[green]+{improvement:.1f}%[/green]"
+                            else:
+                                improvement_text = f"[red]{improvement:.1f}%[/red]"
+                        else:
+                            improvement_text = "N/A"
+                    else:
+                        improvement_text = "N/A"
+                    
+                    row_data.append(improvement_text)
+                
+                # Show first few parameters
+                top_params = list(solution["params"].items())[:2]
+                params_str = ", ".join(f"{k}={v}" for k, v in top_params)
+                row_data.append(params_str)
+                
+                table.add_row(*row_data)
+                
+        else:
+            # Original table without baseline comparison
+            table = Table(title="Pareto-Optimal Solutions")
+            table.add_column("Trial", style="cyan")
+            table.add_column("Objective 1", style="green")
+            table.add_column("Objective 2", style="green")
+            table.add_column("Top Parameters", style="yellow")
+            
+            for solution in results["pareto_front"][:5]:  # Show top 5
+                # Show first few parameters
+                top_params = list(solution["params"].items())[:3]
+                params_str = ", ".join(f"{k}={v}" for k, v in top_params)
+                
+                table.add_row(
+                    str(solution["trial"]),
+                    f"{solution['values'][0]:.4f}",
+                    f"{solution['values'][1]:.4f}",
+                    params_str
+                )
         
         console.print(table)
         console.print(f"[blue]Total Pareto solutions: {results['n_pareto_solutions']}[/blue]")
+        
+        # Show baseline values if available
+        if has_baseline:
+            baseline_table = Table(title="Baseline Values")
+            baseline_table.add_column("Objective", style="cyan")
+            baseline_table.add_column("Baseline Value", style="yellow")
+            
+            for i, obj in enumerate(objectives):
+                if i < len(results["baseline_values"]):
+                    baseline_table.add_row(obj["metric"], f"{results['baseline_values'][i]:.4f}")
+            
+            console.print(baseline_table)
 
 
 @app.command("logs")

@@ -42,9 +42,11 @@ class TrialConfig:
     """Configuration for a single optimization trial."""
     
     study_name: str
-    trial_number: int
-    parameters: Dict[str, Any]  # vLLM parameters from Optuna
-    benchmark_config: BenchmarkConfig
+    trial_id: str  # "trial_123" | "baseline_concurrency_50" | "probe_warmup_1"
+    trial_number: Optional[int] = None  # Only for Optuna trials (for study.tell())
+    trial_type: str = "optimization"  # "baseline" | "optimization" | "probe"
+    parameters: Dict[str, Any] = field(default_factory=dict)  # vLLM parameters from Optuna
+    benchmark_config: BenchmarkConfig = None
     optimization_config: Optional[Any] = None  # Optimization configuration from study
     resource_requirements: Dict[str, float] = field(default_factory=dict)
     logging_config: Optional[Dict[str, Any]] = None  # Logging configuration from study
@@ -95,10 +97,12 @@ class ExecutionInfo:
 class TrialResult:
     """Results from a completed trial."""
     
-    trial_number: int
-    objective_values: List[float]  # For Optuna (throughput, latency, etc.)
-    detailed_metrics: Dict[str, Any]  # Rich percentile data from benchmarks
-    execution_info: ExecutionInfo
+    trial_id: str  # Replace trial_number with composite identifier
+    trial_number: Optional[int] = None  # Keep for Optuna compatibility
+    trial_type: str = "optimization"
+    objective_values: List[float] = field(default_factory=list)  # For Optuna (throughput, latency, etc.)
+    detailed_metrics: Dict[str, Any] = field(default_factory=dict)  # Rich percentile data from benchmarks
+    execution_info: ExecutionInfo = None
     success: bool = True
     error_message: Optional[str] = None
     
