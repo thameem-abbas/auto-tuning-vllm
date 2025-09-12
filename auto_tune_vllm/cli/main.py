@@ -316,7 +316,7 @@ def display_optimization_results(controller: StudyController):
                 table.add_column(f"{obj['metric']}", style="green")
                 table.add_column(f"{obj['metric']} Δ", style="yellow")
             
-            table.add_column("Top Parameters", style="blue")
+            table.add_column("All Parameters", style="blue")
             
             for solution in results["pareto_front"][:5]:  # Show top 5
                 row_data = [str(solution["trial"])]
@@ -340,9 +340,9 @@ def display_optimization_results(controller: StudyController):
                     
                     row_data.append(improvement_text)
                 
-                # Show first few parameters
-                top_params = list(solution["params"].items())[:2]
-                params_str = ", ".join(f"{k}={v}" for k, v in top_params)
+                # Show all parameters
+                all_params = list(solution["params"].items())
+                params_str = ", ".join(f"{k}={v}" for k, v in all_params)
                 row_data.append(params_str)
                 
                 table.add_row(*row_data)
@@ -353,12 +353,12 @@ def display_optimization_results(controller: StudyController):
             table.add_column("Trial", style="cyan")
             table.add_column("Objective 1", style="green")
             table.add_column("Objective 2", style="green")
-            table.add_column("Top Parameters", style="yellow")
+            table.add_column("All Parameters", style="yellow")
             
             for solution in results["pareto_front"][:5]:  # Show top 5
-                # Show first few parameters
-                top_params = list(solution["params"].items())[:3]
-                params_str = ", ".join(f"{k}={v}" for k, v in top_params)
+                # Show all parameters
+                all_params = list(solution["params"].items())
+                params_str = ", ".join(f"{k}={v}" for k, v in all_params)
                 
                 table.add_row(
                     str(solution["trial"]),
@@ -680,6 +680,73 @@ def resume_study_sync(
             
     else:
         console.print("Study resumed. Use --trials to run additional trials or --total-trials to set total trial count.")
+
+
+@app.command("results")
+def results_command(
+    config: str = typer.Option(..., "--config", "-c", help="Study configuration file"),
+    backend: str = typer.Option("ray", "--backend", "-b", help="Execution backend: 'ray' (only supported option)"),
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose logging")
+):
+    """Show results from a completed or partially completed study."""
+    console.print("[bold cyan]📊 Study Results[/bold cyan]")
+    
+    try:
+        # Load configuration
+        study_config = StudyConfig.from_file(config)
+        
+        # Create execution backend (minimal setup for results viewing)
+        if backend.lower() == "ray":
+            execution_backend = RayExecutionBackend(
+                start_ray_head=False,  # Don't start Ray for results viewing
+                python_executable=None,
+                venv_path=None,
+                conda_env=None
+            )
+        else:
+            console.print("[bold red]Error: Local execution backend is not supported in this version.[/bold red]")
+            console.print("[bold red]Only Ray distributed execution is available.[/bold red]")
+            raise typer.Exit(1)
+        
+        # Load existing study
+        controller = StudyController.resume_from_config(execution_backend, study_config)
+        
+        # Count existing trials
+        n_existing = len(controller.study.trials)
+        
+        if n_existing == 0:
+            console.print("[yellow]No trials found in this study.[/yellow]")
+            console.print("Run optimization first with: auto-tune-vllm optimize --config <config_file>")
+            return
+        
+        # Display study information
+        console.print(f"[bold cyan]🔍 Study Name: {study_config.study_name}[/bold cyan]")
+        console.print(f"[blue]Total trials completed: {n_existing}[/blue]")
+        console.print()
+        
+        # Show current results
+        display_optimization_results(controller)
+        
+        # Show baseline status information
+        if study_config.baseline and study_config.baseline.enabled:
+            if controller.baseline_results:
+                console.print("[green]✅ Baseline comparison data is available[/green]")
+            else:
+                console.print("[yellow]⚠️  Baseline trials were configured but comparison data is not available[/yellow]")
+                console.print("[yellow]   This study may have been created before baseline persistence was implemented[/yellow]")
+                console.print("[yellow]   Future studies will automatically include baseline comparisons[/yellow]")
+        
+        # Show log viewing instructions
+        _display_log_viewing_instructions(study_config)
+        
+    except FileNotFoundError:
+        console.print(f"[red]Configuration file not found: {config}[/red]")
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"[red]Failed to load study results: {e}[/red]")
+        if verbose:
+            console.print_exception()
+        raise typer.Exit(1)
 
 
 @app.command("validate")

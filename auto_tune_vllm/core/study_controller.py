@@ -183,7 +183,10 @@ class StudyController:
             else:
                 logger.info("📋 Console logging only - no file or database logging configured")
         
-        return cls(backend, study, config)
+        controller = cls(backend, study, config)
+        # Load any saved baseline results
+        controller._load_baseline_results()
+        return controller
     
     @classmethod
     def resume_from_config(
@@ -298,7 +301,10 @@ class StudyController:
             else:
                 logger.info("📋 Console logging only - no file or database logging configured")
         
-        return cls(backend, study, config)
+        controller = cls(backend, study, config)
+        # Load any saved baseline results
+        controller._load_baseline_results()
+        return controller
     
     @staticmethod
     def _create_sampler(config: StudyConfig) -> optuna.samplers.BaseSampler:
@@ -543,6 +549,29 @@ class StudyController:
             logging_config=self.config.logging_config
         )
     
+    def _save_baseline_results(self):
+        """Save baseline results to study attributes for persistence."""
+        if self.baseline_results:
+            # Convert to a format that can be stored in study attributes
+            baseline_data = {
+                "baseline_results": {str(k): v for k, v in self.baseline_results.items()}
+            }
+            self.study.set_user_attr("auto_tune_vllm_baseline_data", baseline_data)
+    
+    def _load_baseline_results(self):
+        """Load baseline results from study attributes."""
+        try:
+            baseline_data = self.study.user_attrs.get("auto_tune_vllm_baseline_data")
+            if baseline_data and "baseline_results" in baseline_data:
+                # Convert back from string keys to int keys
+                self.baseline_results = {
+                    int(k): v for k, v in baseline_data["baseline_results"].items()
+                }
+                logger.debug(f"Loaded baseline results: {self.baseline_results}")
+        except Exception as e:
+            logger.warning(f"Failed to load baseline results: {e}")
+            self.baseline_results = {}
+    
     def get_best_baseline_result(self) -> Optional[List[float]]:
         """Get the best baseline result for comparison."""
         if not self.baseline_results:
@@ -715,6 +744,8 @@ class StudyController:
                             logger.info(f"   Objectives: {trial_result.objective_values}")
                             # Store baseline results for comparison
                             self.baseline_results[concurrency] = trial_result.objective_values
+                            # Persist baseline results in study attributes for later retrieval
+                            self._save_baseline_results()
                         else:
                             logger.error(f"❌ Baseline trial failed: {trial_result.error_message}")
                         break
