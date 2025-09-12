@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class JobHandle:
     """Handle for submitted trial job."""
-    trial_number: int
+    trial_id: str
     backend_job_id: str  # Ray ObjectRef ID, process PID, etc.
     status: str = "running"  # "running", "completed", "failed"
     submitted_at: float = 0.0
@@ -231,8 +231,8 @@ class RayExecutionBackend(ExecutionBackend):
         # Track active job
         self.active_jobs[job_id] = future_ref
         
-        logger.info(f"Submitted trial {trial_config.trial_number} to Ray cluster")
-        return JobHandle(trial_config.trial_number, job_id)
+        logger.info(f"Submitted trial {trial_config.trial_id} to Ray cluster")
+        return JobHandle(trial_config.trial_id, job_id)
     
     def poll_trials(self, job_handles: List[JobHandle]) -> Tuple[List[TrialResult], List[JobHandle]]:
         """Poll for completed Ray trials."""
@@ -267,14 +267,14 @@ class RayExecutionBackend(ExecutionBackend):
                 try:
                     result = ray.get(ray_ref)  # Get completed result
                     completed_results.append(result)
-                    logger.info(f"Completed trial {handle.trial_number}")
+                    logger.info(f"Completed trial {handle.trial_id}")
                     # Remove from active jobs
                     del self.active_jobs[handle.backend_job_id]
                 except Exception as e:
                     # Trial failed - create error result
                     from ..core.trial import TrialResult, ExecutionInfo
                     error_result = TrialResult(
-                        trial_number=handle.trial_number,
+                        trial_id=handle.trial_id,
                         objective_values=[],
                         detailed_metrics={},
                         execution_info=ExecutionInfo(),
@@ -282,7 +282,7 @@ class RayExecutionBackend(ExecutionBackend):
                         error_message=str(e)
                     )
                     completed_results.append(error_result)
-                    logger.error(f"Trial {handle.trial_number} failed: {e}")
+                    logger.error(f"Trial {handle.trial_id} failed: {e}")
                     # Remove from active jobs
                     del self.active_jobs[handle.backend_job_id]
             else:
@@ -348,8 +348,8 @@ class LocalExecutionBackend(ExecutionBackend):
         job_id = str(id(future))  # Use future object ID as job ID
         self.active_futures[job_id] = future
         
-        logger.info(f"Submitted trial {trial_config.trial_number} for local execution")
-        return JobHandle(trial_config.trial_number, job_id)
+        logger.info(f"Submitted trial {trial_config.trial_id} for local execution")
+        return JobHandle(trial_config.trial_id, job_id)
     
     def poll_trials(self, job_handles: List[JobHandle]) -> Tuple[List[TrialResult], List[JobHandle]]:
         """Poll for completed local trials."""
@@ -366,14 +366,14 @@ class LocalExecutionBackend(ExecutionBackend):
                 try:
                     result = future.result()
                     completed_results.append(result)
-                    logger.info(f"Completed local trial {handle.trial_number}")
+                    logger.info(f"Completed local trial {handle.trial_id}")
                     # Remove from active futures
                     del self.active_futures[handle.backend_job_id]
                 except Exception as e:
                     # Trial failed - create error result
                     from ..core.trial import TrialResult, ExecutionInfo
                     error_result = TrialResult(
-                        trial_number=handle.trial_number,
+                        trial_id=handle.trial_id,
                         objective_values=[],
                         detailed_metrics={},
                         execution_info=ExecutionInfo(),
@@ -381,7 +381,7 @@ class LocalExecutionBackend(ExecutionBackend):
                         error_message=str(e)
                     )
                     completed_results.append(error_result)
-                    logger.error(f"Local trial {handle.trial_number} failed: {e}")
+                    logger.error(f"Local trial {handle.trial_id} failed: {e}")
                     # Remove from active futures
                     del self.active_futures[handle.backend_job_id]
             else:
