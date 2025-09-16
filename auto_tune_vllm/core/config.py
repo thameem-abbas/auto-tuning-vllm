@@ -301,8 +301,12 @@ class ConfigValidator:
                  vllm_version: Optional[str] = None):
         """Initialize with parameter schema and optional defaults."""
         if schema_path is None:
-            # Use default schema shipped with package
-            schema_path = Path(__file__).parent.parent / "schemas" / "parameter_schema.yaml"
+            # Try to use version-specific schema if vllm_version is provided
+            if vllm_version is not None:
+                schema_path = self._get_versioned_schema_path(vllm_version)
+            else:
+                # Use default schema shipped with package
+                schema_path = Path(__file__).parent.parent / "schemas" / "parameter_schema_original.yaml"
         
         self.schema_path = Path(schema_path)
         self.schema = self._load_schema()
@@ -320,6 +324,33 @@ class ConfigValidator:
         else:
             # Try to load latest defaults
             self._load_latest_defaults()
+    
+    def _get_versioned_schema_path(self, vllm_version: str) -> Path:
+        """
+        Get the schema path for a specific vLLM version.
+        
+        Args:
+            vllm_version: vLLM version string (e.g., "0.10.1.1")
+            
+        Returns:
+            Path to versioned schema file
+            
+        Raises:
+            FileNotFoundError: If versioned schema doesn't exist
+        """
+        # Convert version to filename format (e.g., "0.10.1.1" -> "v0_10_1_1.yaml")
+        safe_version = vllm_version.replace('.', '_')
+        schemas_dir = Path(__file__).parent.parent / "schemas"
+        versioned_schema_path = schemas_dir / f"v{safe_version}.yaml"
+        
+        if versioned_schema_path.exists():
+            print(f"Using version-specific schema for vLLM {vllm_version}: {versioned_schema_path}")
+            return versioned_schema_path
+        else:
+            # Fallback to default schema with warning
+            fallback_schema = schemas_dir / "parameter_schema_original.yaml"
+            print(f"Warning: No schema found for vLLM version {vllm_version}, falling back to default schema: {fallback_schema}")
+            return fallback_schema
     
     def _load_schema(self) -> Dict[str, Any]:
         """Load parameter schema from YAML."""
