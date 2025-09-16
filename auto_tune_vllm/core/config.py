@@ -5,7 +5,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import os
 import re
@@ -74,6 +74,141 @@ class BooleanParameter(ParameterConfig):
     def generate_optuna_suggest(self, trial) -> bool:
         """Generate Optuna boolean suggestion."""
         return trial.suggest_categorical(self.name, [True, False])
+
+
+class GridParameter(ParameterConfig):
+    """Hybrid parameter that supports both explicit options and ranges for grid search.
+    
+    This parameter type allows maximum flexibility for grid search:
+    - If 'options' is provided, uses those exact values
+    - If range parameters (min/max/step) are provided, generates discrete range values
+    - Prioritizes user-specified options over schema-defined ranges
+    """
+    
+    # List-based attributes
+    options: Optional[List[Any]] = None
+    
+    # Range-based attributes  
+    min_value: Optional[Union[int, float]] = Field(None, alias="min")
+    max_value: Optional[Union[int, float]] = Field(None, alias="max")
+    step: Optional[Union[int, float]] = None
+    
+    # Data type for validation and conversion
+    data_type: str = "auto"  # "int", "float", "str", "bool", or "auto"
+    
+    def __post_init__(self):
+        """Validate GridParameter configuration."""
+        super().__post_init__()
+        
+        # Must have either options or range parameters
+        has_options = self.options is not None and len(self.options) > 0
+        has_range = (self.min_value is not None and self.max_value is not None)
+        
+        if not has_options and not has_range:
+            raise ValueError(f"GridParameter '{self.name}' must specify either 'options' or range parameters (min/max)")
+        
+        # If both are provided, prioritize options but validate range for consistency
+        if has_options and has_range:
+            # Validate that options fall within the specified range
+            for option in self.options:
+                if not (self.min_value <= option <= self.max_value):
+                    raise ValueError(f"Option {option} for parameter '{self.name}' is outside range [{self.min_value}, {self.max_value}]")
+    
+    def get_grid_values(self) -> List[Any]:
+        """Get the actual values to use for grid search.
+        
+        Returns:
+            List of values to test in grid search
+        """
+        if self.options is not None and len(self.options) > 0:
+            # Use user-specified options
+            return self._convert_values(self.options)
+        else:
+            # Generate values from range
+            return self._generate_range_values()
+    
+    def _convert_values(self, values: List[Any]) -> List[Any]:
+        """Convert values to the appropriate data type."""
+        if self.data_type == "auto":
+            # Auto-detect from first value
+            if values and isinstance(values[0], (int, float)):
+                return [self._convert_numeric(v) for v in values]
+            else:
+                return values
+        elif self.data_type == "int":
+            return [int(v) for v in values]
+        elif self.data_type == "float":
+            return [float(v) for v in values]
+        elif self.data_type == "str":
+            return [str(v) for v in values]
+        elif self.data_type == "bool":
+            return [bool(v) for v in values]
+        else:
+            return values
+    
+    def _convert_numeric(self, value: Any) -> Union[int, float]:
+        """Convert a value to int or float based on context."""
+        if isinstance(value, float) or (isinstance(value, str) and '.' in value):
+            return float(value)
+        else:
+            return int(value)
+    
+    def _generate_range_values(self) -> List[Union[int, float]]:
+        """Generate discrete values from range parameters."""
+        if self.min_value is None or self.max_value is None:
+            raise ValueError(f"Cannot generate range values for '{self.name}': min_value or max_value is None")
+        
+        values = []
+        step = self.step or 1
+        
+        if step <= 0:
+            raise ValueError(f"Parameter '{self.name}' has invalid step size: {step}")
+        
+        # Use integer-based generation for floats to avoid accumulation drift
+        if isinstance(self.min_value, float) or isinstance(step, float):
+            # Calculate number of steps and generate via multiplication
+            n_steps = int((self.max_value - self.min_value) / step) + 1
+            # Cap to reasonable grid size
+            n_steps = min(n_steps, 10000)
+            for i in range(n_steps):
+                val = self.min_value + (i * step)
+                if val > self.max_value:
+                    break
+                # Round to avoid floating precision artifacts
+                values.append(round(val, 10))
+        else:
+            # Integer range - simple iteration
+            current = self.min_value
+            while current <= self.max_value:
+                values.append(current)
+                current += step
+                # Safety break for large ranges
+                if len(values) > 10000:
+                    break
+        
+        return values
+    
+    def generate_optuna_suggest(self, trial) -> Any:
+        """Generate Optuna suggestion for non-grid samplers."""
+        # For non-grid samplers, use the first available method
+        if self.options is not None and len(self.options) > 0:
+            return trial.suggest_categorical(self.name, self.options)
+        else:
+            # Use range suggestion
+            if self.data_type == "int" or (self.data_type == "auto" and isinstance(self.min_value, int)):
+                return trial.suggest_int(
+                    self.name, 
+                    int(self.min_value), 
+                    int(self.max_value),
+                    step=int(self.step) if self.step else None
+                )
+            else:
+                return trial.suggest_float(
+                    self.name,
+                    float(self.min_value),
+                    float(self.max_value), 
+                    step=float(self.step) if self.step else None
+                )
 
 
 @dataclass
@@ -285,6 +420,108 @@ class StudyConfig:
     storage_file: Optional[str] = None  # Alternative to database_url for file-based storage
     study_prefix: Optional[str] = None  # For auto-generated study names with custom prefix
     use_explicit_name: bool = False  # Flag to indicate explicit name usage (affects load_if_exists behavior)
+    
+    def __post_init__(self):
+        """Validate study configuration after initialization."""
+        self._validate_grid_sampler_configuration()
+    
+    def _validate_grid_sampler_configuration(self):
+        """Validate that n_trials matches grid combinations when using grid sampler."""
+        if self.optimization.sampler == "grid":
+            grid_size, param_details = self._calculate_grid_size_with_details()
+            
+            # Create detailed breakdown message
+            details_msg = "\nGrid search parameter breakdown:\n"
+            for param_name, count in param_details.items():
+                details_msg += f"  - {param_name}: {count} values\n"
+            details_msg += f"Total combinations: {' × '.join(str(count) for count in param_details.values())} = {grid_size:,}"
+            
+            if self.optimization.n_trials != grid_size:
+                # Add helpful guidance for large grid sizes
+                guidance = ""
+                if grid_size > 1000:
+                    guidance = ("\n\nWARNING: This grid search has a very large number of combinations! "
+                              "Consider:\n"
+                              "- Reducing parameter ranges or increasing step sizes\n"
+                              "- Using fewer parameters in your grid search\n"
+                              "- Switching to 'tpe', 'random', or 'botorch' sampler for large spaces\n"
+                              "- Using 'nsga2' sampler for multi-objective optimization")
+                
+                raise ValueError(
+                    f"When using grid sampler, n_trials ({self.optimization.n_trials}) "
+                    f"must equal the total number of parameter combinations ({grid_size:,}). "
+                    f"Either adjust n_trials to {grid_size} or use a different sampler."
+                    f"{details_msg}{guidance}"
+                )
+            else:
+                # Log the grid information even when validation passes
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.info(f"Grid sampler validation passed: {grid_size:,} combinations{details_msg}")
+    
+    def _calculate_grid_size(self) -> int:
+        """Calculate total grid search combinations from parameter configuration."""
+        grid_size, _ = self._calculate_grid_size_with_details()
+        return grid_size
+    
+    def _calculate_grid_size_with_details(self) -> Tuple[int, Dict[str, int]]:
+        """Calculate total grid search combinations with detailed parameter breakdown.
+        
+        This replicates the logic from StudyController._calculate_grid_size()
+        but works with ParameterConfig objects instead of raw search space.
+        
+        Returns:
+            tuple: (total_grid_size, dict of parameter_name -> value_count)
+        """
+        if not self.parameters:
+            return 1, {}
+        
+        size = 1
+        param_details = {}
+        
+        for param_name, param_config in self.parameters.items():
+            if not param_config.enabled:
+                continue
+                
+            # Count possible values for this parameter
+            param_values_count = 0
+            
+            if hasattr(param_config, 'get_grid_values'):
+                # GridParameter: use its specialized method to get actual values
+                grid_values = param_config.get_grid_values()
+                param_values_count = len(grid_values)
+            elif hasattr(param_config, 'options') and param_config.options is not None:
+                # ListParameter: discrete options
+                param_values_count = len(param_config.options)
+            elif hasattr(param_config, 'min_value') and param_config.min_value is not None:
+                # RangeParameter: calculate discrete steps
+                min_val = param_config.min_value
+                max_val = param_config.max_value
+                step = getattr(param_config, 'step', 1) or 1
+                
+                if step <= 0:
+                    raise ValueError(f"Parameter {param_name} has invalid step size: {step}")
+                
+                # Calculate number of steps (inclusive of both endpoints)
+                # This matches the logic in StudyController._create_sampler
+                if isinstance(min_val, float) or isinstance(step, float):
+                    n_steps = int((max_val - min_val) / step) + 1
+                    # Cap to reasonable grid size (matching StudyController logic)
+                    param_values_count = min(n_steps, 10000)
+                else:
+                    # Integer range
+                    param_values_count = int((max_val - min_val) / step) + 1
+            else:
+                # BooleanParameter: assume True/False
+                param_values_count = 2
+            
+            if param_values_count <= 0:
+                raise ValueError(f"Parameter {param_name} has no valid values for grid search")
+            
+            param_details[param_name] = param_values_count
+            size *= param_values_count
+        
+        return size, param_details
     
     @classmethod
     def from_file(cls, config_path: str, schema_path: Optional[str] = None, 
@@ -613,7 +850,51 @@ class ConfigValidator:
                 return schema_def[key]
             return schema_fallback
         
-        if param_type == "range":
+        # 🆕 GRID SEARCH ENHANCEMENT: Detect when to use GridParameter
+        # Use GridParameter if:
+        # 1. User provides explicit 'options' for any parameter type, OR
+        # 2. User provides both range info AND options (hybrid parameter), OR  
+        # 3. Parameter has complex grid search requirements
+        user_has_options = "options" in user_config and user_config["options"] is not None
+        user_has_range = any(key in user_config for key in ["min", "max", "min_value", "max_value", "range"])
+        
+        if user_has_options or (user_has_range and param_type in ["range", "list"]):
+            # Use GridParameter for maximum flexibility
+            grid_config = {**base_config}
+            
+            # Add options if provided by user
+            if user_has_options:
+                grid_config["options"] = user_config["options"]
+                
+                # Validate user options are subset of schema options (for list types)
+                if param_type == "list" and "options" in schema_def:
+                    schema_options = schema_def["options"]
+                    invalid_options = set(user_config["options"]) - set(schema_options)
+                    if invalid_options:
+                        raise ValueError(f"Invalid options for {name}: {invalid_options}. Must be subset of {schema_options}")
+            
+            # Add range parameters (from user config or schema)
+            if param_type == "range" or user_has_range:
+                # Handle different range formats
+                if "range" in user_config:
+                    # Handle nested range format: range: {start: X, end: Y, step: Z}
+                    range_config = user_config["range"]
+                    grid_config["min"] = range_config.get("start")
+                    grid_config["max"] = range_config.get("end") 
+                    grid_config["step"] = range_config.get("step")
+                else:
+                    # Handle direct format: min: X, max: Y, step: Z
+                    grid_config["min"] = get_value("min", schema_def.get("min"), allow_defaults=False)
+                    grid_config["max"] = get_value("max", schema_def.get("max"), allow_defaults=False)
+                    grid_config["step"] = get_value("step", schema_def.get("step"), allow_defaults=False)
+            
+            # Set data type
+            grid_config["data_type"] = schema_def.get("data_type", "auto")
+            
+            return GridParameter(**grid_config)
+        
+        # 🔄 LEGACY BEHAVIOR: Use original parameter types when no grid-specific config
+        elif param_type == "range":
             return RangeParameter(
                 **base_config,
                 min=get_value("min", schema_def["min"], allow_defaults=False),

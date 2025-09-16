@@ -319,10 +319,14 @@ class StudyController:
             for param_name, param_config in config.parameters.items():
                 if param_config.enabled:
                     # Convert parameter config to grid search space
-                    if hasattr(param_config, 'options'):
+                    if hasattr(param_config, 'get_grid_values'):
+                        # GridParameter: use its specialized method
+                        search_space[param_name] = param_config.get_grid_values()
+                    elif hasattr(param_config, 'options'):
+                        # ListParameter: use options directly
                         search_space[param_name] = param_config.options
                     elif hasattr(param_config, 'min_value'):
-                        # Generate discrete values for range parameters
+                        # RangeParameter: generate discrete values from range
                         values = []
                         min_val = param_config.min_value
                         max_val = param_config.max_value
@@ -351,7 +355,8 @@ class StudyController:
                                     break
                         search_space[param_name] = values
                     else:
-                        search_space[param_name] = [True, False]  # Boolean
+                        # BooleanParameter: assume True/False
+                        search_space[param_name] = [True, False]
             
             grid_size = StudyController._calculate_grid_size(search_space)
             logger.info(f"Grid search space: {len(search_space)} parameters, "
