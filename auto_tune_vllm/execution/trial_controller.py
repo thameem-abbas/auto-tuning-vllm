@@ -412,6 +412,13 @@ class BaseTrialController(TrialController):
         
         vllm_logger.info(f"Starting vLLM server: {' '.join(cmd)}")
         
+        # Prepare environment variables
+        env = os.environ.copy()
+        trial_env_vars = trial_config.environment_vars
+        if trial_env_vars:
+            env.update(trial_env_vars)
+            vllm_logger.info(f"Environment variables: {trial_env_vars}")
+        
         # Start process with captured output
         self.vllm_process = subprocess.Popen(
             cmd,
@@ -419,7 +426,8 @@ class BaseTrialController(TrialController):
             stderr=subprocess.STDOUT,  # Combine stderr with stdout
             text=True,
             bufsize=1,  # Line buffered
-            universal_newlines=True
+            universal_newlines=True,
+            env=env  # Pass environment variables to the process
         )
         
         # Start a thread to capture and log vLLM output
@@ -571,7 +579,16 @@ class RayWorkerTrialController(BaseTrialController):
         except Exception as e:
             vllm_logger.warning(f"Could not get Ray context: {e}")
         
-        # Call parent implementation (which logs full Python environment)
+        # Check for CUDA_VISIBLE_DEVICES override in trial environment variables
+        trial_env_vars = trial_config.environment_vars
+        if "CUDA_VISIBLE_DEVICES" in trial_env_vars:
+            vllm_logger.warning(
+                f"Trial specifies CUDA_VISIBLE_DEVICES={trial_env_vars['CUDA_VISIBLE_DEVICES']}, "
+                f"but Ray has already assigned GPUs: {gpu_ids}. "
+                f"Trial setting will override Ray assignment."
+            )
+        
+        # Call parent implementation (which handles environment variables and logs full Python environment)
         return super()._start_vllm_server(trial_config)
 
 

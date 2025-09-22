@@ -469,6 +469,25 @@ These environment variables are commonly used with auto-tune-vllm:
 
 Set these in your shell or deployment environment before running auto-tune-vllm.
 
+## vLLM Environment Variables
+
+Auto-tune-vllm supports passing environment variables to vLLM processes in two ways:
+
+- **Environment parameters**: Add `type: environment` in the `parameters` section (list-only options required)
+- **Static environment variables**: Use `static_environment_variables` section for consistent key-value pairs
+
+```yaml
+parameters:
+  VLLM_ATTENTION_BACKEND:
+    enabled: true
+    type: environment
+    options: ["FLASH_ATTN", "XFORMERS"]
+    
+static_environment_variables:
+  VLLM_CACHE_ROOT: "/tmp/vllm_cache"
+  VLLM_DEBUG: "0"
+```
+
 ## Configuration Examples
 
 ### Basic Development Configuration
