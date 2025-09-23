@@ -110,6 +110,7 @@ class OptimizationConfig:
     sampler: str = "tpe"  # "tpe", "random", "botorch", "nsga2", "grid" 
     n_trials: int = 100
     n_startup_trials: Optional[int] = None  # Number of startup trials for samplers that support it
+    max_concurrent: Optional[int] = None  # Maximum concurrent trials (required for resource management)
     
     # New structured format fields
     approach: Optional[str] = None  # "single_objective" or "multi_objective"
@@ -301,12 +302,22 @@ class ConfigValidator:
                  vllm_version: Optional[str] = None):
         """Initialize with parameter schema and optional defaults."""
         if schema_path is None:
-            # Try to use version-specific schema if vllm_version is provided
-            if vllm_version is not None:
-                schema_path = self._get_versioned_schema_path(vllm_version)
+            # Resolve vLLM version: prefer explicit, else auto-detect, else None
+            resolved_version = vllm_version
+            if resolved_version is None:
+                try:
+                    import vllm  # noqa: F401
+                    from importlib.metadata import version as _dist_version
+                    resolved_version = _dist_version("vllm")
+                except Exception:
+                    resolved_version = None
+            # Choose schema
+            if resolved_version and resolved_version.startswith("0.10.0"):
+                schema_path = Path(__file__).parent.parent / "schemas" / "v0_10_0.yaml"
             else:
-                # Use default schema shipped with package
-                schema_path = Path(__file__).parent.parent / "schemas" / "parameter_schema_original.yaml"
+                schema_path = Path(__file__).parent.parent / "schemas" / "v0_10_1_1.yaml"
+        # Store resolved version for defaults handling
+        self.vllm_version = vllm_version or locals().get("resolved_version")
         
         self.schema_path = Path(schema_path)
         self.schema = self._load_schema()
