@@ -498,26 +498,20 @@ class BaseTrialController(TrialController):
             # Get the metric key with percentile if specified
             metric_key = optimization_config.get_metric_key(len(objective_values))
             
-            # Extract the value from benchmark results
+            # Extract the value from benchmark results - FAIL HARD if missing
             value = benchmark_result.get(metric_key)
-            
-            # Handle missing metrics gracefully
+
             if value is None:
-                # Try fallback to base metric without percentile
-                fallback_key = objective.metric
-                value = benchmark_result.get(fallback_key, 0.0)
-                
-                logger.warning(
-                    f"Metric '{metric_key}' not found in benchmark results, "
-                    f"using fallback '{fallback_key}' = {value}"
+                raise RuntimeError(
+                    f"Metric '{metric_key}' not found in benchmark results. "
+                    f"Available metrics: {list(benchmark_result.keys())}"
                 )
-            
+
             # Convert to float and handle potential conversion errors
             try:
                 value = float(value)
             except (ValueError, TypeError):
-                logger.error(f"Failed to convert metric '{metric_key}' value '{value}' to float, using 0.0")
-                value = 0.0
+                raise RuntimeError(f"Failed to convert metric '{metric_key}' value '{value}' to float")
             
             objective_values.append(value)
         
