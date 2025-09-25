@@ -89,11 +89,11 @@ class TrialConfig:
         env_vars = {}
         
         # Add static environment variables first
-        env_vars.update(self.static_environment_variables)
+        env_vars.update({key: str(value) for key, value in self.static_environment_variables.items() if value is not None})
         
         # Add optimizable environment variables from parameters (can override static ones)
         for param_name, value in self.parameters.items():
-            if self._is_environment_parameter(param_name):
+            if self._is_environment_parameter(param_name) and value is not None:
                 env_vars[param_name] = str(value)
             
         return env_vars
