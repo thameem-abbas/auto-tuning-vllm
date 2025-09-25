@@ -425,8 +425,7 @@ class BaseTrialController(TrialController):
         trial_env_vars = trial_config.environment_vars
         if trial_env_vars:
             env.update(trial_env_vars)
-            vllm_logger.info(f"Environment variables: {trial_env_vars}")
-        
+            vllm_logger.info(f"Environment variable keys: {sorted(trial_env_vars.keys())}")
         # Start process with captured output
         self.vllm_process = subprocess.Popen(
             cmd,
