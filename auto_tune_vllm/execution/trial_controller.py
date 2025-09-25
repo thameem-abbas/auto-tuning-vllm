@@ -434,7 +434,8 @@ class BaseTrialController(TrialController):
             text=True,
             bufsize=1,  # Line buffered
             universal_newlines=True,
-            env=env  # Pass environment variables to the process
+            env=env,  # Pass environment variables to the process
+            start_new_session=True # Prevent vLLM termination from killing the parent process -> framework termination
         )
         
         # Start a thread to capture and log vLLM output
