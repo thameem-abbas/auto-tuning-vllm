@@ -561,6 +561,7 @@ class StudyController:
             trial_number=trial.number,
             trial_type="optimization",
             parameters=parameters,
+            static_environment_variables=self.config.static_environment_variables,
             benchmark_config=self.config.benchmark,
             optimization_config=self.config.optimization,
             logging_config=self.config.logging_config
@@ -709,6 +710,7 @@ class StudyController:
                 trial_number=None,  # No Optuna trial number for baselines
                 trial_type="baseline",
                 parameters=baseline_parameters,
+                static_environment_variables=self.config.static_environment_variables,
                 benchmark_config=self.config.benchmark,
                 optimization_config=self.config.optimization,
                 logging_config=self.config.logging_config
