@@ -267,9 +267,8 @@ class OptimizationConfig:
 @dataclass
 class BaselineConfig:
     """Configuration for baseline trials."""
-    
+
     enabled: bool = False
-    run_first: bool = True  # Run baseline before optimization trials
     concurrency_levels: List[int] = field(default_factory=lambda: [50])  # Concurrency levels to test
     
     def __post_init__(self):
