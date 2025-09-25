@@ -373,13 +373,11 @@ Baseline trials establish performance baselines using pure vLLM defaults before 
 ```yaml
 baseline:
   enabled: true
-  run_first: true  # Run baseline before optimization trials
   concurrency_levels: [50, 100, 150]  # Test multiple load levels
 ```
 
 #### Configuration Fields:
 - **`enabled`** (boolean): Enable baseline trials
-- **`run_first`** (boolean): Run baseline trials before optimization (recommended: true)
 - **`concurrency_levels`** (array): List of concurrency levels to test baseline performance
 
 ### Baseline Trial Behavior
@@ -395,7 +393,6 @@ This provides clean baseline performance data for comparison with optimized conf
 ```yaml
 baseline:
   enabled: true
-  run_first: true
   concurrency_levels: [50, 100]
 
 optimization:
