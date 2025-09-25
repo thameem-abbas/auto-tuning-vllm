@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
+import signal
 import subprocess
 import time
 from abc import ABC, abstractmethod
@@ -525,13 +526,35 @@ class BaseTrialController(TrialController):
     def cleanup_resources(self):
         """Clean up vLLM server process."""
         if self.vllm_process:
+            pid = self.vllm_process.pid
             try:
-                self.vllm_process.terminate()
-                self.vllm_process.wait(timeout=10)
-                logger.info(f"Terminated vLLM process {self.vllm_process.pid}")
+                # Send SIGINT first for graceful cleanup (what vLLM expects)
+                logger.info(f"Sending SIGINT to vLLM process {pid} for graceful shutdown")
+                self.vllm_process.send_signal(signal.SIGINT)
+                self.vllm_process.wait(timeout=15)  # Give more time for graceful cleanup
+                logger.info(f"Gracefully terminated vLLM process {pid}")
             except subprocess.TimeoutExpired:
-                self.vllm_process.kill()
-                logger.warning(f"Force killed vLLM process {self.vllm_process.pid}")
+                # If graceful shutdown fails, then use SIGTERM
+                logger.warning(f"Graceful shutdown timed out, sending SIGTERM to {pid}")
+                self.vllm_process.terminate()
+                try:
+                    self.vllm_process.wait(timeout=5)
+                    logger.info(f"Terminated vLLM process {pid} with SIGTERM")
+                except subprocess.TimeoutExpired:
+                    # Last resort: kill entire process group to catch multiprocessing children
+                    logger.warning(f"SIGTERM timeout, killing process group for {pid}")
+                    try:
+                        # Kill the entire process group (negative PID)
+                        os.killpg(os.getpgid(pid), signal.SIGKILL)
+                        logger.info(f"Killed process group for {pid}")
+                    except (OSError, ProcessLookupError) as e:
+                        logger.warning(f"Failed to kill process group for {pid}: {e}")
+                        # Fallback to regular kill if killpg fails
+                        try:
+                            self.vllm_process.kill()
+                            logger.warning(f"Force killed vLLM process {pid}")
+                        except (OSError, ProcessLookupError):
+                            logger.warning(f"Process {pid} already dead")
             finally:
                 self.vllm_process = None
     
