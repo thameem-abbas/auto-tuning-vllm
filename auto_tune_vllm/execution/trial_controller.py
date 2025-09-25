@@ -606,10 +606,10 @@ class RayWorkerTrialController(BaseTrialController):
         # Check for CUDA_VISIBLE_DEVICES override in trial environment variables
         trial_env_vars = trial_config.environment_vars
         if "CUDA_VISIBLE_DEVICES" in trial_env_vars:
-            vllm_logger.warning(
+            raise RuntimeError(
                 f"Trial specifies CUDA_VISIBLE_DEVICES={trial_env_vars['CUDA_VISIBLE_DEVICES']}, "
                 f"but Ray has already assigned GPUs: {gpu_ids}. "
-                f"Trial setting will override Ray assignment."
+                f"Cannot override Ray GPU assignment. Remove CUDA_VISIBLE_DEVICES from trial environment variables."
             )
         
         # Call parent implementation (which handles environment variables and logs full Python environment)
