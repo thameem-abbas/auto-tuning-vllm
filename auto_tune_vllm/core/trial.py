@@ -52,6 +52,7 @@ class TrialConfig:
     optimization_config: Optional[Any] = None  # Optimization configuration from study
     resource_requirements: Dict[str, float] = field(default_factory=dict)
     logging_config: Optional[Dict[str, Any]] = None  # Logging configuration from study
+    vllm_startup_timeout: int = 300  # vLLM server startup timeout in seconds
     
     def __post_init__(self):
         """Calculate resource requirements after initialization."""

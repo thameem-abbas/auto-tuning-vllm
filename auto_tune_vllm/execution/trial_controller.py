@@ -81,7 +81,7 @@ class BaseTrialController(TrialController):
         
         # Check if commands are available in PATH
         required_commands = {
-            'python': 'Python interpreter',
+            'python3': 'Python interpreter',
             'guidellm': 'GuideLLM CLI tool',
         }
         
@@ -200,7 +200,26 @@ class BaseTrialController(TrialController):
     def run_trial(self, trial_config: TrialConfig) -> TrialResult:
         """Execute trial with proper error handling and cleanup."""
         execution_info = ExecutionInfo()
-        
+
+        print(f"Running trial {trial_config.trial_id} with parameters: {trial_config.parameters}")
+        print(f"Study name: {trial_config.study_name}")
+
+        print("")
+
+        # # If the parallelism is set lower than MIN_GPUS in the static_environment_variables, cannot start the trial
+        # if trial_config.parameters.get("tensor_parallel_size") < trial_config.static_environment_variables.get("MIN_GPUS"):
+        #     logger.error(f"Trial {trial_config.trial_id} cannot start because the parallelism is set lower than MIN_GPUS in the static_environment_variables")
+        #     return TrialResult(
+        #         trial_id=trial_config.trial_id,
+        #         trial_number=trial_config.trial_number,
+        #         trial_type=trial_config.trial_type,
+        #         objective_values=[],
+        #         detailed_metrics={},
+        #         execution_info=execution_info,
+        #         success=False,
+        #         error_message="Parallelism is set lower than MIN_GPUS in the static_environment_variables"
+        #     )        
+
         try:
             # Store study name for log flushing
             self._current_study_name = trial_config.study_name
@@ -221,8 +240,8 @@ class BaseTrialController(TrialController):
             execution_info.worker_node_id = self._get_worker_id()
             
             # Wait for server to be ready
-            controller_logger.info(f"Waiting for server at {server_info['url']} to be ready")
-            self._wait_for_server_ready(server_info["url"])
+            controller_logger.info(f"Waiting for server at {server_info['url']} to be ready (timeout: {trial_config.vllm_startup_timeout}s)")
+            self._wait_for_server_ready(server_info["url"], trial_config.vllm_startup_timeout)
             
             # Run benchmark
             controller_logger.info("Starting benchmark run")
@@ -402,10 +421,11 @@ class BaseTrialController(TrialController):
         
         # Build vLLM command
         cmd = [
-            "python", "-m", "vllm.entrypoints.openai.api_server",
+            "python3", "-m", "vllm.entrypoints.openai.api_server",
             "--model", trial_config.benchmark_config.model,
             "--port", str(port),
-            "--host", "0.0.0.0"
+            "--host", "0.0.0.0",
+            "--no-enable-prefix-caching"
         ]
         
         # Add trial-specific parameters
@@ -469,7 +489,7 @@ class BaseTrialController(TrialController):
         start_time = time.time()
         health_url = url.replace("/v1", "/health")
         
-        vllm_logger.info(f"Waiting for vLLM server to be ready at {health_url}")
+        vllm_logger.info(f"Waiting for vLLM server to be ready at {health_url} (timeout: {timeout}s)")
         
         while time.time() - start_time < timeout:
             try:

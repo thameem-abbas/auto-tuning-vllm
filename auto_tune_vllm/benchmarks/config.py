@@ -20,13 +20,13 @@ class BenchmarkConfig:
     processor: Optional[str] = None  # Processor model, defaults to model if not set
     rate: int = 50  # Single rate value for concurrent requests
     
-    # Token statistics for synthetic data
-    prompt_tokens_stdev: int = 128
-    prompt_tokens_min: int = 256  
-    prompt_tokens_max: int = 1024
-    output_tokens_stdev: int = 512
-    output_tokens_min: int = 1024
-    output_tokens_max: int = 3072
+    # Token statistics for synthetic data - only used when explicitly specified
+    prompt_tokens_stdev: Optional[int] = None
+    prompt_tokens_min: Optional[int] = None  
+    prompt_tokens_max: Optional[int] = None
+    output_tokens_stdev: Optional[int] = None
+    output_tokens_min: Optional[int] = None
+    output_tokens_max: Optional[int] = None
     
     @property
     def use_synthetic_data(self) -> bool:
