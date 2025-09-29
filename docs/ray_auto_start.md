@@ -20,7 +20,7 @@ auto-tune-vllm optimize --config study.yaml --backend ray --start-ray-head
 ## How It Works
 
 1. **Detection**: When using Ray backend, the system first attempts to connect to an existing Ray cluster
-2. **Fallback**: If no cluster is found and auto-start is enabled (default), automatically starts a Ray head
+2. **Auto-start**: If no cluster is found, automatically starts a Ray head (default behavior)
 3. **Connection**: Connects to the newly started Ray head using auto-discovery
 4. **Cleanup**: Automatically stops the Ray head when optimization completes
 
@@ -43,15 +43,15 @@ When auto-starting, the Ray head is configured with:
 - Connection: Uses Ray's auto-discovery mechanism
 ## Error Handling
 
-### With `--no-start-ray-head` (auto-start disabled)
+### With auto-start disabled (`--no-start-ray-head`)
 ```
 Failed to connect to Ray cluster: [connection error]
 Use --start-ray-head to automatically start a Ray head, or start one manually:
   ray start --head
 ```
 
-### With auto-start enabled (default)
-- Automatically attempts to start Ray head
+### With auto-start enabled (default behavior)
+- Automatically attempts to start Ray head if no existing cluster found
 - Provides detailed error messages if Ray head startup fails
 - Graceful cleanup on both success and failure
 
