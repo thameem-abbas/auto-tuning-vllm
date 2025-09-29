@@ -9,7 +9,8 @@ from typing import Dict, Optional, List
 
 import optuna
 from optuna.samplers import (
-    GridSampler, 
+    GridSampler,
+    GPSampler,
     NSGAIISampler,
     RandomSampler,
     TPESampler
@@ -309,6 +310,8 @@ class StudyController:
             return TPESampler()
         elif sampler_name == "random":
             return RandomSampler()
+        elif sampler_name == "gp":
+            return GPSampler()
         elif sampler_name == "botorch":
             return optuna.integration.BoTorchSampler()
         elif sampler_name == "nsga2":
@@ -368,7 +371,7 @@ class StudyController:
         for values in search_space.values():
             size *= len(values)
         return size
-    
+        
     def run_optimization(
         self, 
         n_trials: Optional[int] = None,
@@ -387,7 +390,20 @@ class StudyController:
             Completed Optuna study
         """
         total_trials = n_trials or self.config.optimization.n_trials
-        max_concurrent = max_concurrent or float('inf')
+        
+        # Require explicit, positive concurrency specification
+        if max_concurrent is None:
+            msg = (
+                "❌ --max-concurrent is required to prevent GPU memory conflicts!\n\n"
+                "Add to your YAML config:\n"
+                "  optimization:\n"
+                "    max_concurrent: 2  # Match your GPU count\n\n"
+                "Or use CLI: --max-concurrent 2"
+            )
+            raise ValueError(msg)
+        if max_concurrent < 1:
+            raise ValueError("--max-concurrent must be >= 1")
+
         
         logger.info(f"Starting optimization: {total_trials} trials, "
                    f"max concurrent: {max_concurrent if max_concurrent != float('inf') else 'unlimited'}")

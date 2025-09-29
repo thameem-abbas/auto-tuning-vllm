@@ -22,7 +22,9 @@ For a detailed starter guide, see the [Quick Start Guide](docs/quick_start.md).
 ### Installation
 
 ```bash
-pip install auto-tune-vllm
+git clone https://github.com/openshift-psap/auto-tuning-vllm.git
+cd auto-tuning-vllm
+pip install -e .
 ```
 
 ### Basic Usage
@@ -30,13 +32,13 @@ pip install auto-tune-vllm
 #### CLI Interface
 ```bash
 # Run optimization study
-auto-tune-vllm optimize --config study_config.yaml
+auto-tune-vllm optimize --config config.yaml --max-concurrent 2
 
 # Stream live logs  
 auto-tune-vllm logs --study-id 42 --trial-number 15
 
 # Resume interrupted study
-auto-tune-vllm resume --study-id 42
+auto-tune-vllm resume --study-name study_35884
 ```
 
 

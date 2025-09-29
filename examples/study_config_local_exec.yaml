@@ -1,54 +1,47 @@
 # Example study configuration with auto-generated study name
 study:
-  # name: "local_single_trial_test_3"  # <- Comment out to use auto-generation
+  name: "local_single_trial_test_3"  # <- Comment out to use auto-generation
   # Will auto-generate unique name like: study_123456
   # No database - will use local SQLite storage in temp folder
   
 optimization:
   # High-throughput optimization: Maximize token generation rate
-  # approach: "single_objective"
+  # approach: "single_objective" or "multi_objective"
   # objective:
   #   metric: "output_tokens_per_second"  # Throughput optimization
   #   direction: "maximize"
   #   percentile: "mean"  # Use median for stable results
-  # # sampler: "tpe"
-  # n_trials: 1
-  
-  # Alternative: Use preset for common configurations
-  preset: "high_throughput" 
-  # options are: high_throughput, low_latency, balanced
-
-  # Alternative: Multi-objective (throughput vs latency)
-  # approach: "multi_objective"
-  # objectives:
-  #   - metric: "output_tokens_per_second"
-  #     direction: "maximize"
-  #     percentile: "mean"
-  #   - metric: "request_latency"
-  #     direction: "minimize"
-  #     percentile: "median"
+  # # sampler: "botorch"
+  # n_trials: 200
+  preset: "high_throughput"
   sampler: "botorch"
   n_trials: 200
-  
+  max_concurrent: 2  
+
 benchmark:
   benchmark_type: "guidellm"
-  model: "RedHatAI/Qwen3-1.7B-FP8-dynamic"  
-  max_seconds: 240                 
+  model: "RedHatAI/Qwen3-30B-A3B-FP8-dynamic" 
+  max_seconds: 300                 
   dataset: null  # Use synthetic data
-  prompt_tokens: 2000   
-  output_tokens: 2000
-  rate: 30             
+  prompt_tokens: 10000   
+  output_tokens: 1000
+  rate: 10             
   
 logging:
   file_path: "/tmp/auto-tune-vllm-local-run/logs"  # Local temp folder
   log_level: "INFO"
 
-
+baseline:
+  enabled: true
+  run_first: true
+  concurrency_levels: [10]
   
-parameters:
+parameters: # parameters to optimize
   max_num_batched_tokens:
     enabled: true
-    # Uses schema defaults
+    min: 1024
+    max: 32768 
+    step: 1024
     
   gpu_memory_utilization:
     enabled: true
@@ -58,7 +51,28 @@ parameters:
     
   kv_cache_dtype:
     enabled: true
-    options: ["auto", "fp8"]
+    options: ["fp8"]
     
-  enable_cuda_graphs:
-    enabled: false
+  block_size:
+    enabled: true
+    options: [8, 16, 32]
+
+  cuda_graph_sizes:
+    enabled: true
+    min: 8
+    max: 8192
+    step: 128
+    
+  long_prefill_token_threshold:
+    enabled: true
+    options: [0, 256, 512, 1024, 2048, 4096, 8192, 11500] 
+    
+  max_num_partial_prefills:
+    enabled: true
+    options: [1, 2, 4, 8]
+
+  max_seq_len_to_capture: 
+    enabled: true
+    min: 4096
+    max: 16384
+    step: 1024
