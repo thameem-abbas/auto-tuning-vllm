@@ -63,7 +63,7 @@ class RayExecutionBackend(ExecutionBackend):
     def __init__(
         self, 
         resource_requirements: Optional[Dict[str, float]] = None, 
-        start_ray_head: bool = False,
+        start_ray_head: bool = True,
         python_executable: Optional[str] = None,
         venv_path: Optional[str] = None,
         conda_env: Optional[str] = None

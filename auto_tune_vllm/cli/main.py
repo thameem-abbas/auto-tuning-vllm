@@ -72,7 +72,7 @@ def optimize_command(
     max_concurrent: Optional[int] = typer.Option(None, "--max-concurrent", help="REQUIRED: Max concurrent trials to run simultaneously."),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose logging"),
     create_db: bool = typer.Option(False, "--create-db", help="Create database if it doesn't exist"),
-    start_ray_head: bool = typer.Option(False, "--start-ray-head", help="Start Ray head if no cluster is found"),
+    start_ray_head: bool = typer.Option(True, "--start-ray-head/--no-start-ray-head", help="Start Ray head if no cluster is found (default: True)"),
     python_executable: Optional[str] = typer.Option(None, "--python-executable", help="Explicit Python executable path for Ray workers"),
     venv_path: Optional[str] = typer.Option(None, "--venv-path", help="Virtual environment path for Ray workers"),
     conda_env: Optional[str] = typer.Option(None, "--conda-env", help="Conda environment name for Ray workers"),
@@ -128,7 +128,9 @@ def optimize_command(
             )
             console.print("[blue]Using Ray distributed execution[/blue]")
             if start_ray_head:
-                console.print("[blue]Will start Ray head if no cluster found[/blue]")
+                console.print("[blue]Will auto-start Ray head if no cluster found[/blue]")
+            else:
+                console.print("[yellow]Ray auto-start disabled - requires existing cluster[/yellow]")
         else:
             console.print("[bold red]Error: Local execution backend is not supported in this version.[/bold red]")
             console.print("[bold red]Only Ray distributed execution is available.[/bold red]")
@@ -583,7 +585,7 @@ def resume_command(
     n_total_trials: Optional[int] = typer.Option(None, "--total-trials", help="Total number of trials to reach (overrides config)"),
     max_concurrent: Optional[int] = typer.Option(None, "--max-concurrent", help="REQUIRED: Max concurrent trials to run simultaneously (should match your GPU count)"),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose logging"),
-    start_ray_head: bool = typer.Option(False, "--start-ray-head", help="Start Ray head if no cluster is found"),
+    start_ray_head: bool = typer.Option(True, "--start-ray-head/--no-start-ray-head", help="Start Ray head if no cluster is found (default: True)"),
     python_executable: Optional[str] = typer.Option(None, "--python-executable", help="Explicit Python executable path for Ray workers"),
     venv_path: Optional[str] = typer.Option(None, "--venv-path", help="Virtual environment path for Ray workers"),
     conda_env: Optional[str] = typer.Option(None, "--conda-env", help="Conda environment name for Ray workers"),
@@ -620,7 +622,9 @@ def resume_command(
             )
             console.print("[blue]Using Ray distributed execution[/blue]")
             if start_ray_head:
-                console.print("[blue]Will start Ray head if no cluster found[/blue]")
+                console.print("[blue]Will auto-start Ray head if no cluster found[/blue]")
+            else:
+                console.print("[yellow]Ray auto-start disabled - requires existing cluster[/yellow]")
       
         else:
             console.print("[bold red]Error: Local execution backend is not supported in this version.[/bold red]")
