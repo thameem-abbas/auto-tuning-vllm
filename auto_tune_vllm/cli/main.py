@@ -1,6 +1,7 @@
 """Command-line interface for auto-tune-vllm."""
 
 import logging
+import shutil
 import sys
 from pathlib import Path
 from typing import Optional
@@ -36,6 +37,35 @@ def setup_logging(verbose: bool = False):
         datefmt="[%X]",
         handlers=[RichHandler(rich_tracebacks=True, console=console)]
     )
+
+
+def save_config_to_study_folder(config_file_path: str, study_config: StudyConfig):
+    """Save the config YAML file to the study folder alongside the Optuna database."""
+    try:
+        config_path = Path(config_file_path)
+        if not config_path.exists():
+            console.print(f"[yellow]Warning: Config file not found: {config_file_path}[/yellow]")
+            return
+        
+        # Determine study folder based on storage configuration
+        if study_config.storage_file:
+            # For SQLite storage, use the directory containing the database file
+            study_folder = Path(study_config.storage_file).parent
+        else:
+            # For PostgreSQL or in-memory storage, create a default folder structure
+            study_folder = Path("./optuna_studies") / study_config.study_name
+        
+        # Ensure study folder exists
+        study_folder.mkdir(parents=True, exist_ok=True)
+        
+        # Copy config file to study folder
+        dest_config_path = study_folder / "study_config.yaml"
+        shutil.copy2(config_path, dest_config_path)
+        
+        console.print(f"[green]📄 Saved study config to: {dest_config_path}[/green]")
+        
+    except Exception as e:
+        console.print(f"[yellow]Warning: Failed to save config to study folder: {e}[/yellow]")
 
 
 def _display_log_viewing_instructions(config: StudyConfig):
@@ -117,6 +147,9 @@ def optimize_command(
         
         study_config = StudyConfig.from_file(config)
         console.print(f"Loaded study: {study_config.study_name}")
+        
+        # Save config file to study folder
+        save_config_to_study_folder(config, study_config)
         
         # Create execution backend
         if backend.lower() == "ray":
@@ -611,6 +644,9 @@ def resume_command(
     
     try:
         study_config = StudyConfig.from_file(config)
+        
+        # Save config file to study folder
+        save_config_to_study_folder(config, study_config)
         
         # Create backend
         if backend.lower() == "ray":
