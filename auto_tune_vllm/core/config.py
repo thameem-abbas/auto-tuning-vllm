@@ -269,6 +269,7 @@ class BaselineConfig:
 
     enabled: bool = False
     concurrency_levels: List[int] = field(default_factory=lambda: [50])  # Concurrency levels to test
+    parameters: Dict[str, Any] = field(default_factory=dict)  # Custom parameters for baseline trials
     
     def __post_init__(self):
         """Validate baseline configuration."""
