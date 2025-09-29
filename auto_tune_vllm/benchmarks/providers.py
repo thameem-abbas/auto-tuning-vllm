@@ -176,17 +176,25 @@ class GuideLLMBenchmark(BenchmarkProvider):
         
         # Add dataset or synthetic data configuration
         if config.use_synthetic_data:
-            # Build complex data JSON object with statistics
+            # Build data JSON object - only include statistical parameters if specified
             data_config = {
                 "prompt_tokens": config.prompt_tokens,
-                "prompt_tokens_stdev": config.prompt_tokens_stdev,
-                "prompt_tokens_min": config.prompt_tokens_min,
-                "prompt_tokens_max": config.prompt_tokens_max,
-                "output_tokens": config.output_tokens,
-                "output_tokens_stdev": config.output_tokens_stdev,
-                "output_tokens_min": config.output_tokens_min,
-                "output_tokens_max": config.output_tokens_max
+                "output_tokens": config.output_tokens
             }
+            
+            # Only add statistical distribution parameters if they were explicitly specified
+            if config.prompt_tokens_stdev is not None:
+                data_config["prompt_tokens_stdev"] = config.prompt_tokens_stdev
+            if config.prompt_tokens_min is not None:
+                data_config["prompt_tokens_min"] = config.prompt_tokens_min
+            if config.prompt_tokens_max is not None:
+                data_config["prompt_tokens_max"] = config.prompt_tokens_max
+            if config.output_tokens_stdev is not None:
+                data_config["output_tokens_stdev"] = config.output_tokens_stdev
+            if config.output_tokens_min is not None:
+                data_config["output_tokens_min"] = config.output_tokens_min
+            if config.output_tokens_max is not None:
+                data_config["output_tokens_max"] = config.output_tokens_max
             
             cmd.extend([
                 "--data", json.dumps(data_config)
