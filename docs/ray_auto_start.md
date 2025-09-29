@@ -2,29 +2,32 @@
 
 ## Overview
 
-The `--start-ray-head` option allows auto-tune-vllm to automatically start a Ray head node when no existing Ray cluster is detected. This simplifies deployment for single-machine setups and development environments.
+Auto-tune-vllm automatically starts a Ray head node when no existing Ray cluster is detected. This simplifies deployment for single-machine setups and development environments. Ray auto-start is **enabled by default**.
 
 ## Usage
 
 ```bash
-# Auto-start Ray head if no cluster found
-auto-tune-vllm optimize --config study.yaml --backend ray --start-ray-head
-
-# Traditional usage (requires existing Ray cluster)
+# Default behavior - auto-start Ray head if no cluster found
 auto-tune-vllm optimize --config study.yaml --backend ray
+
+# Disable auto-start (requires existing Ray cluster)
+auto-tune-vllm optimize --config study.yaml --backend ray --no-start-ray-head
+
+# Explicitly enable auto-start (same as default)
+auto-tune-vllm optimize --config study.yaml --backend ray --start-ray-head
 ```
 
 ## How It Works
 
 1. **Detection**: When using Ray backend, the system first attempts to connect to an existing Ray cluster
-2. **Fallback**: If no cluster is found and `--start-ray-head` is enabled, automatically starts a Ray head
+2. **Auto-start**: If no cluster is found, automatically starts a Ray head (default behavior)
 3. **Connection**: Connects to the newly started Ray head using auto-discovery
 4. **Cleanup**: Automatically stops the Ray head when optimization completes
 
 ## Technical Implementation
 
 ### CLI Changes
-- Added `--start-ray-head` boolean option to the `optimize` command
+- `--start-ray-head` is enabled by default (use `--no-start-ray-head` to disable)
 - Option is passed to `RayExecutionBackend` constructor
 
 ### Backend Changes
@@ -40,15 +43,15 @@ When auto-starting, the Ray head is configured with:
 - Connection: Uses Ray's auto-discovery mechanism
 ## Error Handling
 
-### Without `--start-ray-head`
+### With auto-start disabled (`--no-start-ray-head`)
 ```
 Failed to connect to Ray cluster: [connection error]
 Use --start-ray-head to automatically start a Ray head, or start one manually:
   ray start --head
 ```
 
-### With `--start-ray-head`
-- Automatically attempts to start Ray head
+### With auto-start enabled (default behavior)
+- Automatically attempts to start Ray head if no existing cluster found
 - Provides detailed error messages if Ray head startup fails
 - Graceful cleanup on both success and failure
 
@@ -69,20 +72,20 @@ INFO: Successfully stopped Ray head
 
 ### Development Environment
 ```bash
-# Quick start for local development
-auto-tune-vllm optimize --config dev-study.yaml --start-ray-head
+# Quick start for local development (auto-start enabled by default)
+auto-tune-vllm optimize --config dev-study.yaml
 ```
 
 ### Single Machine Deployment
 ```bash
-# Production single-machine setup
-auto-tune-vllm optimize --config production.yaml --backend ray --start-ray-head
+# Production single-machine setup (auto-start enabled by default)
+auto-tune-vllm optimize --config production.yaml --backend ray
 ```
 
 ### CI/CD Pipelines
 ```bash
-# Automated testing with ephemeral Ray cluster
-auto-tune-vllm optimize --config test-study.yaml --start-ray-head --trials 5
+# Automated testing with ephemeral Ray cluster (auto-start enabled by default)
+auto-tune-vllm optimize --config test-study.yaml --trials 5
 ```
 
 ## Considerations
