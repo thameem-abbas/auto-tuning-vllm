@@ -547,9 +547,10 @@ class StudyController:
     
     def _build_trial_config(self, trial: optuna.Trial) -> TrialConfig:
         """Build trial configuration from Optuna trial."""
-        # Generate parameter values using configured parameter definitions
-        parameters = {}
+        # Start with static parameters that apply to all trials
+        parameters = self.config.static_parameters.copy()
         
+        # Add optimizable parameter values using configured parameter definitions
         for param_name, param_config in self.config.parameters.items():
             if param_config.enabled:
                 value = param_config.generate_optuna_suggest(trial)
@@ -699,8 +700,13 @@ class StudyController:
         for concurrency in self.config.baseline.concurrency_levels:
             logger.info(f"Running baseline trial with concurrency={concurrency}")
             
-            # Create baseline trial config with max-num-seqs parameter only if concurrency > 256
-            baseline_parameters = {}
+            # Create baseline trial config with custom parameters from config + max-num-seqs when needed
+            # Start with static parameters that apply to all trials
+            baseline_parameters = self.config.static_parameters.copy()
+            # Add baseline-specific parameters from config (if any)
+            if self.config.baseline.parameters:
+                baseline_parameters.update(self.config.baseline.parameters)
+            # Add max-num-seqs parameter only if concurrency > 256
             if concurrency > 256:
                 baseline_parameters["max_num_seqs"] = concurrency
             

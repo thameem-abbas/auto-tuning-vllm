@@ -292,8 +292,9 @@ class StudyConfig:
     optimization: OptimizationConfig
     benchmark: BenchmarkConfig
     parameters: Dict[str, ParameterConfig] = field(default_factory=dict)
-    static_environment_variables: Dict[str, str] = field(default_factory=dict)  # NEW: Static environment variables
-    baseline: Optional[BaselineConfig] = None  # NEW: Baseline configuration
+    static_environment_variables: Dict[str, str] = field(default_factory=dict)  # Static environment variables
+    static_parameters: Dict[str, Any] = field(default_factory=dict)  # Static vLLM parameters for all trials
+    baseline: Optional[BaselineConfig] = None  # Baseline configuration
     logging_config: Optional[Dict[str, Any]] = None
     storage_file: Optional[str] = None  # Alternative to database_url for file-based storage
     study_prefix: Optional[str] = None  # For auto-generated study names with custom prefix
@@ -579,6 +580,16 @@ class ConfigValidator:
             
             static_env_vars[env_name] = str(env_value)
         
+        # Validate static parameters (simple key-value pairs for vLLM CLI args)
+        static_params = {}
+        
+        for param_name, param_value in raw_config.get("static_parameters", {}).items():
+            if not isinstance(param_value, (str, int, float, bool)):
+                raise ValueError(f"Static parameter '{param_name}' must be a simple value (string, number, or boolean), got {type(param_value)}")
+            
+            # Keep the original type (don't convert to string like env vars)
+            static_params[param_name] = param_value
+        
         # Build other configs
         study_info = raw_config.get("study", {})
         if study_info is None:
@@ -621,6 +632,9 @@ class ConfigValidator:
         if "baseline" in raw_config:
             baseline_data = raw_config["baseline"]
             if baseline_data.get("enabled", False):
+                # Ensure parameters field is a dict, not None (YAML can parse empty as None)
+                if baseline_data.get("parameters") is None:
+                    baseline_data["parameters"] = {}
                 baseline_config = BaselineConfig(**baseline_data)
         
         return StudyConfig(
@@ -630,6 +644,7 @@ class ConfigValidator:
             benchmark=benchmark, 
             parameters=validated_params,
             static_environment_variables=static_env_vars,
+            static_parameters=static_params,
             baseline=baseline_config,
             logging_config=raw_config.get("logging"),
             storage_file=storage_file,
