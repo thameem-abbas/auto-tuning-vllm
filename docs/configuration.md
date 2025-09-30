@@ -10,18 +10,23 @@ This guide provides detailed explanations of all configuration options available
 4. [Benchmark Configuration](#benchmark-configuration)
 5. [Logging Configuration](#logging-configuration)
 6. [Parameter Configuration](#parameter-configuration)
-7. [Environment Variables](#environment-variables)
-8. [Configuration Examples](#configuration-examples)
+7. [Baseline Configuration](#baseline-configuration)
+8. [Environment Variables](#environment-variables)
+9. [Static Parameters](#static-parameters)
+10. [Configuration Examples](#configuration-examples)
 
 ## Configuration File Structure
 
-Auto-tune-vllm uses YAML configuration files with five main sections. Each section controls a different aspect of the optimization process:
+Auto-tune-vllm uses YAML configuration files with several main sections. Each section controls a different aspect of the optimization process:
 
 - **`study`**: Defines study metadata, naming, and storage backend
 - **`optimization`**: Specifies what metrics to optimize and how
 - **`benchmark`**: Configures how performance benchmarks are executed
 - **`logging`**: Controls logging output and verbosity (optional)
 - **`parameters`**: Defines which vLLM parameters to optimize and their ranges
+- **`static_parameters`**: Defines vLLM parameters that remain constant across all trials (optional)
+- **`baseline`**: Configures baseline performance trials (optional)
+- **`static_environment_variables`**: Defines environment variables for all trials (optional)
 
 The basic structure looks like:
 
@@ -37,6 +42,15 @@ benchmark:
   
 logging:
   # Where and how to log (optional)
+
+baseline:
+  # Baseline trial configuration (optional)
+
+static_parameters:
+  # Fixed vLLM parameters for all trials (optional)
+
+static_environment_variables:
+  # Environment variables for all trials (optional)
   
 parameters:
   # Which vLLM parameters to tune
@@ -374,17 +388,23 @@ Baseline trials establish performance baselines using pure vLLM defaults before 
 baseline:
   enabled: true
   concurrency_levels: [50, 100, 150]  # Test multiple load levels
+  parameters:  # Optional: Custom parameters for baseline trials - Will override static_parameters if defined in both
+    tensor_parallel_size: 1
+    max_model_len: 16384
 ```
 
 #### Configuration Fields:
 - **`enabled`** (boolean): Enable baseline trials
 - **`concurrency_levels`** (array): List of concurrency levels to test baseline performance
+- **`parameters`** (dict, optional): Custom vLLM parameters to use for all baseline trials - Will override static_parameters if defined in both
 
 ### Baseline Trial Behavior
 
-Baseline trials use **pure vLLM defaults** with only one parameter modified:
-- `--max-num-seqs` is set to the concurrency level being tested
+By default, baseline trials use **pure vLLM defaults** with only one parameter modified:
+- `--max-num-seqs` is set to the concurrency level being tested (when concurrency > 256)
 - All other parameters use vLLM's built-in defaults (not hardcoded values)
+
+Optionally, you can specify custom parameters in the `parameters` field to set specific vLLM arguments for baseline trials. This is useful when you need consistent baseline parameters across all runs (e.g., `tensor_parallel_size`, `max_model_len`).
 
 This provides clean baseline performance data for comparison with optimized configurations.
 
@@ -483,6 +503,72 @@ parameters:
 static_environment_variables:
   VLLM_CACHE_ROOT: "/tmp/vllm_cache"
   VLLM_DEBUG: "0"
+```
+
+## Static Parameters
+
+Static parameters are vLLM command-line arguments that remain constant across **all trials** (both baseline and optimization trials). Use this section when you need specific vLLM settings applied consistently without optimizing them.
+
+### When to Use Static Parameters
+
+Static parameters are useful for:
+- **Hardware constraints**: Fixed parallelism settings like `tensor_parallel_size` based on your GPU setup
+- **Model requirements**: Parameters like `max_model_len` that must match your model's specifications
+- **Consistency requirements**: Settings that should remain constant for fair comparisons across trials
+
+### Configuration
+
+```yaml
+static_parameters:
+  tensor_parallel_size: 1       # Use 1 GPU for all trials
+  max_model_len: 16384          # Fixed context length
+  enable_chunked_prefill: true  # Always enable chunked prefill
+```
+
+### How Static Parameters Work
+
+1. Static parameters are applied to **every trial** (baseline and optimization)
+2. They can be overridden by baseline-specific parameters or optimization parameters if needed
+3. The merge order is: `static_parameters` → `baseline.parameters` (for baseline trials) → optimized parameters (for optimization trials)
+
+### Example with Optimization
+
+```yaml
+# Fixed parameters for all trials
+static_parameters:
+  tensor_parallel_size: 2
+  max_model_len: 8192
+
+# Parameters to optimize (will be added to static parameters)
+parameters:
+  gpu_memory_utilization:
+    enabled: true
+    min: 0.85
+    max: 0.95
+    
+  max_num_batched_tokens:
+    enabled: true
+    options: [2048, 4096, 8192]
+```
+
+In this example, all trials will use:
+- Fixed: `tensor_parallel_size=2`, `max_model_len=8192`
+- Optimized: varying `gpu_memory_utilization` and `max_num_batched_tokens`
+
+### Static Parameters vs Baseline Parameters
+
+- **`static_parameters`**: Applied to ALL trials (baseline + optimization)
+- **`baseline.parameters`**: Applied ONLY to baseline trials (on top of static_parameters)
+
+```yaml
+static_parameters:
+  tensor_parallel_size: 1  # All trials use this
+
+baseline:
+  enabled: true
+  concurrency_levels: [50]
+  parameters:
+    gpu_memory_utilization: 0.9  # Only baseline trials use this
 ```
 
 ## Configuration Examples
