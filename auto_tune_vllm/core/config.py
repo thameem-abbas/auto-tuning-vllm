@@ -644,6 +644,10 @@ class ConfigValidator:
                 # Ensure parameters field is a dict, not None (YAML can parse empty as None)
                 if baseline_data.get("parameters") is None:
                     baseline_data["parameters"] = {}
+                elif not isinstance(baseline_data.get("parameters"), dict):
+                    raise TypeError(
+                        "Baseline parameters must be provided as a mapping of CLI flag names to simple values."
+                    )
                 baseline_config = BaselineConfig(**baseline_data)
         
         return StudyConfig(
