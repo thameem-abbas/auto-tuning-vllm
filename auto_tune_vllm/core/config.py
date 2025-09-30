@@ -583,13 +583,22 @@ class ConfigValidator:
         # Validate static parameters (simple key-value pairs for vLLM CLI args)
         static_params = {}
         
-        for param_name, param_value in raw_config.get("static_parameters", {}).items():
+        raw_static_parameters = raw_config.get("static_parameters")
+        if raw_static_parameters is None:
+            raw_static_parameters = {}
+        elif not isinstance(raw_static_parameters, dict):
+            raise TypeError(
+                "Static parameters must be provided as a mapping of CLI flag names to simple values."
+            )
+
+        for param_name, param_value in raw_static_parameters.items():
             if not isinstance(param_value, (str, int, float, bool)):
-                raise ValueError(f"Static parameter '{param_name}' must be a simple value (string, number, or boolean), got {type(param_value)}")
+                raise ValueError(
+                    f"Static parameter '{param_name}' must be a simple value (string, number, or boolean), got {type(param_value)}"
+                )
             
             # Keep the original type (don't convert to string like env vars)
             static_params[param_name] = param_value
-        
         # Build other configs
         study_info = raw_config.get("study", {})
         if study_info is None:
