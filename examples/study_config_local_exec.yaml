@@ -76,3 +76,14 @@ parameters: # parameters to optimize
     min: 4096
     max: 16384
     step: 1024
+
+  # Environment variables (sampled by Optuna) - identified by type: environment
+  # Can only be a list of options
+  VLLM_ATTENTION_BACKEND:
+    enabled: false
+    type: environment
+    options: ["FLASH_ATTN", "FLASHINFER"]
+
+static_environment_variables:
+  VLLM_USE_V1: "1"
+  VLLM_STARTUP_TIMEOUT: "900"  # 15 minutes timeout for vLLM server startup
