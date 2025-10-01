@@ -240,7 +240,7 @@ class OptimizationConfig:
 class BaselineConfig:
     """Configuration for baseline trials."""
 
-    enabled: bool = False
+    enabled: bool = True
     concurrency_levels: List[int] = field(
         default_factory=lambda: [50]
     )  # Concurrency levels to test
@@ -331,7 +331,7 @@ class ConfigValidator:
                 schema_path = Path(__file__).parent.parent / "schemas" / "v0_10_0.yaml"
             else:
                 schema_path = (
-                    Path(__file__).parent.parent / "schemas" / "v0_10_1_1.yaml"
+                    Path(__file__).parent.parent / "schemas" / "v0_10_2.yaml"
                 )
         # Store resolved version for defaults handling
         self.vllm_version = vllm_version or locals().get("resolved_version")
@@ -341,7 +341,7 @@ class ConfigValidator:
 
         # Load defaults - support versioned defaults
         self.defaults = {}
-        self.vllm_version = vllm_version
+        
 
         if defaults_path is not None:
             self.defaults_path = Path(defaults_path)
@@ -701,7 +701,10 @@ class ConfigValidator:
         baseline_config = None
         if "baseline" in raw_config:
             baseline_data = raw_config["baseline"]
-            if baseline_data.get("enabled", False):
+            # If concurrency_levels not specified, inherit from benchmark rate
+            if "concurrency_levels" not in baseline_data:
+                baseline_data["concurrency_levels"] = [benchmark.rate]
+            if baseline_data.get("enabled", True):  # Default is now True
                 # Ensure parameters field is a dict, not None
                 # (YAML can parse empty as None)
                 if baseline_data.get("parameters") is None:
@@ -712,6 +715,12 @@ class ConfigValidator:
                         "CLI flag names to simple values."
                     )
                 baseline_config = BaselineConfig(**baseline_data)
+        else:
+            # No baseline section in config
+            # Create default baseline with benchmark rate
+            baseline_config = BaselineConfig(
+                enabled=True, concurrency_levels=[benchmark.rate]
+            )
 
         return StudyConfig(
             study_name=study_name,
