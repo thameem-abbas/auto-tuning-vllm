@@ -44,7 +44,7 @@ logging:
   # Where and how to log (optional)
 
 baseline:
-  # Baseline trial configuration (optional)
+  # Baseline trial configuration (optional - enabled by default)
 
 static_parameters:
   # Fixed vLLM parameters for all trials (optional)
@@ -382,20 +382,22 @@ Focus on high-impact parameters first:
 
 Baseline trials establish performance baselines using pure vLLM defaults before running optimization. This helps measure optimization improvements and provides reference performance data.
 
+**Default Behavior**: Baseline trials are **enabled by default**. If no baseline configuration is provided, the system automatically creates a baseline trial using the benchmark's configured rate as the concurrency level.
+
 ### Baseline Configuration Fields
 
 ```yaml
 baseline:
-  enabled: true
-  concurrency_levels: [50, 100, 150]  # Test multiple load levels
+  enabled: true  # Default: true (can be set to false to disable)
+  concurrency_levels: [50, 100, 150]  # Optional: defaults to benchmark.rate if not specified
   parameters:  # Optional: Custom parameters for baseline trials - Will override static_parameters if defined in both
     tensor_parallel_size: 1
     max_model_len: 16384
 ```
 
 #### Configuration Fields:
-- **`enabled`** (boolean): Enable baseline trials
-- **`concurrency_levels`** (array): List of concurrency levels to test baseline performance
+- **`enabled`** (boolean, default: `true`): Enable baseline trials. Set to `false` to disable.
+- **`concurrency_levels`** (array, optional): List of concurrency levels to test baseline performance. If not specified, defaults to `[benchmark.rate]`.
 - **`parameters`** (dict, optional): Custom vLLM parameters to use for all baseline trials - Will override static_parameters if defined in both
 
 ### Baseline Trial Behavior
@@ -407,6 +409,17 @@ By default, baseline trials use **pure vLLM defaults** with only one parameter m
 Optionally, you can specify custom parameters in the `parameters` field to set specific vLLM arguments for baseline trials. This is useful when you need consistent baseline parameters across all runs (e.g., `tensor_parallel_size`, `max_model_len`).
 
 This provides clean baseline performance data for comparison with optimized configurations.
+
+### Disabling Baseline Trials
+
+To disable baseline trials entirely, explicitly set `enabled: false`:
+
+```yaml
+baseline:
+  enabled: false  # Disable baseline trials
+```
+
+**Note**: If you completely omit the baseline section from your config, baseline trials will still run by default using your benchmark's configured rate.
 
 ### Example Configuration
 
