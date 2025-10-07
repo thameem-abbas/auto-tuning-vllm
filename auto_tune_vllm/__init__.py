@@ -13,7 +13,8 @@ __author__ = "Your Name"
 __email__ = "your.email@example.com"
 
 # Main public API
-from .benchmarks.providers import BenchmarkProvider, GuideLLMBenchmark
+from .benchmarks.providers import BenchmarkProvider
+from .benchmarks.guidellm import GuideLLMBenchmark
 from .core.config import ParameterConfig, StudyConfig
 from .core.study_controller import StudyController
 from .execution.backends import LocalExecutionBackend, RayExecutionBackend

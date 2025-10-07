@@ -12,7 +12,7 @@ from typing import Optional
 
 import ray
 
-from ..benchmarks.providers import BenchmarkProvider, GuideLLMBenchmark
+from ..benchmarks.providers import BenchmarkProvider, get_benchmark_provider
 from ..core.trial import ExecutionInfo, TrialConfig, TrialResult
 from ..logging.manager import CentralizedLogger
 
@@ -367,11 +367,11 @@ class BaseTrialController(TrialController):
         """Create appropriate benchmark provider."""
         benchmark_type = trial_config.benchmark_config.benchmark_type
 
-        if benchmark_type == "guidellm":
-            return GuideLLMBenchmark()
-        else:
-            # Import custom provider by name
-            # This enables extensibility for custom benchmarks
+        try:
+            # Try to get provider from registry first
+            return get_benchmark_provider(benchmark_type)
+        except ValueError:
+            # Fallback to custom provider import for backward compatibility
             return self._import_custom_benchmark(benchmark_type)
 
     def _import_custom_benchmark(self, benchmark_type: str) -> BenchmarkProvider:
