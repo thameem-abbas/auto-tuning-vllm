@@ -2,16 +2,13 @@
 
 from __future__ import annotations
 
-import json
 import logging
-import os
-import subprocess
-import tempfile
 from abc import ABC, abstractmethod
-from pathlib import Path
 from typing import Any, Dict
 
 from .config import BenchmarkConfig
+
+# Note: Registry moved to __init__.py to avoid circular imports
 
 logger = logging.getLogger(__name__)
 
@@ -103,24 +100,5 @@ class CustomBenchmarkTemplate(BenchmarkProvider):
         }
 
 
-# Registry for dynamic benchmark provider loading
-# Import GuideLLMBenchmark from its dedicated module
-from .guidellm import GuideLLMBenchmark
-
-BENCHMARK_PROVIDERS = {
-    "guidellm": GuideLLMBenchmark,
-    "custom_template": CustomBenchmarkTemplate,
-}
-
-
-def get_benchmark_provider(provider_name: str) -> BenchmarkProvider:
-    """Get benchmark provider by name."""
-    if provider_name not in BENCHMARK_PROVIDERS:
-        raise ValueError(
-            f"Unknown benchmark provider: {provider_name}. "
-            f"Available providers: {list(BENCHMARK_PROVIDERS.keys())}"
-        )
-
-    provider_class = BENCHMARK_PROVIDERS[provider_name]
-    return provider_class()
+# Registry and get_benchmark_provider() moved to __init__.py to avoid circular imports
 
