@@ -3,10 +3,12 @@
 from .config import BenchmarkConfig
 from .guidellm import GuideLLMBenchmark
 from .providers import BenchmarkProvider, CustomBenchmarkTemplate
+from .vllm_bench_serve import VLLMBenchServeBenchmark
 
 # Registry for dynamic benchmark provider loading
 BENCHMARK_PROVIDERS = {
     "guidellm": GuideLLMBenchmark,
+    "vllm_bench_online": VLLMBenchServeBenchmark,
     "custom_template": CustomBenchmarkTemplate,
 }
 
@@ -26,6 +28,7 @@ def get_benchmark_provider(provider_name: str) -> BenchmarkProvider:
 __all__ = [
     "BenchmarkProvider",
     "GuideLLMBenchmark", 
+    "VLLMBenchServeBenchmark",
     "BenchmarkConfig",
     "CustomBenchmarkTemplate",
     "BENCHMARK_PROVIDERS",

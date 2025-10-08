@@ -14,6 +14,7 @@ __email__ = "your.email@example.com"
 
 # Main public API
 from .benchmarks.guidellm import GuideLLMBenchmark
+from .benchmarks.vllm_bench_serve import VLLMBenchServeBenchmark
 from .benchmarks.providers import BenchmarkProvider
 from .core.config import ParameterConfig, StudyConfig
 from .core.study_controller import StudyController
@@ -26,5 +27,6 @@ __all__ = [
     "RayExecutionBackend",
     "LocalExecutionBackend", 
     "GuideLLMBenchmark",
+    "VLLMBenchServeBenchmark",
     "BenchmarkProvider",
 ]
