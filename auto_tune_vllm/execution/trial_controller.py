@@ -8,6 +8,7 @@ import signal
 import subprocess
 import time
 from abc import ABC, abstractmethod
+from enum import Enum, auto
 from typing import Optional
 
 import ray
@@ -17,6 +18,12 @@ from ..core.trial import ExecutionInfo, TrialConfig, TrialResult
 from ..logging.manager import CentralizedLogger
 
 logger = logging.getLogger(__name__)
+
+
+class TrialState(Enum):
+    """States for trial execution state machine."""
+    WAITING_FOR_VLLM = auto()
+    RUNNING_BENCHMARK = auto()
 
 
 class TrialController(ABC):
@@ -30,6 +37,11 @@ class TrialController(ABC):
     @abstractmethod
     def cleanup_resources(self):
         """Clean up any resources (servers, processes, etc.)."""
+        pass
+
+    @abstractmethod
+    def request_cancellation(self):
+        """Request cancellation of the running trial (non-blocking)."""
         pass
 
 
@@ -59,10 +71,12 @@ class BaseTrialController(TrialController):
         self.trial_loggers = {}  # Dict to hold trial-specific loggers
         self._health_monitor_thread = None
         self._health_monitor_stop = False
+        self._health_monitor_stop_event = None
         self._health_check_url = None
         self._health_check_failed = False
         self._health_check_failure_reason = None
         self._benchmark_process = None  # Track running benchmark process
+        self._cancellation_requested = False  # Flag for external cancellation requests
 
     def _validate_environment(self, trial_config: Optional[TrialConfig] = None) -> None:
         """Validate that all required packages are available on this worker."""
@@ -213,6 +227,18 @@ class BaseTrialController(TrialController):
         """
         return self.trial_loggers.get(component, logger)
 
+    def _flush_logger_handlers(self, target_logger):
+        """
+        Immediately flush all handlers for a specific logger.
+        This ensures logs appear in real-time during critical operations like cleanup.
+        """
+        for handler in target_logger.handlers:
+            try:
+                handler.flush()
+            except Exception as e:
+                # Silently ignore flush errors to avoid breaking cleanup
+                logger.debug(f"Failed to flush handler: {e}")
+
     def _flush_trial_logs(self, trial_id: str):
         """Flush any buffered logs for the trial to ensure all records are written."""
         try:
@@ -242,63 +268,109 @@ class BaseTrialController(TrialController):
         except Exception as e:
             logger.debug(f"Error flushing trial logs: {e}")
 
-    def run_trial(self, trial_config: TrialConfig) -> TrialResult:
-        """Execute trial with proper error handling and cleanup."""
-        execution_info = ExecutionInfo()
+    def request_cancellation(self):
+        """Request cancellation of the running trial (non-blocking).
+        
+        This method can be called via Ray .remote() while run_trial is executing.
+        It sets a flag that causes the trial to terminate gracefully.
+        """
+        controller_logger = self._get_trial_logger("controller")
+        controller_logger.info(
+            "!!! CANCELLATION REQUESTED - Terminating trial immediately !!!"
+        )
+        self._flush_logger_handlers(controller_logger)
+        
+        self._cancellation_requested = True
+        
+        # Immediately terminate benchmark if running
+        if self.benchmark_provider:
+            controller_logger.info("Cancellation: Terminating benchmark process...")
+            self._flush_logger_handlers(controller_logger)
+            try:
+                self.benchmark_provider.terminate_benchmark()
+                controller_logger.info("Cancellation: Benchmark terminated")
+            except Exception as e:
+                controller_logger.warning(
+                    f"Cancellation: Error terminating benchmark: {e}"
+                )
+            self._flush_logger_handlers(controller_logger)
 
-        print(
+    def run_trial(
+        self, trial_config: TrialConfig, cancellation_flag_actor=None
+    ) -> TrialResult:
+        """Execute trial with proper error handling and cleanup.
+        
+        Args:
+            trial_config: Configuration for this trial
+            cancellation_flag_actor: Optional Ray actor that holds cancellation state.
+                                    Can be checked via .is_cancelled().remote()
+        """
+        execution_info = ExecutionInfo()
+        controller_logger = self._get_trial_logger("controller")
+        controller_logger.info(
             f"Running trial {trial_config.trial_id} "
             f"with parameters: {trial_config.parameters}"
         )
-        print(f"Study name: {trial_config.study_name}")
-
-        print("")
-
-        # If the parallelism is set lower than MIN_GPUS in the
-        # static_environment_variables, cannot start the trial
-        # if trial_config.parameters.get(
-        #     "tensor_parallel_size"
-        # ) < trial_config.static_environment_variables.get("MIN_GPUS"):
-        #     logger.error(
-        #         f"Trial {trial_config.trial_id} cannot start "
-        #         f"because the parallelism is set lower than MIN_GPUS "
-        #         f" in the static_environment_variables"
-        #     )
-        #     return TrialResult(
-        #         trial_id=trial_config.trial_id,
-        #         trial_number=trial_config.trial_number,
-        #         trial_type=trial_config.trial_type,
-        #         objective_values=[],
-        #         detailed_metrics={},
-        #         execution_info=execution_info,
-        #         success=False,
-        #         error_message=(
-        #             "Parallelism is set lower than MIN_GPUS "
-        #             "in the static_environment_variables"
-        #         ),
-        #     )
+        controller_logger.info(f"Study name: {trial_config.study_name}")
 
         try:
             # Store study name for log flushing
             self._current_study_name = trial_config.study_name
+            
+            # Store trial context for benchmark subprocess
+            self._trial_context = {
+                "study_name": trial_config.study_name,
+                "trial_id": trial_config.trial_id
+            }
 
             # Setup trial-specific logging first
             self._setup_trial_logging(trial_config)
 
             # Validate environment first
-            # (with trial config for conditional psycopg2 check)
             self._validate_environment(trial_config)
 
             # Setup benchmark provider
             self.benchmark_provider = self._create_benchmark_provider(trial_config)
-
+            
+            # Setup cancellation checker function
+            def should_cancel():
+                """Check if cancellation was requested.
+                
+                Works with both Ray actor and local flag.
+                """
+                if cancellation_flag_actor:
+                    try:
+                        # Use ray.get() with a small timeout to check cancellation
+                        # This ensures the remote call has time to complete
+                        is_cancelled = ray.get(
+                            cancellation_flag_actor.is_cancelled.remote(), 
+                            timeout=0.2
+                        )
+                        return is_cancelled
+                    except (Exception, GetTimeoutError) as _:
+                        return False
+                return self._cancellation_requested
+            
+            # UNIFIED EXECUTION LOOP - Handles vLLM startup AND benchmark 
+            # while allowing for cancellation at any point
+            controller_logger.info(
+                "Starting unified execution loop (vLLM startup + benchmark)"
+            )
+            
             # Start vLLM server
-            controller_logger = self._get_trial_logger("controller")
             controller_logger.info("Starting vLLM server")
             execution_info.mark_vllm_started()
             server_info = self._start_vllm_server(trial_config)
             execution_info.worker_node_id = self._get_worker_id()
-
+            
+            # State machine for trial execution
+            state = TrialState.WAITING_FOR_VLLM
+            benchmark_process = None
+            vllm_start_time = time.time()
+            benchmark_start_time = None
+            poll_interval = 0.5  # 500ms
+            poll_count = 0
+            
             # Wait for server to be ready
             controller_logger.info(
                 f"Waiting for server at {server_info['url']} to be ready "
@@ -308,70 +380,108 @@ class BaseTrialController(TrialController):
                 server_info["url"], trial_config.vllm_startup_timeout
             )
             execution_info.mark_vllm_ready()
-
-            # Start health monitoring after server is ready
-            health_url = server_info["url"].replace("/v1", "/health")
-            controller_logger.info("Starting runtime health monitoring")
-            self._start_health_monitoring(
-                health_url,
-                check_interval=trial_config.health_check_interval,
-                max_failures=trial_config.health_check_max_failures,
-            )
-
-            # Run benchmark
-            controller_logger.info("Starting benchmark run")
-            benchmark_logger = self._get_trial_logger("benchmark")
-
-            # Pass benchmark logger to provider if it supports it
-            if hasattr(self.benchmark_provider, "set_logger"):
-                self.benchmark_provider.set_logger(benchmark_logger)
-
-            # Pass trial context for benchmark result storage
-            if hasattr(self.benchmark_provider, "set_trial_context"):
-                self.benchmark_provider.set_trial_context(
-                    trial_config.study_name, trial_config.trial_id
+            
+            # Main execution loop - concise with extracted state handlers
+            while True:
+                poll_count += 1
+                
+                # Check for cancellation (every iteration)
+                self._check_cancellation(
+                    should_cancel, poll_count, state, vllm_start_time,
+                    benchmark_process, controller_logger
                 )
+                
+                # Handle current state
+                if state == TrialState.WAITING_FOR_VLLM:
+                    result = self._handle_vllm_startup(
+                        trial_config, server_info, vllm_start_time, controller_logger
+                    )
+                    if result:  # vLLM is ready, transition to benchmark
+                        benchmark_process, benchmark_start_time = result
+                        execution_info.mark_benchmark_started()
+                        state = TrialState.RUNNING_BENCHMARK
+                        controller_logger.debug(
+                            f"State transition: {TrialState.WAITING_FOR_VLLM.name} "
+                            f"→ {TrialState.RUNNING_BENCHMARK.name}"
+                        )
+                        continue  # Skip sleep, start benchmark immediately
+                
+                elif state == TrialState.RUNNING_BENCHMARK:
+                    result = self._handle_benchmark_running(
+                        benchmark_process, benchmark_start_time, trial_config,
+                        execution_info, controller_logger
+                    )
+                    if result:  # Benchmark completed successfully
+                        controller_logger.debug(
+                            f"Benchmark handler returned result: "
+                            f"success={result.success}, "
+                            f"objectives={result.objective_values}"
+                        )
+                        execution_info.mark_benchmark_completed()
+                        execution_info.mark_completed(status="success")
+                        controller_logger.info(
+                            f"Returning successful trial result with "
+                            f"{len(result.objective_values)} objectives"
+                        )
+                        return result
+                    # If None, benchmark still running - continue polling
+                    controller_logger.debug(
+                        f"Benchmark still running... "
+                        f"(elapsed: {time.time() - benchmark_start_time:.1f}s)"
+                    )
+                
+                # Sleep before next poll
+                time.sleep(poll_interval)
 
-            execution_info.mark_benchmark_started()
-            benchmark_result = self.benchmark_provider.run_benchmark(
-                model_url=server_info["url"], config=trial_config.benchmark_config
-            )
-            execution_info.mark_benchmark_completed()
-
-            # Check if vLLM server died during benchmark execution
-            self._check_health_status()
-
-            # Extract objectives for Optuna using optimization configuration
-            objective_values = self._extract_objectives(
-                benchmark_result, trial_config.optimization_config
-            )
-            controller_logger.info(
-                f"Trial completed with objectives: {objective_values}"
-            )
-
-            execution_info.mark_completed(status="success")
+        except KeyboardInterrupt as e:
+            execution_info.mark_completed()
+            controller_logger.warning(f"Trial {trial_config.trial_id} cancelled: {e}")
 
             return TrialResult(
                 trial_id=trial_config.trial_id,
                 trial_number=trial_config.trial_number,
                 trial_type=trial_config.trial_type,
-                objective_values=objective_values,
-                detailed_metrics=benchmark_result,
+                objective_values=[],
+                detailed_metrics={},
                 execution_info=execution_info,
-                success=True,
+                success=False,
+                error_message=f"Trial cancelled: {e}",
+                error_type="Cancelled",
             )
-
         except Exception as e:
-            # Determine failure type based on error message
+            # Check if this is a Ray cancellation exception
+            exception_name = type(e).__name__
+            if "Cancel" in exception_name or "cancel" in str(e).lower():
+                execution_info.mark_completed()
+                controller_logger.warning(
+                    f"Trial {trial_config.trial_id} cancelled by Ray: {e}"
+                )
+
+                return TrialResult(
+                    trial_id=trial_config.trial_id,
+                    trial_number=trial_config.trial_number,
+                    trial_type=trial_config.trial_type,
+                    objective_values=[],
+                    detailed_metrics={},
+                    execution_info=execution_info,
+                    success=False,
+                    error_message=f"Trial cancelled: {e}",
+                    error_type="Cancelled",
+                )
+            
+            # Handle other exceptions normally
+            # determine failure type based on error message
             error_str = str(e)
             status = (
                 "vllm_crash"
                 if "vLLM" in error_str or "health" in error_str
                 else "benchmark_crash"
             )
+            # Mark benchmark as completed if we were running it
+            if state == TrialState.RUNNING_BENCHMARK:
+                execution_info.mark_benchmark_completed()
             execution_info.mark_completed(status=status)
-            error_logger = self._get_trial_logger("controller")
-            error_logger.error(f"Trial {trial_config.trial_id} failed: {e}")
+            controller_logger.error(f"Trial {trial_config.trial_id} failed: {e}")
 
             # Classify error for database storage
             error_type = self._classify_error(e)
@@ -432,6 +542,7 @@ class BaseTrialController(TrialController):
             return provider_class()
         except (ImportError, AttributeError) as e:
             raise ValueError(f"Unknown benchmark provider: {benchmark_type}") from e
+
 
     def _log_python_environment(self, logger):
         """Log Python environment information for debugging."""
@@ -545,6 +656,178 @@ class BaseTrialController(TrialController):
 
         logger.info("=" * 60)
 
+    def _check_cancellation(
+        self,
+        should_cancel,
+        poll_count: int,
+        state: TrialState,
+        vllm_start_time: float,
+        benchmark_process,
+        controller_logger,
+    ):
+        """Check for cancellation request and handle cleanup if cancelled."""
+        is_cancelled = should_cancel()
+        
+        # Log every 5th check to verify mechanism is working
+        if poll_count % 5 == 0:
+            controller_logger.debug(f"Cancellation check #{poll_count}: {is_cancelled}")
+        
+        # Log progress periodically
+        if poll_count % 20 == 0:  # Every 10 seconds
+            elapsed_total = time.time() - vllm_start_time
+            logger.debug(
+                f"Main loop iteration {poll_count}, elapsed: {elapsed_total:.1f}s, "
+                f"state: {state.name}"
+            )
+        
+        if is_cancelled:
+            controller_logger.warning(
+                "!!! CANCELLATION DETECTED IN MAIN LOOP - Terminating trial !!!"
+            )
+            controller_logger.info(f"Trial was in state: {state.name}")
+            controller_logger.info(f"Detection occurred at iteration: {poll_count}")
+            self._flush_logger_handlers(controller_logger)
+            
+            # Cleanup based on current state
+            if benchmark_process and benchmark_process.poll() is None:
+                controller_logger.info("Terminating running benchmark process...")
+                if hasattr(self.benchmark_provider, "terminate_benchmark"):
+                    self.benchmark_provider.terminate_benchmark()
+            
+            raise KeyboardInterrupt(f"Trial cancelled while {state.name}")
+
+    def _handle_vllm_startup(
+        self,
+        trial_config: TrialConfig,
+        server_info: dict,
+        vllm_start_time: float,
+        logger,
+    ):
+        """Handle vLLM startup state.
+        
+        Returns (benchmark_process, start_time) on success, None otherwise.
+        """
+        import requests
+        
+        # Check timeout
+        elapsed = time.time() - vllm_start_time
+        if elapsed > trial_config.vllm_startup_timeout:
+            raise RuntimeError(
+                f"vLLM server failed to start within "
+                f"{trial_config.vllm_startup_timeout}s"
+            )
+        
+        # Check if vLLM process died
+        if self.vllm_process and self.vllm_process.poll() is not None:
+            raise RuntimeError(
+                f"vLLM process died during startup with exit code "
+                f"{self.vllm_process.returncode}"
+            )
+        
+        # Check if server is ready
+        try:
+            health_url = server_info["url"].replace("/v1", "/health")
+            response = requests.get(health_url, timeout=2)
+            if response.status_code == 200:
+                logger.info(
+                    f"vLLM server ready at {server_info['url']} "
+                    f"(took {elapsed:.1f}s)"
+                )
+                
+                # Start health monitoring
+                logger.info("Starting runtime health monitoring")
+                self._start_health_monitoring(
+                    health_url,
+                    check_interval=trial_config.health_check_interval,
+                    max_failures=trial_config.health_check_max_failures,
+                )
+                
+                # Setup and start benchmark
+                logger.info("Starting benchmark run")
+                benchmark_logger = self._get_trial_logger("benchmark")
+                
+                if hasattr(self.benchmark_provider, "set_logger"):
+                    self.benchmark_provider.set_logger(benchmark_logger)
+                
+                if hasattr(self.benchmark_provider, "set_trial_context"):
+                    self.benchmark_provider.set_trial_context(
+                        trial_config.study_name, trial_config.trial_id
+                    )
+                
+                # Start benchmark as subprocess
+                benchmark_process = self.benchmark_provider.start_benchmark(
+                    server_info["url"], trial_config.benchmark_config
+                )
+                return benchmark_process, time.time()
+            
+        except requests.exceptions.RequestException as e:
+            # Health check failed, log and continue polling
+            logger.debug(f"Health check failed: {e}")
+        except Exception as e:
+            # Other errors during benchmark setup - fatal
+            logger.error(f"Error setting up benchmark: {e}")
+            raise
+        
+        return None  # Not ready yet, continue polling
+
+    def _handle_benchmark_running(
+        self,
+        benchmark_process,
+        benchmark_start_time: float,
+        trial_config: TrialConfig,
+        execution_info,
+        logger,
+    ):
+        """Handle benchmark running state.
+        
+        Returns TrialResult on completion, None otherwise.
+        """
+        # Check if benchmark completed
+        returncode = benchmark_process.poll()
+        if returncode is not None:
+            logger.debug(f"Benchmark process completed with return code {returncode}")
+            
+            # Get benchmark output and parse results
+            stdout, stderr = benchmark_process.communicate(timeout=5)
+            
+            if returncode != 0:
+                raise RuntimeError(
+                    f"Benchmark failed with exit code {returncode}: {stderr}"
+                )
+            
+            # Parse benchmark results
+            benchmark_result = self.benchmark_provider.parse_results()
+            
+            # Check if vLLM server died during benchmark
+            self._check_health_status()
+            
+            # Extract objectives
+            objective_values = self._extract_objectives(
+                benchmark_result, trial_config.optimization_config
+            )
+            logger.info(f"Trial completed with objectives: {objective_values}")
+            
+            return TrialResult(
+                trial_id=trial_config.trial_id,
+                trial_number=trial_config.trial_number,
+                trial_type=trial_config.trial_type,
+                objective_values=objective_values,
+                detailed_metrics=benchmark_result,
+                execution_info=execution_info,
+                success=True,
+            )
+        
+        # Check benchmark timeout
+        elapsed = time.time() - benchmark_start_time
+        max_benchmark_time = trial_config.benchmark_config.max_seconds * 1.5
+        if elapsed > max_benchmark_time:
+            logger.warning(f"Benchmark timeout after {elapsed:.1f}s, terminating...")
+            if hasattr(self.benchmark_provider, "terminate_benchmark"):
+                self.benchmark_provider.terminate_benchmark()
+            raise RuntimeError(f"Benchmark timed out after {max_benchmark_time}s")
+        
+        return None  # Still running, continue polling
+
     def _start_vllm_server(self, trial_config: TrialConfig) -> dict:
         """Start vLLM server with trial parameters."""
         port = self._get_available_port()
@@ -588,6 +871,7 @@ class BaseTrialController(TrialController):
             bufsize=1,  # Line buffered
             universal_newlines=True,
             env=env,  # Pass environment variables to the process
+            start_new_session=True,  # Put child in its own process group/session
         )
 
         # Start a thread to capture and log vLLM output
@@ -659,7 +943,7 @@ class BaseTrialController(TrialController):
         raise RuntimeError(f"vLLM server failed to start within {timeout} seconds")
 
     def _start_health_monitoring(
-        self, health_url: str, check_interval: int = 30, max_failures: int = 3
+        self, health_url: str, check_interval: float = 1.0, max_failures: int = 3
     ):
         """
         Start background health monitoring of vLLM server.
@@ -694,16 +978,30 @@ class BaseTrialController(TrialController):
 
         def monitor_health():
             consecutive_failures = 0
-            check_count = 0  # TODO: Remove after verifying health monitoring works
+            # Normalize polling period to a positive float and default to 1.0s
+            try:
+                period = float(check_interval)
+            except Exception:
+                period = 1.0
+            if period <= 0:
+                period = 1.0
             vllm_logger.info(
                 f"Starting health monitoring: checking {health_url} every "
-                f"{check_interval}s"
+                f"{period}s"
                 + (" (DEBUG MODE: verbose logging enabled)" if debug else "")
             )
+            
+            # Event used to interrupt waits for responsive shutdown
+            import threading as _threading
+            if self._health_monitor_stop_event is None:
+                self._health_monitor_stop_event = _threading.Event()
+            stop_event = self._health_monitor_stop_event
+            
+            # Schedule first run immediately, then maintain fixed cadence
+            next_deadline = time.monotonic() + period
 
-            while not self._health_monitor_stop:
-                check_count += 1  # TODO: Remove after verifying health monitoring works
-
+            while not self._health_monitor_stop and not stop_event.is_set():
+                
                 # Check if vLLM process itself has died
                 if self.vllm_process and self.vllm_process.poll() is not None:
                     self._health_check_failed = True
@@ -716,7 +1014,7 @@ class BaseTrialController(TrialController):
                         f"exit code {self.vllm_process.returncode}"
                     )
                     # Terminate running benchmark immediately
-                    self._terminate_benchmark()
+                    self.benchmark_provider.terminate_benchmark()
                     break
 
                 try:
@@ -726,7 +1024,7 @@ class BaseTrialController(TrialController):
                         # monitoring works
                         if debug:
                             vllm_logger.info(
-                                f"[DEBUG] Health check #{check_count} PASSED: "
+                                f"[DEBUG] Health check PASSED: "
                                 f"status={response.status_code}, "
                                 f"consecutive_failures={consecutive_failures}"
                             )
@@ -753,7 +1051,7 @@ class BaseTrialController(TrialController):
                     )
                     if debug:
                         log_msg = (
-                            f"[DEBUG] Health check #{check_count} FAILED: {log_msg}"
+                            f"[DEBUG] Health check FAILED: {log_msg}"
                         )
                     vllm_logger.warning(log_msg)
                 except Exception as e:
@@ -766,7 +1064,7 @@ class BaseTrialController(TrialController):
                     )
                     if debug:
                         log_msg = (
-                            f"[DEBUG] Health check #{check_count} ERROR: {log_msg}"
+                            f"[DEBUG] Health check ERROR: {log_msg}"
                         )
                     vllm_logger.warning(log_msg)
 
@@ -782,11 +1080,17 @@ class BaseTrialController(TrialController):
                         f"{self._health_check_failure_reason}"
                     )
                     # Terminate running benchmark immediately
-                    self._terminate_benchmark()
+                    self.benchmark_provider.terminate_benchmark()
                     break
 
-                # Wait before next check (but check stop flag periodically)
-                time.sleep(check_interval)
+                # Maintain fixed-cadence scheduling based on monotonic time
+                now = time.monotonic()
+                # Catch up if the last cycle overran the period
+                while next_deadline <= now:
+                    next_deadline += period
+                sleep_duration = max(0.0, next_deadline - now)
+                if stop_event.wait(timeout=sleep_duration):
+                    break
 
             vllm_logger.info("Health monitoring stopped")
 
@@ -802,20 +1106,16 @@ class BaseTrialController(TrialController):
             vllm_logger = self._get_trial_logger("vllm")
             vllm_logger.info("Stopping health monitoring thread")
             self._health_monitor_stop = True
-            # Give the thread a moment to stop gracefully
-            self._health_monitor_thread.join(timeout=5)
-            if self._health_monitor_thread.is_alive():
-                vllm_logger.warning("Health monitoring thread did not stop gracefully")
-
-    def _terminate_benchmark(self):
-        """Terminate the running benchmark process if vLLM has failed."""
-        if self.benchmark_provider and hasattr(
-            self.benchmark_provider, "terminate_benchmark"
-        ):
             try:
-                self.benchmark_provider.terminate_benchmark()
-            except Exception as e:
-                logger.warning(f"Failed to terminate benchmark: {e}")
+                if self._health_monitor_stop_event is not None:
+                    self._health_monitor_stop_event.set()
+            except Exception:
+                pass
+            # Wait briefly for the thread to exit cooperatively
+            self._health_monitor_thread.join(timeout=10)
+            if self._health_monitor_thread.is_alive():
+                vllm_logger.debug("Health monitoring thread did not stop within "  
+                 "timeout; continuing cleanup")
 
     def _check_health_status(self):
         """Check if health monitoring has detected a failure."""
@@ -865,46 +1165,144 @@ class BaseTrialController(TrialController):
 
     def cleanup_resources(self):
         """Clean up vLLM server process and health monitoring."""
+        # Use trial-specific logger if available, otherwise fall back to module logger
+        controller_logger = self._get_trial_logger("controller")
+        
+        controller_logger.info(
+            "!!! Trial Controller: Received cleanup request from backend !!!"
+        )
+        
+        # IMMEDIATE FLUSH: Ensure user sees cleanup starting in real-time
+        self._flush_logger_handlers(controller_logger)
+        
         # Stop health monitoring first
+        controller_logger.info("Trial Controller: Stopping health monitoring...")
         self._stop_health_monitoring()
-
+        controller_logger.debug("Trial Controller: Health monitoring stopped")
+        self._flush_logger_handlers(controller_logger)
+        
+        # Terminate any running benchmark process
+        if self.benchmark_provider:
+            try:
+                controller_logger.info(
+                    "Trial Controller: Terminating benchmark process..."
+                )
+                self._flush_logger_handlers(controller_logger)
+                self.benchmark_provider.terminate_benchmark()
+                controller_logger.info("Trial Controller: Benchmark process terminated")
+                self._flush_logger_handlers(controller_logger)
+            except Exception as e:
+                controller_logger.warning(
+                    f"Trial Controller: Error terminating benchmark process: {e}"
+                )
+                self._flush_logger_handlers(controller_logger)
+        
         if self.vllm_process:
             pid = self.vllm_process.pid
+            controller_logger.info(
+                f"Trial Controller: Cleaning up vLLM server process "
+                f"(PID: {pid})..."
+            )
+            self._flush_logger_handlers(controller_logger)
+            
+            # Try to resolve the child's process group id upfront. If the process
+            # has already exited, fall back to signaling the process directly.
             try:
-                # Send SIGINT first for graceful cleanup (what vLLM expects)
-                logger.info(
-                    f"Sending SIGINT to vLLM process {pid} for graceful shutdown"
+                pgid = os.getpgid(pid)
+                controller_logger.debug(
+                    f"Trial Controller: vLLM process group ID: {pgid}"
                 )
-                self.vllm_process.send_signal(signal.SIGINT)
-                self.vllm_process.wait(
-                    timeout=15
-                )  # Give more time for graceful cleanup
-                logger.info(f"Gracefully terminated vLLM process {pid}")
+            except (OSError, ProcessLookupError):
+                controller_logger.warning(
+                    f"Trial Controller: Failed to get process group id "
+                    f"for {pid}"
+                )
+                pgid = None
+
+            # Attempt graceful shutdown with SIGTERM first
+            controller_logger.info(
+                f"Trial Controller → vLLM: Sending SIGTERM to process {pid} "
+                f"for graceful shutdown..."
+            )
+            self._flush_logger_handlers(controller_logger)
+            try:
+                if pgid is not None:
+                    os.killpg(pgid, signal.SIGTERM)
+                    controller_logger.debug(
+                        f"Trial Controller: Sent SIGTERM to process group {pgid}"
+                    )
+                else:
+                    controller_logger.debug(
+                        f"Trial Controller: No process group, sending SIGTERM "
+                        f"to process {pid}"
+                    )
+                    self.vllm_process.terminate()
+            except (OSError, ProcessLookupError):
+                # Process already gone
+                controller_logger.info(
+                    f"Trial Controller: vLLM process {pid} already terminated"
+                )
+                self.vllm_process = None
+                return
+            
+            try:
+                controller_logger.debug(
+                    f"Trial Controller: Waiting up to 10s for vLLM process {pid} "
+                    f"to terminate..."
+                )
+                self.vllm_process.wait(timeout=10)
+                controller_logger.info(
+                    f"Trial Controller: ✓ vLLM process {pid} terminated "
+                    f"gracefully via SIGTERM"
+                )
+                self._flush_logger_handlers(controller_logger)
+                self.vllm_process = None
+                return
             except subprocess.TimeoutExpired:
-                # If graceful shutdown fails, then use SIGTERM
-                logger.warning(f"Graceful shutdown timed out, sending SIGTERM to {pid}")
-                self.vllm_process.terminate()
-                try:
-                    self.vllm_process.wait(timeout=5)
-                    logger.info(f"Terminated vLLM process {pid} with SIGTERM")
-                except subprocess.TimeoutExpired:
-                    # Last resort: kill entire process group to catch multiprocessing
-                    # children
-                    logger.warning(f"SIGTERM timeout, killing process group for {pid}")
-                    try:
-                        # Kill the entire process group (negative PID)
-                        os.killpg(os.getpgid(pid), signal.SIGKILL)
-                        logger.info(f"Killed process group for {pid}")
-                    except (OSError, ProcessLookupError) as e:
-                        logger.warning(f"Failed to kill process group for {pid}: {e}")
-                        # Fallback to regular kill if killpg fails
-                        try:
-                            self.vllm_process.kill()
-                            logger.warning(f"Force killed vLLM process {pid}")
-                        except (OSError, ProcessLookupError):
-                            logger.warning(f"Process {pid} already dead")
+                controller_logger.warning(
+                    f"Trial Controller: vLLM process {pid} did not respond to "
+                    f"SIGTERM within 10s. "
+                    f"Escalating to SIGKILL..."
+                )
+                self._flush_logger_handlers(controller_logger)
+
+            # Final fallback: SIGKILL
+            try:
+                if pgid is not None:
+                    os.killpg(pgid, signal.SIGKILL)
+                    controller_logger.info(
+                        f"Trial Controller: Sent SIGKILL to process group {pgid}"
+                    )
+                else:
+                    self.vllm_process.kill()
+                    controller_logger.info(
+                        f"Trial Controller: Sent SIGKILL to process {pid}"
+                    )
+                controller_logger.info(
+                    f"Trial Controller: ✓ vLLM process {pid} force killed "
+                    f"via SIGKILL"
+                )
+                self._flush_logger_handlers(controller_logger)
+            except (OSError, ProcessLookupError) as e:
+                controller_logger.warning(
+                    f"Trial Controller: Failed to kill process {pid}: {e}"
+                )
+                self._flush_logger_handlers(controller_logger)
             finally:
                 self.vllm_process = None
+        else:
+            controller_logger.debug("Trial Controller: No vLLM process to cleanup")
+        
+        # Flush all trial logs to ensure cleanup messages are written
+        controller_logger.info("Trial Controller: Cleanup complete, flushing logs...")
+        for component_logger in self.trial_loggers.values():
+            for handler in component_logger.handlers:
+                try:
+                    handler.flush()
+                except Exception as e:
+                    # Use module logger as fallback since trial logger might be affected
+                    logger.debug(f"Failed to flush handler during cleanup: {e}")
+        controller_logger.info("Trial Controller: Log flush complete")
 
     @abstractmethod
     def _get_worker_id(self) -> str:
@@ -973,9 +1371,11 @@ class RayWorkerTrialController(BaseTrialController):
 class RayTrialActor(RayWorkerTrialController):
     """Ray remote actor for distributed trial execution."""
 
-    def run_trial(self, trial_config: TrialConfig) -> TrialResult:
-        """Run trial on Ray worker."""
-        return super().run_trial(trial_config)
+    def run_trial(
+        self, trial_config: TrialConfig, cancellation_flag_actor=None
+    ) -> TrialResult:
+        """Run trial on Ray worker with optional cancellation flag actor."""
+        return super().run_trial(trial_config, cancellation_flag_actor)
 
     def __del__(self):
         """Ensure cleanup on actor destruction."""
