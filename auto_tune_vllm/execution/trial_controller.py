@@ -13,7 +13,7 @@ from typing import Optional
 
 import ray
 
-from ..benchmarks.providers import BenchmarkProvider, GuideLLMBenchmark
+from ..benchmarks import BenchmarkProvider, GuideLLMBenchmark
 from ..core.trial import ExecutionInfo, TrialConfig, TrialResult
 from ..logging.manager import CentralizedLogger
 
