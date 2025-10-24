@@ -298,147 +298,21 @@ class StudyConfig:
     def from_file(
         cls,
         config_path: str,
-        schema_path: Optional[str] = None,
-        defaults_path: Optional[str] = None,
-        vllm_version: Optional[str] = None,
+        vllm_version: str | None = None,
     ) -> StudyConfig:
         """Load and validate configuration from YAML file."""
-        config_validator = ConfigValidator(schema_path, defaults_path, vllm_version)
+        config_validator = ConfigValidator(vllm_version)
         return config_validator.load_and_validate(config_path)
 
 
 class ConfigValidator:
-    """Validates study configurations against parameter schema."""
+    """Validates study configurations against parameter"""
 
     def __init__(
         self,
-        schema_path: Optional[str] = None,
-        defaults_path: Optional[str] = None,
-        vllm_version: Optional[str] = None,
+        vllm_version: str | None = None,
     ):
-        """Initialize with parameter schema and optional defaults."""
-        if schema_path is None:
-            # Resolve vLLM version: prefer explicit, else auto-detect, else None
-            resolved_version = vllm_version
-            if resolved_version is None:
-                try:
-                    from importlib.metadata import version as _dist_version
-
-                    import vllm  # noqa: F401
-
-                    resolved_version = _dist_version("vllm")
-                except Exception:
-                    resolved_version = None
-            # Choose schema
-            if resolved_version and resolved_version.startswith("0.10.0"):
-                schema_path = Path(__file__).parent.parent / "schemas" / "v0_10_0.yaml"
-            else:
-                schema_path = Path(__file__).parent.parent / "schemas" / "v0_11_0.yaml"
-        # Store resolved version for defaults handling
-        self.vllm_version = vllm_version or locals().get("resolved_version")
-
-        self.schema_path = Path(schema_path)
-        self.schema = self._load_schema()
-
-        # Load defaults - support versioned defaults
-        self.defaults = {}
-
-        if defaults_path is not None:
-            self.defaults_path = Path(defaults_path)
-            self.defaults = self._load_defaults()
-        elif vllm_version is not None:
-            # Load version-specific defaults
-            self._load_version_defaults(vllm_version)
-        else:
-            # Try to load latest defaults
-            self._load_latest_defaults()
-
-    def _get_versioned_schema_path(self, vllm_version: str) -> Path:
-        """
-        Get the schema path for a specific vLLM version.
-
-        Args:
-            vllm_version: vLLM version string (e.g., "0.10.1.1")
-
-        Returns:
-            Path to versioned schema file
-
-        Raises:
-            FileNotFoundError: If versioned schema doesn't exist
-        """
-        # Convert version to filename format (e.g., "0.10.1.1" -> "v0_10_1_1.yaml")
-        safe_version = vllm_version.replace(".", "_")
-        schemas_dir = Path(__file__).parent.parent / "schemas"
-        versioned_schema_path = schemas_dir / f"v{safe_version}.yaml"
-
-        if versioned_schema_path.exists():
-            print(
-                f"Using version-specific schema for vLLM {vllm_version}: "
-                f"{versioned_schema_path}"
-            )
-            return versioned_schema_path
-        else:
-            # Fallback to default schema with warning
-            fallback_schema = schemas_dir / "parameter_schema_original.yaml"
-            print(
-                f"Warning: No schema found for vLLM version {vllm_version}, "
-                f"falling back to default schema: {fallback_schema}"
-            )
-            return fallback_schema
-
-    def _load_schema(self) -> Dict[str, Any]:
-        """Load parameter schema from YAML."""
-        if not self.schema_path.exists():
-            raise FileNotFoundError(f"Schema file not found: {self.schema_path}")
-
-        with open(self.schema_path) as f:
-            return yaml.safe_load(f)
-
-    def _load_defaults(self) -> Dict[str, Any]:
-        """Load defaults from YAML file."""
-        if not self.defaults_path.exists():
-            raise FileNotFoundError(f"Defaults file not found: {self.defaults_path}")
-
-        with open(self.defaults_path) as f:
-            defaults_data = yaml.safe_load(f)
-
-        return self._flatten_defaults(defaults_data)
-
-    def _load_version_defaults(self, version: str):
-        """Load version-specific defaults."""
-        try:
-            from ..utils.version_manager import VLLMVersionManager
-
-            manager = VLLMVersionManager()
-            defaults_data = manager.load_defaults(version)
-            self.defaults = self._flatten_defaults(defaults_data)
-            self.defaults_path = manager.get_defaults_path(version)
-        except Exception as e:
-            print(f"Warning: Could not load vLLM defaults for version {version}: {e}")
-            self.defaults = {}
-            self.defaults_path = None
-
-    def _load_latest_defaults(self):
-        """Try to load the latest available defaults."""
-        try:
-            from ..utils.version_manager import VLLMVersionManager
-
-            manager = VLLMVersionManager()
-            defaults_data = manager.load_defaults()  # Load latest
-            self.defaults = self._flatten_defaults(defaults_data)
-            self.defaults_path = manager.get_defaults_path()
-        except Exception:
-            # No versioned defaults available, use empty defaults
-            self.defaults = {}
-            self.defaults_path = None
-
-    def _flatten_defaults(self, defaults_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Flatten the nested defaults structure for easy lookup."""
-        flat_defaults = {}
-        for _, section_defaults in defaults_data.get("defaults", {}).items():
-            for param_name, default_value in section_defaults.items():
-                flat_defaults[param_name] = default_value
-        return flat_defaults
+        self.vllm_version: str = vllm_version if vllm_version else "No Version Set"
 
     def load_and_validate(self, config_path: str) -> StudyConfig:
         """Load and validate study configuration with environment variable expansion."""
@@ -560,8 +434,7 @@ class ConfigValidator:
         print(f"Auto-generated study name: {auto_name}")
         return auto_name, None, False
 
-    def _validate_config(self, raw_config: Dict[str, Any]) -> StudyConfig:
-        """Validate configuration against schema."""
+    def _validate_config(self, raw_config: dict[str, dict[str, Any]]) -> StudyConfig:
         # Validate and build parameter configs
         validated_params = {}
 
@@ -570,13 +443,9 @@ class ConfigValidator:
                 continue
 
             # Check if this is an environment variable
-            # (has explicit type or not in schema)
-            param_type = param_config.get("type")
-            schema_def = self.schema.get("parameters", {}).get(param_name)
+            is_env_var = param_config.get("env_var", False)
 
-            if param_type == "environment" or (
-                not schema_def and "options" in param_config
-            ):
+            if is_env_var:
                 # This is an environment variable parameter
                 if (
                     "range" in param_config
@@ -605,20 +474,13 @@ class ConfigValidator:
                     ),
                 )
             else:
-                # This is a regular vLLM parameter
-                if not schema_def:
-                    raise ValueError(f"Unknown parameter in schema: {param_name}")
-
                 # Build parameter config based on schema type
-                validated_param = self._build_parameter_config(
-                    param_name, param_config, schema_def
-                )
+                validated_param = self._build_parameter_config(param_name, param_config)
 
             validated_params[param_name] = validated_param
 
         # Validate static environment variables (simple key-value pairs)
         static_env_vars = {}
-
         for env_name, env_value in raw_config.get(
             "static_environment_variables", {}
         ).items():
@@ -627,7 +489,6 @@ class ConfigValidator:
                     f"Static environment variable '{env_name}' must be a simple "
                     f"value (string, number, or boolean), got {type(env_value)}"
                 )
-
             static_env_vars[env_name] = str(env_value)
 
         # Validate static parameters (simple key-value pairs for vLLM CLI args)
@@ -652,10 +513,9 @@ class ConfigValidator:
             # Keep the original type (don't convert to string like env vars)
             static_params[param_name] = param_value
         # Build other configs
-        study_info = raw_config.get("study", {})
+        study_info = raw_config.get("study", None)
         if study_info is None:
             study_info = {}
-
         # Handle study naming logic with prefix support
         study_name, study_prefix, use_explicit_name = self._handle_study_naming(
             study_info
@@ -748,57 +608,57 @@ class ConfigValidator:
             constraints=constraints,
         )
 
-    def _build_parameter_config(
-        self, name: str, user_config: Dict[str, Any], schema_def: Dict[str, Any]
-    ) -> ParameterConfig:
-        """Build parameter config from user config, defaults, and schema."""
-        param_type = schema_def["type"]
-        description = schema_def.get("description")
+    def _infer_parameter_type(self, parameter_config: dict[str, Any]):
+        range_check = ["max" in parameter_config, "min" in parameter_config]
+        list_check = "options" in parameter_config
+        if any(range_check):
+            min_value = parameter_config.get("min")
+            max_value = parameter_config.get("max")
+            min_is_numeric = isinstance(min_value, (int, float))
+            max_is_numeric = isinstance(max_value, (int, float))
+            if not min_is_numeric or not max_is_numeric:
+                raise TypeError("'min' and 'max' must be numbers (int or float)")
+            # check or clause incase users do (0, 1.0) as a range
+            if isinstance(max_value, float) or isinstance(min_value, float):
+                return float
+            else:
+                return int
+        elif list_check:
+            options = parameter_config.get("options")
+            if not isinstance(options, list):
+                raise TypeError("'options' must be a list")
+            if options == [True, False] or options == [False, True]:
+                return bool
+            return list
 
-        base_config = {
+        raise ValueError(f"Unable to parse parameter {parameter_config}")
+
+    def _build_parameter_config(
+        self, name: str, user_config: dict[str, Any]
+    ) -> ParameterConfig:
+        """Build parameter config from user config."""
+        try:
+            param_type = self._infer_parameter_type(user_config)
+        except ValueError as _:
+            raise ValueError(f"Unable to parse {name}: {user_config}")
+
+        common = {
             "name": name,
             "enabled": user_config.get("enabled", True),
-            "description": description,
         }
-
-        def get_value(key: str, schema_fallback=None, allow_defaults: bool = False):
-            """Get value with priority.
-
-            Priority: user_config > (defaults if allow_defaults) > schema
-            > schema_fallback.
-            Note: defaults are parameter values, not bounds; do NOT use for
-            min/max/step/options.
-            """
-            if key in user_config:
-                return user_config[key]
-            if allow_defaults and name in self.defaults:
-                return self.defaults[name]
-            if key in schema_def:
-                return schema_def[key]
-            return schema_fallback
-
-        if param_type == "range":
+        common.update(user_config)
+        if param_type is float or param_type is int:
+            # TODO: Separate out into RangeIntParamter and RangeFloatParameter types
             return RangeParameter(
-                **base_config,
-                min=get_value("min", schema_def["min"], allow_defaults=False),
-                max=get_value("max", schema_def["max"], allow_defaults=False),
-                step=get_value("step", schema_def.get("step"), allow_defaults=False),
-                data_type=schema_def["data_type"],
+                name=name,
+                min=user_config.get("min"),
+                max=user_config.get("max"),
+                step=common.get("step", None),
+                data_type=param_type,
             )
-        elif param_type == "list":
-            # Allow user to restrict schema options
-            schema_options = schema_def["options"]
-            user_options = user_config.get("options", schema_options)
-
-            # Validate user options are subset of schema options
-            invalid_options = set(user_options) - set(schema_options)
-            if invalid_options:
-                raise ValueError(f"Invalid options for {name}: {invalid_options}")
-
-            return ListParameter(
-                **base_config, options=user_options, data_type=schema_def["data_type"]
-            )
-        elif param_type == "boolean":
-            return BooleanParameter(**base_config)
+        elif param_type is list:
+            return ListParameter(name=name, options=user_config.get("options"))
+        elif param_type is bool:
+            return BooleanParameter(name=name)
         else:
             raise ValueError(f"Unknown parameter type: {param_type}")
