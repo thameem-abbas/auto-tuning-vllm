@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import logging
 import time
-from typing import Any, Dict, List, Optional
 
 import optuna
 import optuna.integration
@@ -43,11 +42,11 @@ class StudyController:
         self.backend: ExecutionBackend = backend
         self.study: optuna.Study = study
         self.config: StudyConfig = config
-        self.active_trials: Dict[str, JobHandle] = {}
-        self.trial_objects: Dict[int, optuna.Trial] = {}
+        self.active_trials: dict[str, JobHandle] = {}
+        self.trial_objects: dict[int, optuna.Trial] = {}
         self.completed_trials: int = 0
-        self.baseline_results: Dict[
-            int, List[float]
+        self.baseline_results: dict[
+            int, list[float]
         ] = {}  # concurrency -> objective_values
 
     @staticmethod
@@ -77,14 +76,18 @@ class StudyController:
         if config.database_url and not verify_database_connection(config.database_url):
             if create_db:
                 raise RuntimeError(
-                    "Cannot connect to database after creation attempt. "
-                    f"Please check your database URL: {config.database_url}"
+                    (
+                        f"Cannot connect to database after creation attempt. "
+                        f"Please check your database URL: {config.database_url}"
+                    )
                 )
             else:
                 raise RuntimeError(
-                    f"Cannot connect to database: {config.database_url}. "
-                    "Database may not exist. "
-                    "Use --create-db flag to create it automatically."
+                    (
+                        f"Cannot connect to database: {config.database_url}. "
+                        f"Database may not exist. "
+                        f"Use --create-db flag to create it automatically."
+                    )
                 )
 
         # Create sampler based on config
@@ -105,7 +108,7 @@ class StudyController:
 
         if config.use_explicit_name:
             logger.info(
-                "Creating new study with explicit name: "
+                f"Creating new study with explicit name: "
                 f"{config.study_name} (will fail if exists)"
             )
         else:
@@ -131,14 +134,14 @@ class StudyController:
                     f"to continue the existing study\n"
                     f"  • Change the study name to create a new study\n"
                     f"  • Use 'prefix: {config.study_name}' instead of 'name' "
-                    f"for auto-generated unique names"
+                    "for auto-generated unique names"
                 )
             elif config.database_url and (
                 "does not exist" in str(e).lower() or "database" in str(e).lower()
             ):
                 raise RuntimeError(
                     f"Failed to create Optuna study. Database connection error: {e}. "
-                    f"Use --create-db flag to create the database automatically."
+                    "Use --create-db flag to create the database automatically."
                 )
             else:
                 raise RuntimeError(f"Failed to create Optuna study: {e}")
@@ -343,7 +346,9 @@ class StudyController:
         return cls(backend, study, config)
 
     @staticmethod
-    def _create_search_space(config: StudyConfig) -> dict:
+    def _create_search_space(
+        config: StudyConfig,
+    ) -> dict[str, list[int | float | str | bool]]:
         search_space = {}
         for param_name, param_config in config.parameters.items():
             if param_config.enabled:
@@ -417,7 +422,9 @@ class StudyController:
             )
 
     @staticmethod
-    def _calculate_grid_size(search_space: Dict) -> int:
+    def _calculate_grid_size(
+        search_space: dict[str, list[int | float | str | bool]],
+    ) -> int:
         """Calculate total grid search combinations."""
         size = 1
         for values in search_space.values():
@@ -426,8 +433,8 @@ class StudyController:
 
     def run_optimization(
         self,
-        n_trials: Optional[int] = None,
-        max_concurrent: Optional[int] = None,
+        n_trials: int | None = None,
+        max_concurrent: int | None = None,
         poll_interval: float = 5.0,
     ) -> optuna.Study:
         """
@@ -585,7 +592,7 @@ class StudyController:
             # Check if these exact parameters have already been tried and failed
             if self._is_duplicate_trial(trial.params):
                 log_msg = (
-                    "Trial %d has duplicate parameters from a previous failed trial."
+                    "Trial %d has duplicate parameters from a previous failed trial. "
                     "Skipping: %s"
                 )
                 logger.warning(log_msg, trial.number, trial.params)
@@ -711,7 +718,7 @@ class StudyController:
 
         return optimization_completed_count
 
-    def _is_duplicate_trial(self, params: dict[str, Any]) -> bool:
+    def _is_duplicate_trial(self, params: dict[str, int | float | str | bool]) -> bool:
         """
         Check if the given parameters match any previously failed trial.
 
@@ -747,7 +754,9 @@ class StudyController:
 
         return False
 
-    def _check_constraints(self, parameters: dict[str, Any]) -> bool:
+    def _check_constraints(
+        self, parameters: dict[str, int | float | str | bool]
+    ) -> bool:
         """
         Check if any constraints are violated.
 
@@ -884,9 +893,12 @@ class StudyController:
                 f"status={result.execution_info.trial_status}"
             )
 
-    def get_best_baseline_result(self) -> Optional[List[float]]:
+    def get_best_baseline_result(self) -> list[float] | None:
         """Get the best baseline result for comparison."""
         if not self.baseline_results:
+            return None
+
+        if not self.config.optimization.objectives:
             return None
 
         # For single objective, find the best baseline based on optimization direction
@@ -909,7 +921,18 @@ class StudyController:
             first_concurrency = min(self.baseline_results.keys())
             return self.baseline_results[first_concurrency]
 
-    def get_optimization_results(self) -> Dict:
+    def get_optimization_results(
+        self,
+    ) -> dict[
+        str,
+        int
+        | float
+        | str
+        | list[float]
+        | list[dict[str, int | float | str | list[float] | None]]
+        | dict[str, str | int | float]
+        | None,
+    ]:
         """Get optimization results summary."""
         # Get baseline results for comparison
         baseline_result = self.get_best_baseline_result()
@@ -921,7 +944,7 @@ class StudyController:
                 trial_data = {"trial": t.number, "values": t.values, "params": t.params}
 
                 # Add baseline comparison for each objective
-                if baseline_result:
+                if baseline_result and self.config.optimization.objectives:
                     improvements = []
                     for i, (value, objective) in enumerate(
                         zip(t.values, self.config.optimization.objectives)
@@ -954,7 +977,7 @@ class StudyController:
                         "direction": obj.direction,
                         "percentile": obj.percentile,
                     }
-                    for obj in self.config.optimization.objectives
+                    for obj in (self.config.optimization.objectives or [])
                 ],
                 "n_trials": len(self.study.trials),
                 "n_pareto_solutions": len(self.study.best_trials),
@@ -964,6 +987,8 @@ class StudyController:
         else:
             # Single objective results
             best_trial = self.study.best_trial
+            if not self.config.optimization.objectives:
+                raise ValueError("No objectives defined")
             objective = self.config.optimization.objectives[0]
 
             # Calculate baseline improvement
@@ -1044,7 +1069,13 @@ class StudyController:
         """Run baseline trials using pure vLLM defaults.
 
         Adds max-num-seqs when concurrency > 256.
+        Baseline trials are now added to the Optuna study and appear in dashboard.
         """
+        if not self.config.baseline or not self.config.baseline.enabled:
+            logger.warning(
+                "No baseline configuration found or disabled, skipping baseline trials"
+            )
+            return
         logger.info("🔄 Running baseline trials...")
 
         for concurrency in self.config.baseline.concurrency_levels:
@@ -1061,11 +1092,33 @@ class StudyController:
             if concurrency > 256:
                 baseline_parameters["max_num_seqs"] = concurrency
 
+            # Enqueue baseline trial in Optuna study with fixed parameters
+            # This ensures it appears in the dashboard and visualizations
+            try:
+                self.study.enqueue_trial(baseline_parameters)
+                logger.debug(
+                    f"Enqueued baseline trial with parameters: {baseline_parameters}"
+                )
+            except Exception as e:
+                logger.error(f"Failed to enqueue baseline trial: {e}")
+                continue  # Skip to next concurrency level - prevents study corruption
+
+            # IMPORTANT: Code below only runs if enqueue succeeded
+            # Get the trial object from Optuna (it will have the enqueued parameters)
+            trial = self.study.ask()
+
+            # Mark this trial as a baseline with user attributes
+            trial.set_user_attr("is_baseline", True)
+            trial.set_user_attr("baseline_concurrency", concurrency)
+
+            # Cache trial object for setting additional user attributes later
+            self.trial_objects[trial.number] = trial
+
             # Create special baseline trial configuration
             baseline_trial_config = TrialConfig(
                 study_name=self.config.study_name,
                 trial_id=f"baseline_concurrency_{concurrency}",
-                trial_number=None,  # No Optuna trial number for baselines
+                trial_number=trial.number,  # Use Optuna trial number
                 trial_type="baseline",
                 parameters=baseline_parameters,
                 parameter_configs=self.config.parameters,
@@ -1081,7 +1134,7 @@ class StudyController:
 
                 # Wait for baseline trial to complete using polling mechanism
                 logger.info(
-                    f"⏳ Waiting for baseline trial "
+                    f"⏳ Waiting for baseline trial #{trial.number} "
                     f"(concurrency={concurrency}) to complete..."
                 )
 
@@ -1099,8 +1152,13 @@ class StudyController:
                         # Trial completed
                         trial_result = completed_results[0]
                         logger.info(
-                            f"✅ Baseline trial (concurrency={concurrency}) completed:"
+                            f"✅ Baseline trial #{trial.number} "
+                            f"(concurrency={concurrency}) completed:"
                         )
+
+                        # Set timing and error user attributes
+                        self._set_trial_user_attributes(trial.number, trial_result)
+
                         if trial_result.success and trial_result.objective_values:
                             logger.info(
                                 f"   Objectives: {trial_result.objective_values}"
@@ -1109,11 +1167,28 @@ class StudyController:
                             self.baseline_results[concurrency] = (
                                 trial_result.objective_values
                             )
+                            # Report to Optuna so it appears in dashboard
+                            self.study.tell(
+                                trial=trial.number,
+                                values=trial_result.objective_values,
+                                state=TrialState.COMPLETE,
+                            )
                         else:
                             logger.error(
                                 f"❌ Baseline trial failed: "
                                 f"{trial_result.error_message}"
                             )
+                            # Report failure to Optuna
+                            self.study.tell(
+                                trial=trial.number,
+                                values=None,
+                                state=TrialState.FAIL,
+                            )
+
+                        # Clean up trial object cache
+                        if trial.number in self.trial_objects:
+                            del self.trial_objects[trial.number]
+
                         break
                     else:
                         # Still running, wait and poll again
@@ -1121,14 +1196,34 @@ class StudyController:
                 else:
                     # Timeout reached
                     logger.error(
-                        f"❌ Baseline trial (concurrency={concurrency}) "
+                        f"❌ Baseline trial #{trial.number} "
+                        f"(concurrency={concurrency}) "
                         f"timed out after {timeout_seconds} seconds"
                     )
+                    # Report timeout as failure to Optuna
+                    self.study.tell(
+                        trial=trial.number,
+                        values=None,
+                        state=TrialState.FAIL,
+                    )
+                    # Clean up trial object cache
+                    if trial.number in self.trial_objects:
+                        del self.trial_objects[trial.number]
 
             except Exception as e:
                 logger.error(
-                    f"❌ Baseline trial (concurrency={concurrency}) failed: {e}"
+                    f"❌ Baseline trial #{trial.number} "
+                    f"(concurrency={concurrency}) failed: {e}"
                 )
+                # Report exception as failure to Optuna
+                self.study.tell(
+                    trial=trial.number,
+                    values=None,
+                    state=TrialState.FAIL,
+                )
+                # Clean up trial object cache
+                if trial.number in self.trial_objects:
+                    del self.trial_objects[trial.number]
                 # Continue with other concurrency levels
                 continue
 
