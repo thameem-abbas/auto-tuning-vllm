@@ -89,6 +89,9 @@ class TrialConfig:
             if isinstance(value, bool):
                 if value:
                     args.append(f"--{cli_param}")
+                else:
+                    # When False, add --no- prefix for vLLM
+                    args.append(f"--no-{cli_param}")
             else:
                 args.extend([f"--{cli_param}", str(value)])
 
