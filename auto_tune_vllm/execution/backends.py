@@ -100,9 +100,11 @@ class RayExecutionBackend(ExecutionBackend):
             "num_gpus": 1,
             "num_cpus": 4,
         }
-        self.active_jobs: Dict[str, object] = {}  # job_id -> ray_ref
-        self.active_actors: Dict[str, object] = {}  # job_id -> ray_actor
-        self.cancellation_flags: Dict[str, object] = {}  # job_id -> ray.put(flag_dict)
+        self.active_jobs: Dict[str, object] = {}  # job_id -> ray_ref (workload future)
+        self.active_actors: Dict[str, object] = {}  # job_id -> workload_actor
+        self.vllm_actors: Dict[str, object] = {}  # job_id -> vllm_actor
+        self.shared_states: Dict[str, object] = {}  # job_id -> shared_state_actor
+        self.cancellation_flags: Dict[str, object] = {}  # job_id -> cancellation_flag_actor
         self.start_ray_head = start_ray_head
         self._started_ray_head = False  # Track if we started Ray head for cleanup
 
@@ -238,15 +240,13 @@ class RayExecutionBackend(ExecutionBackend):
             raise RuntimeError(f"Unexpected error starting Ray head: {e}") from e
 
     def submit_trial(self, trial_config: TrialConfig) -> JobHandle:
-        """Submit trial to Ray cluster."""
-        from .trial_controller import RayTrialActor
+        """Submit trial to Ray cluster using separate vLLM and workload actors."""
+        from .trial_controller import VLLMServerActor, WorkloadActor, SharedState
 
-        # Create a lightweight cancellation flag actor (separate from trial actor)
-        # This can be called even while the trial actor is busy
+        # Create cancellation flag actor
         cancellation_flag_actor = CancellationFlag.remote()
 
-        # Create Ray actor with resource requirements from trial config
-        # Extract num_gpus and num_cpus from trial's resource_requirements
+        # Extract resource requirements
         num_gpus = trial_config.resource_requirements.get("num_gpus", 1)
         num_cpus = trial_config.resource_requirements.get("num_cpus", 1)
 
@@ -260,29 +260,66 @@ class RayExecutionBackend(ExecutionBackend):
         # Build runtime environment for Python configuration
         runtime_env = self._build_runtime_env()
 
-        # Create controller with runtime environment
-        controller_options = {"num_gpus": num_gpus, "num_cpus": num_cpus}
+        # Create SharedState actor (lightweight, no resources needed)
+        shared_state_actor = SharedState.remote()
 
-        # Add custom resources if any
+        # Create VLLMServerActor with GPU resources
+        vllm_options = {"num_gpus": num_gpus, "num_cpus": 1}  # Minimal CPU for vLLM actor
         if custom_resources:
-            controller_options["resources"] = custom_resources
-
-        # Add runtime environment if configured
+            vllm_options["resources"] = custom_resources
         if runtime_env:
-            controller_options["runtime_env"] = runtime_env
+            vllm_options["runtime_env"] = runtime_env
 
-        controller = RayTrialActor.options(**controller_options).remote()
+        vllm_actor = VLLMServerActor.options(**vllm_options).remote()
 
-        # Submit trial execution with cancellation flag actor
-        future_ref = controller.run_trial.remote(trial_config, cancellation_flag_actor)
-        job_id = str(future_ref)  # Use Ray ObjectRef as job ID
+        # Start vLLM server
+        server_info_ref = vllm_actor.start_server.remote(trial_config)
+        server_info = ray.get(server_info_ref)
+        server_url = server_info["url"]
 
-        # Track active job, actor, and cancellation flag actor
-        self.active_jobs[job_id] = future_ref
-        self.active_actors[job_id] = controller
+        # Store server URL in shared state
+        shared_state_actor.set_server_url.remote(server_url)
+
+        # Wait for server to be ready
+        ready = ray.get(vllm_actor.wait_for_ready.remote(trial_config.vllm_startup_timeout))
+        if not ready:
+            # Cleanup on failure
+            vllm_actor.cleanup.remote()
+            raise RuntimeError(f"vLLM server failed to start within {trial_config.vllm_startup_timeout}s")
+
+        # Start health monitoring
+        health_url = server_url.replace("/v1", "/health")
+        vllm_actor.start_health_monitoring.remote(
+            health_url,
+            check_interval=trial_config.health_check_interval,
+            max_failures=trial_config.health_check_max_failures,
+        )
+
+        # Create WorkloadActor with CPU resources
+        workload_options = {"num_cpus": num_cpus}
+        if runtime_env:
+            workload_options["runtime_env"] = runtime_env
+
+        workload_actor = WorkloadActor.options(**workload_options).remote()
+
+        # Start workload execution
+        workload_future = workload_actor.run_workload.remote(
+            shared_state_actor, trial_config, cancellation_flag_actor
+        )
+
+        job_id = str(workload_future)  # Use Ray ObjectRef as job ID
+
+        # Track all actors and futures
+        self.active_jobs[job_id] = workload_future
+        self.active_actors[job_id] = workload_actor
+        self.vllm_actors[job_id] = vllm_actor
+        self.shared_states[job_id] = shared_state_actor
         self.cancellation_flags[job_id] = cancellation_flag_actor
 
-        logger.info(f"Submitted trial {trial_config.trial_id} to Ray cluster")
+        logger.info(
+            f"Submitted trial {trial_config.trial_id} to Ray cluster "
+            f"(vLLM actor + workload actor)"
+        )
         return JobHandle(trial_config.trial_id, job_id)
 
     def poll_trials(
@@ -321,10 +358,9 @@ class RayExecutionBackend(ExecutionBackend):
                     result = ray.get(ray_ref)  # Get completed result
                     completed_results.append(result)
                     logger.info(f"Completed trial {handle.trial_id}")
-                    # Remove from active jobs and actors
-                    del self.active_jobs[handle.backend_job_id]
-                    if handle.backend_job_id in self.active_actors:
-                        del self.active_actors[handle.backend_job_id]
+                    
+                    # Cleanup actors for this trial
+                    self._cleanup_trial_actors(handle.backend_job_id)
                 except Exception as e:
                     # Trial failed - create error result
                     from ..core.trial import ExecutionInfo, TrialResult
@@ -339,15 +375,35 @@ class RayExecutionBackend(ExecutionBackend):
                     )
                     completed_results.append(error_result)
                     logger.error(f"Trial {handle.trial_id} failed: {e}")
-                    # Remove from active jobs and actors
-                    del self.active_jobs[handle.backend_job_id]
-                    if handle.backend_job_id in self.active_actors:
-                        del self.active_actors[handle.backend_job_id]
+                    
+                    # Cleanup actors for this trial
+                    self._cleanup_trial_actors(handle.backend_job_id)
             else:
                 remaining_handles.append(handle)
 
         return completed_results, remaining_handles
 
+    def _cleanup_trial_actors(self, job_id: str):
+        """Cleanup all actors for a specific trial."""
+        # Cleanup vLLM actor
+        if job_id in self.vllm_actors:
+            try:
+                ray.get(self.vllm_actors[job_id].cleanup.remote(), timeout=30)
+            except Exception as e:
+                logger.warning(f"Error cleaning up vLLM actor for {job_id}: {e}")
+            finally:
+                del self.vllm_actors[job_id]
+        
+        # Remove from tracking dictionaries
+        if job_id in self.active_jobs:
+            del self.active_jobs[job_id]
+        if job_id in self.active_actors:
+            del self.active_actors[job_id]
+        if job_id in self.shared_states:
+            del self.shared_states[job_id]
+        if job_id in self.cancellation_flags:
+            del self.cancellation_flags[job_id]
+    
     def _execute_remote_calls(
         self, items: dict, method_name: str, description: str
     ) -> list:
@@ -408,14 +464,15 @@ class RayExecutionBackend(ExecutionBackend):
         Cleanup phases:
         1. Set cancellation flags (triggers polling loop detection)
         2. Cancel Ray tasks (sends cancellation signal)
-        3. Call cleanup_resources on actors (graceful SIGTERM)
+        3. Call cleanup on vLLM actors (graceful SIGTERM)
         4. Force kill unresponsive actors (SIGKILL)
         """
-        if not self.active_actors:
+        if not self.active_actors and not self.vllm_actors:
             logger.debug("No active trials to cleanup")
             return
 
-        logger.info(f"Cleaning up {len(self.active_actors)} active trial(s)")
+        total_trials = max(len(self.active_actors), len(self.vllm_actors))
+        logger.info(f"Cleaning up {total_trials} active trial(s)")
 
         # Phase 1: Set cancellation flags
         logger.info("Phase 1 - Setting cancellation flags...")
@@ -434,7 +491,7 @@ class RayExecutionBackend(ExecutionBackend):
             )
             time.sleep(self.CANCELLATION_DETECTION_WAIT)
         
-        # Phase 2: Cancel Ray tasks
+        # Phase 2: Cancel Ray tasks (workload futures)
         logger.info("Phase 2 - Cancelling Ray tasks...")
         cancelled = 0
         for job_id, task_ref in self.active_jobs.items():
@@ -451,26 +508,30 @@ class RayExecutionBackend(ExecutionBackend):
             )
             time.sleep(self.TASK_CANCELLATION_WAIT)
         
-        # Phase 3: Call cleanup_resources on actors
-        logger.info("Phase 3 - Requesting graceful cleanup from actors...")
-        cleanup_futures = self._execute_remote_calls(
-            self.active_actors, "cleanup_resources", "Sent cleanup request"
+        # Phase 3: Call cleanup on vLLM actors
+        logger.info("Phase 3 - Requesting graceful cleanup from vLLM actors...")
+        vllm_cleanup_futures = self._execute_remote_calls(
+            self.vllm_actors, "cleanup", "Sent cleanup request to vLLM actor"
         )
         logger.info(
             f"Waiting up to {self.GRACEFUL_CLEANUP_TIMEOUT}s "
-            f"for graceful cleanup..."
+            f"for graceful vLLM cleanup..."
         )
         self._wait_for_refs(
-            cleanup_futures, self.GRACEFUL_CLEANUP_TIMEOUT, "actor cleanups"
+            vllm_cleanup_futures, self.GRACEFUL_CLEANUP_TIMEOUT, "vLLM actor cleanups"
         )
         
         # Phase 4: Force kill unresponsive actors
-        if self.active_actors:
+        all_actors = {}
+        all_actors.update(self.active_actors)
+        all_actors.update(self.vllm_actors)
+        
+        if all_actors:
             logger.warning(
-                f"Force killing {len(self.active_actors)} "
+                f"Force killing {len(all_actors)} "
                 f"unresponsive actor(s)..."
             )
-            for job_id, actor in list(self.active_actors.items()):
+            for job_id, actor in list(all_actors.items()):
                 try:
                     ray.kill(actor)
                     logger.debug(f"Force killed actor {job_id}")
@@ -480,6 +541,8 @@ class RayExecutionBackend(ExecutionBackend):
         # Clear tracking
         self.active_actors.clear()
         self.active_jobs.clear()
+        self.vllm_actors.clear()
+        self.shared_states.clear()
         self.cancellation_flags.clear()
         logger.info("✓ Completed cleanup of all active trials")
 

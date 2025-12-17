@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 import os
 import signal
+import socket
 import subprocess
 import time
 from abc import ABC, abstractmethod
@@ -1366,7 +1367,820 @@ class RayWorkerTrialController(BaseTrialController):
         return super()._start_vllm_server(trial_config)
 
 
-# Ray remote actor wrapper
+# Helper functions for endpoint discovery
+def _is_kubernetes_env() -> bool:
+    """Check if running in Kubernetes environment."""
+    return os.environ.get("KUBERNETES_SERVICE_HOST") is not None
+
+
+def _get_node_ip() -> str:
+    """Get node IP address for server URL.
+    
+    Returns:
+        Node IP address or hostname, falls back to localhost
+    """
+    try:
+        # Try to get hostname first
+        hostname = socket.gethostname()
+        
+        # Try to resolve to IP address
+        try:
+            node_ip = socket.gethostbyname(hostname)
+            # If it resolves to 127.0.0.1, use hostname instead
+            if node_ip != "127.0.0.1":
+                return node_ip
+            return hostname
+        except socket.gaierror:
+            # If resolution fails, use hostname
+            return hostname
+    except Exception:
+        # Fallback to localhost
+        return "localhost"
+
+
+def _get_kubernetes_namespace() -> str:
+    """Get Kubernetes namespace from environment or service account."""
+    # Try environment variable first
+    namespace = os.environ.get("POD_NAMESPACE")
+    if namespace:
+        return namespace
+    
+    # Try reading from service account namespace file
+    try:
+        with open("/var/run/secrets/kubernetes.io/serviceaccount/namespace", "r") as f:
+            return f.read().strip()
+    except (FileNotFoundError, IOError):
+        pass
+    
+    # Default namespace
+    return "default"
+
+
+# SharedState Actor for server URL communication
+@ray.remote
+class SharedState:
+    """Ray actor to hold vLLM server URL for communication between actors."""
+    
+    def __init__(self):
+        self.server_url: Optional[str] = None
+    
+    def set_server_url(self, url: str):
+        """Set the vLLM server URL."""
+        self.server_url = url
+    
+    def get_server_url(self) -> Optional[str]:
+        """Get the vLLM server URL."""
+        return self.server_url
+
+
+# VLLM Server Actor
+@ray.remote
+class VLLMServerActor:
+    """Ray actor that manages vLLM server lifecycle."""
+    
+    def __init__(self):
+        self.vllm_process: Optional[subprocess.Popen] = None
+        self.server_url: Optional[str] = None
+        self.server_port: Optional[int] = None
+        self.trial_loggers = {}
+        self._health_monitor_thread = None
+        self._health_monitor_stop = False
+        self._health_monitor_stop_event = None
+        self._health_check_url = None
+        self._health_check_failed = False
+        self._health_check_failure_reason = None
+        self._k8s_service_name: Optional[str] = None
+        self._k8s_service_created = False
+    
+    def _get_trial_logger(self, component: str):
+        """Get trial logger for component, fallback to module logger."""
+        return self.trial_loggers.get(component, logger)
+    
+    def _setup_trial_logging(self, trial_config: TrialConfig):
+        """Setup trial-specific loggers."""
+        if not trial_config.logging_config:
+            return
+        
+        try:
+            from ..logging.manager import CentralizedLogger
+            
+            log_database_url = trial_config.logging_config.get("database_url")
+            log_file_path = trial_config.logging_config.get("file_path")
+            log_level = trial_config.logging_config.get("log_level", "INFO")
+            
+            if log_database_url or log_file_path:
+                centralized_logger = CentralizedLogger(
+                    study_name=trial_config.study_name,
+                    pg_url=log_database_url,
+                    file_path=log_file_path,
+                    log_level=log_level,
+                )
+                
+                self.trial_loggers["vllm"] = centralized_logger.get_trial_logger(
+                    trial_config.trial_id, "vllm"
+                )
+        except Exception as e:
+            logger.warning(f"Failed to setup trial logging: {e}")
+    
+    def _get_available_port(self) -> int:
+        """Get an available port for vLLM server."""
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.bind(("", 0))
+            s.listen(1)
+            port = s.getsockname()[1]
+        return port
+    
+    def _create_kubernetes_service(self, trial_config: TrialConfig, port: int) -> Optional[str]:
+        """Create Kubernetes Service for vLLM server.
+        
+        Returns:
+            Service DNS URL if successful, None otherwise
+        """
+        if not _is_kubernetes_env():
+            return None
+        
+        try:
+            from kubernetes import client, config
+            from kubernetes.client.rest import ApiException
+        except ImportError:
+            logger.debug("kubernetes library not available, skipping Service creation")
+            return None
+        
+        try:
+            # Load in-cluster config (uses service account token)
+            try:
+                config.load_incluster_config()
+            except config.ConfigException:
+                logger.debug("Not in Kubernetes cluster, skipping Service creation")
+                return None
+            
+            v1 = client.CoreV1Api()
+            namespace = _get_kubernetes_namespace()
+            service_name = f"vllm-service-{trial_config.trial_id}".lower().replace("_", "-")
+            
+            # Get current pod name and labels for selector
+            pod_name = os.environ.get("HOSTNAME") or os.environ.get("POD_NAME")
+            if not pod_name:
+                logger.warning("Cannot determine pod name for Service selector")
+                return None
+            
+            # Create Service manifest
+            service = client.V1Service(
+                metadata=client.V1ObjectMeta(
+                    name=service_name,
+                    namespace=namespace,
+                    labels={"app": "vllm-server", "trial-id": trial_config.trial_id},
+                ),
+                spec=client.V1ServiceSpec(
+                    selector={"app": "vllm-server", "trial-id": trial_config.trial_id},
+                    ports=[
+                        client.V1ServicePort(
+                            port=port,
+                            target_port=port,
+                            protocol="TCP",
+                        )
+                    ],
+                    type="ClusterIP",
+                ),
+            )
+            
+            # Create Service
+            v1.create_namespaced_service(namespace=namespace, body=service)
+            self._k8s_service_name = service_name
+            self._k8s_service_created = True
+            
+            # Return Service DNS URL
+            service_url = f"http://{service_name}.{namespace}.svc.cluster.local:{port}/v1"
+            vllm_logger = self._get_trial_logger("vllm")
+            vllm_logger.info(f"Created Kubernetes Service: {service_name}, URL: {service_url}")
+            return service_url
+            
+        except ApiException as e:
+            logger.warning(f"Failed to create Kubernetes Service: {e}")
+            return None
+        except Exception as e:
+            logger.warning(f"Error creating Kubernetes Service: {e}")
+            return None
+    
+    def _delete_kubernetes_service(self):
+        """Delete Kubernetes Service if it was created."""
+        if not self._k8s_service_created or not self._k8s_service_name:
+            return
+        
+        try:
+            from kubernetes import client, config
+            from kubernetes.client.rest import ApiException
+        except ImportError:
+            return
+        
+        try:
+            config.load_incluster_config()
+            v1 = client.CoreV1Api()
+            namespace = _get_kubernetes_namespace()
+            
+            v1.delete_namespaced_service(
+                name=self._k8s_service_name,
+                namespace=namespace,
+            )
+            vllm_logger = self._get_trial_logger("vllm")
+            vllm_logger.info(f"Deleted Kubernetes Service: {self._k8s_service_name}")
+        except ApiException as e:
+            if e.status != 404:  # Ignore if already deleted
+                logger.warning(f"Failed to delete Kubernetes Service: {e}")
+        except Exception as e:
+            logger.warning(f"Error deleting Kubernetes Service: {e}")
+        finally:
+            self._k8s_service_created = False
+            self._k8s_service_name = None
+    
+    def _get_server_url(self, port: int) -> str:
+        """Get server URL using appropriate discovery method.
+        
+        Priority:
+        1. Kubernetes Service (if in KubeRay)
+        2. Node IP (for native Ray)
+        3. localhost (fallback)
+        """
+        # Try Kubernetes Service first
+        if _is_kubernetes_env():
+            # Service creation happens in start_server, URL is returned there
+            # This is just for fallback
+            pass
+        
+        # Try node IP extraction
+        node_ip = _get_node_ip()
+        if node_ip != "localhost":
+            url = f"http://{node_ip}:{port}/v1"
+            vllm_logger = self._get_trial_logger("vllm")
+            if node_ip == socket.gethostname():
+                vllm_logger.info(f"Using hostname for server URL: {url}")
+            else:
+                vllm_logger.info(f"Using node IP for server URL: {url}")
+            return url
+        
+        # Fallback to localhost
+        url = f"http://localhost:{port}/v1"
+        vllm_logger = self._get_trial_logger("vllm")
+        vllm_logger.warning(f"Falling back to localhost URL: {url} (may not work in multi-node clusters)")
+        return url
+    
+    def start_server(self, trial_config: TrialConfig) -> dict:
+        """Start vLLM server and return server info.
+        
+        Returns:
+            Dictionary with 'port', 'url', and 'pid' keys
+        """
+        self._setup_trial_logging(trial_config)
+        vllm_logger = self._get_trial_logger("vllm")
+        
+        port = self._get_available_port()
+        self.server_port = port
+        
+        # Log Python environment information
+        self._log_python_environment(vllm_logger)
+        
+        # Build vLLM command
+        cmd = [
+            "python3",
+            "-m",
+            "vllm.entrypoints.openai.api_server",
+            "--model",
+            trial_config.benchmark_config.model,
+            "--port",
+            str(port),
+            "--host",
+            "0.0.0.0",
+        ]
+        
+        # Add trial-specific parameters
+        cmd.extend(trial_config.vllm_args)
+        
+        vllm_logger.info(f"Starting vLLM server: {' '.join(cmd)}")
+        
+        # Prepare environment variables
+        env = os.environ.copy()
+        trial_env_vars = trial_config.environment_vars
+        if trial_env_vars:
+            env.update(trial_env_vars)
+            vllm_logger.info(f"Environment variables: {trial_env_vars}")
+        
+        # Start process
+        self.vllm_process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1,
+            universal_newlines=True,
+            env=env,
+            start_new_session=True,
+        )
+        
+        # Start thread to capture and log vLLM output
+        import threading
+        
+        def log_vllm_output():
+            try:
+                for line in iter(self.vllm_process.stdout.readline, ""):
+                    if line.strip():
+                        vllm_logger.info(line.strip())
+            except Exception as e:
+                vllm_logger.error(f"Error capturing vLLM output: {e}")
+        
+        log_thread = threading.Thread(target=log_vllm_output, daemon=True)
+        log_thread.start()
+        
+        # Try to create Kubernetes Service first
+        service_url = self._create_kubernetes_service(trial_config, port)
+        
+        # Determine server URL
+        if service_url:
+            self.server_url = service_url
+        else:
+            self.server_url = self._get_server_url(port)
+        
+        return {
+            "port": port,
+            "url": self.server_url,
+            "pid": self.vllm_process.pid,
+        }
+    
+    def get_server_url(self) -> Optional[str]:
+        """Get current server URL."""
+        return self.server_url
+    
+    def is_ready(self) -> bool:
+        """Check if vLLM server is ready."""
+        if not self.server_url:
+            return False
+        
+        import requests
+        
+        health_url = self.server_url.replace("/v1", "/health")
+        try:
+            response = requests.get(health_url, timeout=2)
+            return response.status_code == 200
+        except Exception:
+            return False
+    
+    def wait_for_ready(self, timeout: int = 300) -> bool:
+        """Wait for vLLM server to be ready.
+        
+        Returns:
+            True if server became ready, False if timeout
+        """
+        import requests
+        
+        vllm_logger = self._get_trial_logger("vllm")
+        start_time = time.time()
+        health_url = self.server_url.replace("/v1", "/health") if self.server_url else None
+        
+        if not health_url:
+            return False
+        
+        vllm_logger.info(
+            f"Waiting for vLLM server to be ready at {health_url} (timeout: {timeout}s)"
+        )
+        
+        while time.time() - start_time < timeout:
+            if self.vllm_process and self.vllm_process.poll() is not None:
+                vllm_logger.error(
+                    f"vLLM process died during startup with exit code "
+                    f"{self.vllm_process.returncode}"
+                )
+                return False
+            
+            try:
+                response = requests.get(health_url, timeout=5)
+                if response.status_code == 200:
+                    vllm_logger.info(f"vLLM server ready at {self.server_url}")
+                    return True
+            except requests.exceptions.RequestException:
+                pass
+            
+            time.sleep(2)
+        
+        vllm_logger.error(f"vLLM server failed to start within {timeout} seconds")
+        return False
+    
+    def start_health_monitoring(
+        self, health_url: str, check_interval: float = 1.0, max_failures: int = 3
+    ):
+        """Start background health monitoring of vLLM server."""
+        import threading
+        import requests
+        
+        self._health_check_url = health_url
+        self._health_monitor_stop = False
+        self._health_check_failed = False
+        self._health_check_failure_reason = None
+        
+        vllm_logger = self._get_trial_logger("vllm")
+        
+        def monitor_health():
+            consecutive_failures = 0
+            period = max(1.0, float(check_interval))
+            
+            vllm_logger.info(
+                f"Starting health monitoring: checking {health_url} every {period}s"
+            )
+            
+            import threading as _threading
+            if self._health_monitor_stop_event is None:
+                self._health_monitor_stop_event = _threading.Event()
+            stop_event = self._health_monitor_stop_event
+            
+            next_deadline = time.monotonic() + period
+            
+            while not self._health_monitor_stop and not stop_event.is_set():
+                if self.vllm_process and self.vllm_process.poll() is not None:
+                    self._health_check_failed = True
+                    self._health_check_failure_reason = (
+                        f"vLLM process died with exit code {self.vllm_process.returncode}"
+                    )
+                    vllm_logger.error(f"Health monitoring detected process death")
+                    break
+                
+                try:
+                    response = requests.get(health_url, timeout=5)
+                    if response.status_code == 200:
+                        consecutive_failures = 0
+                    else:
+                        consecutive_failures += 1
+                        vllm_logger.warning(
+                            f"Health check returned status {response.status_code} "
+                            f"(failure {consecutive_failures}/{max_failures})"
+                        )
+                except Exception as e:
+                    consecutive_failures += 1
+                    vllm_logger.warning(
+                        f"Health check failed: {e} "
+                        f"(failure {consecutive_failures}/{max_failures})"
+                    )
+                
+                if max_failures > 0 and consecutive_failures >= max_failures:
+                    self._health_check_failed = True
+                    self._health_check_failure_reason = (
+                        f"vLLM server failed {consecutive_failures} consecutive health checks"
+                    )
+                    vllm_logger.error(f"Health monitoring detected server failure")
+                    break
+                
+                now = time.monotonic()
+                while next_deadline <= now:
+                    next_deadline += period
+                sleep_duration = max(0.0, next_deadline - now)
+                if stop_event.wait(timeout=sleep_duration):
+                    break
+            
+            vllm_logger.info("Health monitoring stopped")
+        
+        self._health_monitor_thread = threading.Thread(
+            target=monitor_health, daemon=True, name="vllm-health-monitor"
+        )
+        self._health_monitor_thread.start()
+    
+    def stop_health_monitoring(self):
+        """Stop the health monitoring thread."""
+        if self._health_monitor_thread and self._health_monitor_thread.is_alive():
+            vllm_logger = self._get_trial_logger("vllm")
+            vllm_logger.info("Stopping health monitoring thread")
+            self._health_monitor_stop = True
+            try:
+                if self._health_monitor_stop_event is not None:
+                    self._health_monitor_stop_event.set()
+            except Exception:
+                pass
+            self._health_monitor_thread.join(timeout=10)
+    
+    def _log_python_environment(self, logger):
+        """Log Python environment information for debugging."""
+        # Reuse the existing method from BaseTrialController
+        # This is a simplified version - can be enhanced if needed
+        import platform
+        import sys
+        
+        logger.info("=" * 60)
+        logger.info("PYTHON ENVIRONMENT INFORMATION")
+        logger.info("=" * 60)
+        logger.info(f"Python executable: {sys.executable}")
+        logger.info(f"Python version: {sys.version}")
+        logger.info(f"Platform: {platform.platform()}")
+        
+        if ray.is_initialized():
+            try:
+                runtime_ctx = ray.get_runtime_context()
+                logger.info(f"Ray node ID: {runtime_ctx.get_node_id()}")
+                logger.info(f"Ray worker ID: {runtime_ctx.get_worker_id()}")
+            except Exception as e:
+                logger.info(f"Ray context error: {e}")
+        
+        logger.info("=" * 60)
+    
+    def cleanup(self):
+        """Clean up vLLM server process, health monitoring, and Kubernetes Service."""
+        vllm_logger = self._get_trial_logger("vllm")
+        vllm_logger.info("Cleaning up vLLM server actor")
+        
+        # Stop health monitoring
+        self.stop_health_monitoring()
+        
+        # Delete Kubernetes Service
+        self._delete_kubernetes_service()
+        
+        # Terminate vLLM process
+        if self.vllm_process:
+            pid = self.vllm_process.pid
+            vllm_logger.info(f"Terminating vLLM process {pid}")
+            
+            try:
+                pgid = os.getpgid(pid)
+                os.killpg(pgid, signal.SIGTERM)
+            except (OSError, ProcessLookupError):
+                try:
+                    self.vllm_process.terminate()
+                except (OSError, ProcessLookupError):
+                    pass
+            
+            try:
+                self.vllm_process.wait(timeout=10)
+                vllm_logger.info(f"vLLM process {pid} terminated gracefully")
+            except subprocess.TimeoutExpired:
+                vllm_logger.warning(f"vLLM process {pid} did not terminate, sending SIGKILL")
+                try:
+                    if pgid:
+                        os.killpg(pgid, signal.SIGKILL)
+                    else:
+                        self.vllm_process.kill()
+                except (OSError, ProcessLookupError):
+                    pass
+            
+            self.vllm_process = None
+
+
+# Workload Actor
+@ray.remote
+class WorkloadActor:
+    """Ray actor that runs benchmark workload."""
+    
+    def __init__(self):
+        self.benchmark_provider = None
+        self.trial_loggers = {}
+        self._trial_context = None
+    
+    def _get_trial_logger(self, component: str):
+        """Get trial logger for component, fallback to module logger."""
+        return self.trial_loggers.get(component, logger)
+    
+    def _setup_trial_logging(self, trial_config: TrialConfig):
+        """Setup trial-specific loggers."""
+        if not trial_config.logging_config:
+            return
+        
+        try:
+            from ..logging.manager import CentralizedLogger
+            
+            log_database_url = trial_config.logging_config.get("database_url")
+            log_file_path = trial_config.logging_config.get("file_path")
+            log_level = trial_config.logging_config.get("log_level", "INFO")
+            
+            if log_database_url or log_file_path:
+                centralized_logger = CentralizedLogger(
+                    study_name=trial_config.study_name,
+                    pg_url=log_database_url,
+                    file_path=log_file_path,
+                    log_level=log_level,
+                )
+                
+                self.trial_loggers["benchmark"] = centralized_logger.get_trial_logger(
+                    trial_config.trial_id, "benchmark"
+                )
+                self.trial_loggers["controller"] = centralized_logger.get_trial_logger(
+                    trial_config.trial_id, "controller"
+                )
+        except Exception as e:
+            logger.warning(f"Failed to setup trial logging: {e}")
+    
+    def _create_benchmark_provider(self, trial_config: TrialConfig):
+        """Create appropriate benchmark provider."""
+        from ..benchmarks.providers import BenchmarkProvider, GuideLLMBenchmark
+        
+        benchmark_type = trial_config.benchmark_config.benchmark_type
+        
+        if benchmark_type == "guidellm":
+            return GuideLLMBenchmark()
+        else:
+            # Import custom provider
+            try:
+                module_name = f"auto_tune_vllm.benchmarks.custom.{benchmark_type}"
+                module = __import__(module_name, fromlist=[benchmark_type])
+                provider_class = getattr(module, f"{benchmark_type.title()}Benchmark")
+                return provider_class()
+            except (ImportError, AttributeError) as e:
+                raise ValueError(f"Unknown benchmark provider: {benchmark_type}") from e
+    
+    def _extract_objectives(
+        self, benchmark_result: dict, optimization_config=None
+    ) -> list[float]:
+        """Extract objective values for Optuna from benchmark results."""
+        if optimization_config is None:
+            throughput = benchmark_result.get("output_tokens_per_second", 0.0)
+            return [throughput]
+        
+        objective_values = []
+        for _ in optimization_config.objectives:
+            metric_key = optimization_config.get_metric_key(len(objective_values))
+            value = benchmark_result.get(metric_key)
+            
+            if value is None:
+                raise RuntimeError(
+                    f"Metric '{metric_key}' not found in benchmark results. "
+                    f"Available metrics: {list(benchmark_result.keys())}"
+                )
+            
+            try:
+                value = float(value)
+            except (ValueError, TypeError):
+                raise RuntimeError(
+                    f"Failed to convert metric '{metric_key}' value '{value}' to float"
+                )
+            
+            objective_values.append(value)
+        
+        return objective_values
+    
+    def _classify_error(self, exception: Exception) -> str:
+        """Classify error type based on exception message."""
+        error_message = str(exception).lower()
+        
+        error_patterns = {
+            "OOM": ["out of memory", "outofmemoryerror", "memory allocation failed"],
+            "GPU_Memory": ["gpu memory", "free memory on device", "insufficient gpu memory"],
+            "Timeout": ["timeout", "timed out"],
+            "CUDA_Error": ["cuda error", "cuda runtime error"],
+            "Connection_Error": ["connection refused", "connection reset"],
+            "Server_Startup": ["server startup", "failed to start", "died during startup"],
+            "Benchmark_Error": ["benchmark", "guidellm"],
+        }
+        
+        for error_type, patterns in error_patterns.items():
+            if any(pattern in error_message for pattern in patterns):
+                return error_type
+        
+        return "Unknown"
+    
+    def run_workload(
+        self,
+        shared_state_actor,
+        trial_config: TrialConfig,
+        cancellation_flag_actor=None,
+    ) -> TrialResult:
+        """Run benchmark workload against vLLM server.
+        
+        Args:
+            shared_state_actor: Ray actor reference to SharedState (for server URL)
+            trial_config: Trial configuration
+            cancellation_flag_actor: Optional cancellation flag actor
+            
+        Returns:
+            TrialResult with benchmark results
+        """
+        from ..core.trial import ExecutionInfo
+        
+        self._setup_trial_logging(trial_config)
+        controller_logger = self._get_trial_logger("controller")
+        benchmark_logger = self._get_trial_logger("benchmark")
+        
+        execution_info = ExecutionInfo()
+        execution_info.mark_benchmark_started()
+        
+        try:
+            # Get server URL from shared state
+            server_url = ray.get(shared_state_actor.get_server_url.remote())
+            if not server_url:
+                raise RuntimeError("Server URL not available from shared state")
+            
+            controller_logger.info(f"Starting benchmark against server: {server_url}")
+            
+            # Create benchmark provider
+            self.benchmark_provider = self._create_benchmark_provider(trial_config)
+            
+            # Setup benchmark provider
+            if hasattr(self.benchmark_provider, "set_logger"):
+                self.benchmark_provider.set_logger(benchmark_logger)
+            
+            if hasattr(self.benchmark_provider, "set_trial_context"):
+                self.benchmark_provider.set_trial_context(
+                    trial_config.study_name, trial_config.trial_id
+                )
+            
+            # Setup cancellation checker
+            def should_cancel():
+                if cancellation_flag_actor:
+                    try:
+                        is_cancelled = ray.get(
+                            cancellation_flag_actor.is_cancelled.remote(), timeout=0.2
+                        )
+                        return is_cancelled
+                    except Exception:
+                        return False
+                return False
+            
+            # Start benchmark
+            benchmark_process = self.benchmark_provider.start_benchmark(
+                server_url, trial_config.benchmark_config
+            )
+            
+            # Wait for benchmark to complete
+            benchmark_start_time = time.time()
+            max_benchmark_time = trial_config.benchmark_config.max_seconds * 1.5
+            
+            while True:
+                # Check cancellation
+                if should_cancel():
+                    controller_logger.warning("Cancellation requested, terminating benchmark")
+                    self.benchmark_provider.terminate_benchmark()
+                    raise KeyboardInterrupt("Benchmark cancelled")
+                
+                # Check if benchmark completed
+                returncode = benchmark_process.poll()
+                if returncode is not None:
+                    stdout, stderr = benchmark_process.communicate(timeout=5)
+                    
+                    if returncode != 0:
+                        raise RuntimeError(
+                            f"Benchmark failed with exit code {returncode}: {stderr}"
+                        )
+                    
+                    # Parse results
+                    benchmark_result = self.benchmark_provider.parse_results()
+                    
+                    # Extract objectives
+                    objective_values = self._extract_objectives(
+                        benchmark_result, trial_config.optimization_config
+                    )
+                    
+                    execution_info.mark_benchmark_completed()
+                    execution_info.mark_completed(status="success")
+                    
+                    controller_logger.info(
+                        f"Benchmark completed with objectives: {objective_values}"
+                    )
+                    
+                    return TrialResult(
+                        trial_id=trial_config.trial_id,
+                        trial_number=trial_config.trial_number,
+                        trial_type=trial_config.trial_type,
+                        objective_values=objective_values,
+                        detailed_metrics=benchmark_result,
+                        execution_info=execution_info,
+                        success=True,
+                    )
+                
+                # Check timeout
+                elapsed = time.time() - benchmark_start_time
+                if elapsed > max_benchmark_time:
+                    controller_logger.warning(
+                        f"Benchmark timeout after {elapsed:.1f}s, terminating..."
+                    )
+                    self.benchmark_provider.terminate_benchmark()
+                    raise RuntimeError(f"Benchmark timed out after {max_benchmark_time}s")
+                
+                time.sleep(0.5)
+        
+        except KeyboardInterrupt:
+            execution_info.mark_completed()
+            controller_logger.warning("Benchmark cancelled")
+            return TrialResult(
+                trial_id=trial_config.trial_id,
+                trial_number=trial_config.trial_number,
+                trial_type=trial_config.trial_type,
+                objective_values=[],
+                detailed_metrics={},
+                execution_info=execution_info,
+                success=False,
+                error_message="Benchmark cancelled",
+                error_type="Cancelled",
+            )
+        except Exception as e:
+            execution_info.mark_completed(status="benchmark_crash")
+            error_type = self._classify_error(e)
+            controller_logger.error(f"Benchmark failed: {e}")
+            
+            return TrialResult(
+                trial_id=trial_config.trial_id,
+                trial_number=trial_config.trial_number,
+                trial_type=trial_config.trial_type,
+                objective_values=[],
+                detailed_metrics={},
+                execution_info=execution_info,
+                success=False,
+                error_message=str(e),
+                error_type=error_type,
+            )
+
+
+# Ray remote actor wrapper (kept for backward compatibility)
 @ray.remote
 class RayTrialActor(RayWorkerTrialController):
     """Ray remote actor for distributed trial execution."""

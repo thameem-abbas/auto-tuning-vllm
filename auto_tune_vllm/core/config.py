@@ -273,6 +273,9 @@ class StudyConfig:
     optimization: OptimizationConfig
     benchmark: BenchmarkConfig
     parameters: Dict[str, ParameterConfig] = field(default_factory=dict)
+    benchmark_tunables: Dict[str, ParameterConfig] = field(
+        default_factory=dict
+    )  # Benchmark tunable parameters
     static_environment_variables: Dict[str, str] = field(
         default_factory=dict
     )  # Static environment variables
@@ -538,7 +541,80 @@ class ConfigValidator:
             ]
 
         optimization = OptimizationConfig(**opt_config_data)
-        benchmark = BenchmarkConfig(**raw_config["benchmark"])
+        
+        # Parse benchmark configuration: separate constants from tunables
+        raw_benchmark = raw_config.get("benchmark", {})
+        if not isinstance(raw_benchmark, dict):
+            raise TypeError("Benchmark configuration must be a dictionary")
+        
+        # Extract constants (all fields except "tunables")
+        benchmark_constants = {
+            k: v for k, v in raw_benchmark.items() if k != "tunables"
+        }
+        
+        # Extract tunables section
+        benchmark_tunables_raw = raw_benchmark.get("tunables")
+        if benchmark_tunables_raw is None:
+            raise ValueError(
+                "Benchmark configuration must include a 'tunables' section "
+                "(can be empty dict {} if no tunables are needed)"
+            )
+        if not isinstance(benchmark_tunables_raw, dict):
+            raise TypeError("Benchmark tunables must be a dictionary")
+        
+        # Validate no field appears in both constants and tunables
+        overlap = set(benchmark_constants.keys()) & set(benchmark_tunables_raw.keys())
+        if overlap:
+            raise ValueError(
+                f"Fields cannot be in both benchmark constants and tunables: {overlap}"
+            )
+        
+        # Build BenchmarkConfig from constants only
+        benchmark = BenchmarkConfig(**benchmark_constants)
+        
+        # Build benchmark tunables using same logic as vLLM parameters
+        validated_benchmark_tunables = {}
+        for tunable_name, tunable_config in benchmark_tunables_raw.items():
+            if not tunable_config.get("enabled", True):
+                continue
+            
+            # Check if this is an environment variable (unlikely for benchmarks, but support it)
+            is_env_var = tunable_config.get("env_var", False)
+            
+            if is_env_var:
+                if (
+                    "range" in tunable_config
+                    or "min" in tunable_config
+                    or "max" in tunable_config
+                    or "step" in tunable_config
+                ):
+                    raise ValueError(
+                        f"Benchmark tunable '{tunable_name}' cannot use "
+                        f"range configurations when env_var is True. Only list options are allowed."
+                    )
+                
+                if "options" not in tunable_config:
+                    raise ValueError(
+                        f"Benchmark tunable '{tunable_name}' with env_var=True "
+                        f"must specify options as a list"
+                    )
+                
+                validated_tunable = EnvironmentParameter(
+                    name=tunable_name,
+                    enabled=tunable_config.get("enabled", True),
+                    options=tunable_config["options"],
+                    data_type=tunable_config.get("data_type", "str"),
+                    description=tunable_config.get(
+                        "description", f"Benchmark tunable {tunable_name}"
+                    ),
+                )
+            else:
+                # Build parameter config based on schema type
+                validated_tunable = self._build_parameter_config(
+                    tunable_name, tunable_config
+                )
+            
+            validated_benchmark_tunables[tunable_name] = validated_tunable
 
         # Handle optional database_url and storage_file
         database_url = study_info.get("database_url")
@@ -560,6 +636,7 @@ class ConfigValidator:
         if "baseline" in raw_config:
             baseline_data = raw_config["baseline"]
             # If concurrency_levels not specified, inherit from benchmark rate
+            # Use benchmark.rate (which may be default if rate is a tunable)
             if "concurrency_levels" not in baseline_data:
                 baseline_data["concurrency_levels"] = [benchmark.rate]
             if baseline_data.get("enabled", True):  # Default is now True
@@ -575,7 +652,7 @@ class ConfigValidator:
                 baseline_config = BaselineConfig(**baseline_data)
         else:
             # No baseline section in config
-            # Create default baseline with benchmark rate
+            # Create default baseline with benchmark rate (may be default if rate is tunable)
             baseline_config = BaselineConfig(
                 enabled=True, concurrency_levels=[benchmark.rate]
             )
@@ -596,6 +673,7 @@ class ConfigValidator:
             optimization=optimization,
             benchmark=benchmark,
             parameters=validated_params,
+            benchmark_tunables=validated_benchmark_tunables,
             static_environment_variables=static_env_vars,
             static_parameters=static_params,
             baseline=baseline_config,

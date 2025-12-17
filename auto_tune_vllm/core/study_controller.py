@@ -833,6 +833,18 @@ class StudyController:
                 value = param_config.generate_optuna_suggest(trial)
                 parameters[param_name] = value
 
+        # Generate benchmark tunable values
+        benchmark_tunable_values = {}
+        for tunable_name, tunable_config in self.config.benchmark_tunables.items():
+            if tunable_config.enabled:
+                value = tunable_config.generate_optuna_suggest(trial)
+                benchmark_tunable_values[tunable_name] = value
+
+        # Merge benchmark constants with tunable values to create trial-specific config
+        trial_benchmark_config = self.config.benchmark.merge_tunables(
+            benchmark_tunable_values
+        )
+
         return TrialConfig(
             study_name=self.config.study_name,
             trial_id=f"trial_{trial.number}",
@@ -841,7 +853,7 @@ class StudyController:
             parameters=parameters,
             parameter_configs=self.config.parameters,
             static_environment_variables=self.config.static_environment_variables,
-            benchmark_config=self.config.benchmark,
+            benchmark_config=trial_benchmark_config,
             optimization_config=self.config.optimization,
             logging_config=self.config.logging_config,
         )

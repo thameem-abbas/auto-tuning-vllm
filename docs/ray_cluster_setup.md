@@ -308,6 +308,100 @@ auto-tune-vllm logs --study-id <id> --database-url <postgres_url>
 - Consider containerization (Docker/Kubernetes) for better isolation
 - Use Ray's resource allocation to prevent resource conflicts
 
+## KubeRay Setup (Kubernetes)
+
+### Kubernetes Service Creation
+
+When running in KubeRay, the system automatically creates Kubernetes Services for vLLM server endpoints. This requires RBAC permissions.
+
+#### Required RBAC Permissions
+
+Create a ServiceAccount and ClusterRole with the following permissions:
+
+```yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: auto-tune-vllm
+  namespace: <your-namespace>
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: auto-tune-vllm-service-manager
+rules:
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["create", "get", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: auto-tune-vllm-service-manager
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: auto-tune-vllm-service-manager
+subjects:
+- kind: ServiceAccount
+  name: auto-tune-vllm
+  namespace: <your-namespace>
+```
+
+#### Optional Dependencies
+
+Install the Kubernetes client library for KubeRay support:
+
+```bash
+pip install auto-tune-vllm[kuberay]
+```
+
+Or install directly:
+
+```bash
+pip install kubernetes>=28.0.0
+```
+
+#### Network Policies
+
+If using Kubernetes NetworkPolicy, ensure that:
+- Pods can communicate with each other within the namespace
+- Services are accessible from workload pods to vLLM server pods
+- DNS resolution works for Service names (`.svc.cluster.local`)
+
+Example NetworkPolicy (allows all traffic within namespace):
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-namespace-traffic
+  namespace: <your-namespace>
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: <your-namespace>
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: <your-namespace>
+```
+
+#### Fallback Behavior
+
+If Kubernetes Service creation fails or the `kubernetes` library is not available, the system automatically falls back to:
+1. Node IP extraction (for native Ray clusters)
+2. localhost (for single-node deployments, with warning)
+
+This ensures compatibility with both KubeRay and standalone Ray deployments.
+
 ## Troubleshooting
 
 ### Debug Mode
